@@ -1,0 +1,330 @@
+﻿@page
+@model FytSoa.Web.Pages.FytAdmin.Sys.AuthorizationModel
+@{
+    ViewData["Title"] = "权限管理";
+}
+<div id="container">
+    <style>
+        .l220 {
+            left: 220px;
+            background-color: #ffffff;
+            border-right: 1px solid #e4eaec;
+        }
+
+            .l220 .layui-nav-title {
+                background-color: #ffffff;
+                position: relative;
+                font-weight: normal;
+                border-bottom: 1px solid #e4eaec;
+            }
+        .role{
+            overflow:auto;
+        }
+        .role li a {
+            display: block;
+            padding: 10px 20px;
+        }
+
+        .role li.active a {
+            background-color: #f3f7f9;
+            color: #409eff;
+        }
+
+        .l440 {
+            left: 441px;
+        }
+
+            .l440 .layui-nav-title {
+                width: 100%;
+                height: 70px;
+                line-height: 70px;
+                background: #d9dee4;
+                overflow: hidden;
+                text-overflow: ellipsis;
+                white-space: nowrap;
+                font-weight: bold;
+                text-indent: 20px;
+                background-color: #ffffff;
+                position: relative;
+                font-weight: normal;
+                border-bottom: 1px solid #e4eaec;
+            }
+        .menu-wall .layui-tree-cus{
+            overflow:auto;
+        }
+        .menu-wall .layui-tree-cus li {
+            padding: 4px 0;
+        }
+
+        .menu-wall .layui-tree-cus ul li {
+            padding-left: 35px;
+            line-height: 30px;
+        }
+        .menu-wall .layui-tree-cus span{
+            cursor:pointer;
+        }
+        .menu-wall {
+            padding: 15px;
+        }
+        .menu-wall .layui-tree-cus .btnfun{
+            display:inline-block;
+            margin-left:50px;
+            text-align:right;
+        }
+        .menu-wall .layui-tree-cus .btnfun label{
+            margin-left:25px;
+        }
+        .menu-save{padding:10px; text-align:center;}
+    </style>
+    <div id="app">
+        <div class="layui-col-220">
+            <div class="layui-nav-title">组织机构</div>
+            <div id="tree" class="layui-tree-cus" style="overflow:auto;"></div>
+        </div>
+        <div class="layui-col-220 l220">
+            <div class="layui-nav-title">角色列表</div>
+            <ul class="role">
+                <li :class="index==roleActive?'active':''" v-for="(it,index) in roleList" v-cloak @@click="roleGoMenu(it,index)"><a href="javascript:void(0)">{{it.name}}</a></li>
+            </ul>
+        </div>
+        <div class="right-col-body l440">
+            <div class="layui-nav-title">菜单列表</div>
+            <div class="menu-wall soa-cur" style="padding-bottom: 0px;">
+                <ul class="layui-tree-cus">
+                    <li class="item" v-for="(a,index) in menuList" v-if="a.layer==1" v-cloak>
+                        <div class="bold">
+                            <span><i class="layui-icon layui-icon-triangle-d"></i></span>
+                            <a href="javascript:void(0)"><label><input type="checkbox" :checked="a.isChecked?'checked':''" name="cbkmenu" :value="a.guid" @@click="selectCbk(a,$event)" />{{a.name}}</label> </a>
+                        </div>
+                        <ul>
+                            <li class="item" v-for="(b,index) in menuList" v-if="b.layer==2 && b.parentGuid==a.guid">
+                                <div class="bold">
+                                    <span><i class="layui-icon layui-icon-triangle-d"></i></span>
+                                    <a href="javascript:void(0)"><label><input type="checkbox" :checked="b.isChecked?'checked':''" name="cbkmenu" :value="b.guid" @@click="selectCbk(b,$event)" />{{b.name}}</label></a>
+                                </div>
+                                <ul>
+                                    <li class="item" v-for="(c,index) in menuList" v-if="c.layer==3 && c.parentGuid==b.guid">
+                                        <div>
+                                            <a href="javascript:void(0)"><label><input type="checkbox" :checked="c.isChecked?'checked':''" name="cbkmenu" :value="c.guid" @@click="selectCbk(c,$event)" />{{c.name}}</label></a>
+                                            <div class="btnfun">
+                                                <label v-for="(d,index) in c.btnFun"><input type="checkbox" :checked="d.status?'checked':''" name="cbkbtnfun" :value="d.guid" @@click="selectbtnFunCbk(d,c,$event)" />{{d.name}}</label>
+                                            </div>
+                                        </div>
+                                    </li>
+                                </ul>
+                            </li>
+                        </ul>
+                    </li>
+                </ul>
+                <div class="menu-save layui-cur-submit" style="border-top: 1px solid #f5f6f7">
+                    <button type="button" class="layui-btn" id="submit" onclick="fun.saveMenu()"><i class="layui-icon layui-icon-loading layui-icon layui-anim layui-anim-rotate layui-anim-loop layui-hide"></i>保存权限</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <script>var os, $, fun, vm = new Vue({
+            el: '#app',
+            data: {
+                roleList: [],
+                roleActive: 0,
+                roleGuid: '',
+                menuList: []
+            },
+            methods: {
+                roleGoMenu: function (m, index) {
+                    var that = this;
+                    layer.confirm('授权功能尚未保存，是否确认查看其它角色权限？', function (is) {
+                        layer.close(is);
+                        that.roleActive = index;
+                        that.roleGuid = m.guid;
+                        that.menuList = [];
+                        fun.menuList(m.guid);
+                    });
+                },
+                selectCbk: function (m, e) {
+                    var that = this;
+                    if (m.layer === 1) {
+                        if (e.target.checked) {
+                            that.menuList.some((item, i)=>{
+                                 if(item.parentGuidList.indexOf(m.guid)>-1){
+                                     item.isChecked=true;
+                                 }
+                                 if(item.parentGuidList.indexOf(m.guid)>-1 && item.layer==3){
+                                    if(item.btnFun){
+                                        item.btnFun.some((row,j)=>{
+                                            row.status=true;
+                                        })
+                                    }
+                                }
+                        　　 })　
+                        }
+                        else {
+                            that.menuList.some((item, i)=>{
+                                 if(item.parentGuidList.indexOf(m.guid)>-1){
+                                     item.isChecked=false;
+                                 }
+                                 if(item.parentGuidList.indexOf(m.guid)>-1 && item.layer==3){
+                                    if(item.btnFun){
+                                        item.btnFun.some((row,j)=>{
+                                            row.status=false;
+                                        })
+                                    }
+                                }
+                        　　 })　
+                        }
+                        
+                    }
+                    if (m.layer === 2) {
+                        if (e.target.checked) {
+                            that.menuList.some((item, i)=>{
+                                if(item.parentGuidList.indexOf(m.guid)>-1 || (m.parentGuidList.indexOf(item.guid)>-1 && item.layer==1)){
+                                    item.isChecked=true;
+                                }
+                                if(item.parentGuidList.indexOf(m.guid)>-1 && item.layer==3){
+                                    if(item.btnFun){
+                                        item.btnFun.some((row,j)=>{
+                                            row.status=true;
+                                        })
+                                    }
+                                }
+                        　　 })　
+                        }
+                        else {
+                            that.menuList.some((item, i)=>{
+                                 if(item.parentGuidList.indexOf(m.guid)>-1){
+                                     item.isChecked=false;
+                                 }
+                                 if(item.parentGuidList.indexOf(m.guid)>-1 && item.layer==3){
+                                    if(item.btnFun){
+                                        item.btnFun.some((row,j)=>{
+                                            row.status=false;
+                                        })
+                                    }
+                                }
+                        　　 })　
+                        }
+                    }
+                    if (m.layer == 3) {
+                        if (e.target.checked) {
+                            that.menuList.some((item, i)=>{
+                                if(item.parentGuidList.indexOf(m.guid)>-1 || 
+                                (m.parentGuidList.indexOf(item.guid)>-1 && item.layer==1) ||
+                                (m.parentGuidList.indexOf(item.guid)>-1 && item.layer==2)){
+                                    item.isChecked=true;
+                                }
+                                if(item.guid==m.guid){
+                                    if(item.btnFun){
+                                        item.btnFun.some((row,j)=>{
+                                            row.status=true;
+                                        })
+                                    }
+                                }
+                        　　 })　
+                        }
+                        else {
+                            that.menuList.some((item, i)=>{
+                                 if(item.guid==m.guid){
+                                    item.isChecked=false;
+                                    if(item.btnFun){
+                                        item.btnFun.some((row,j)=>{
+                                            row.status=false;
+                                        })
+                                    }
+                                 }
+                        　　 })　
+                        }
+                        
+                    }
+                    //console.log(e.target.checked);
+                },
+                selectbtnFunCbk: function (m, p, e) {
+                    var that = this;
+                    for (var i = 0; i < that.menuList.length; i++) {
+                        if (that.menuList[i].btnFun) {
+                            for (var j = 0; j < that.menuList[i].btnFun.length; j++) {
+                                if (that.menuList[i].btnFun[j].guid == m.guid && that.menuList[i].guid == p.guid) {
+                                    if (e.target.checked) {
+                                        that.menuList[i].btnFun[j].status = true;
+                                        return;
+                                    } else {
+                                        that.menuList[i].btnFun[j].status = false;
+                                        return;
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        });
+        layui.config({
+            base: '/themes/js/modules/'
+        }).use(['table', 'layer', 'jquery', 'tree', 'common'],
+            function () {
+                $ = layui.jquery,
+                    os = layui.common,
+                    tree = layui.tree;
+
+                $('.layui-tree-cus').css({ 'height': $(window).height() - 206 });
+                $('.role').css({ 'height': $(window).height() - 132 });
+                fun = {
+                    initTree() {
+                        os.ajax('api/organize/gettree/', {}, function (res) {
+                            tree.render({
+                                elem: '#tree'
+                                , data: res
+                                , onlyIconControl: true
+                                , click: function (obj) {
+                                    fun.initRole(obj.data.id);
+                                }
+                            });
+                        });
+                    },
+                    //根据部门查询角色
+                    initRole: function (guid) {
+                        os.ajax('api/role/getpages', { key: guid }, function (res) {
+                            if (res.count != 0) {
+                                vm.roleList = res.data;
+                                //默认第一条选中
+                                vm.roleGuid = vm.roleList[0].guid;
+                                vm.roleActive = 0;
+                                fun.menuList(vm.roleGuid);
+                            }
+                        }, 'get');
+                    },
+                    //根据角色查询菜单和权限
+                    menuList: function (roleguid) {
+                        os.ajax('api/menu/authorizaion', { parm: roleguid }, function (res) {
+                            //os.log(res);
+                            if (res.statusCode === 200) {
+                                vm.menuList = res.data;
+                                vm.$nextTick(function () {
+                                    //展开和关闭
+                                    $('.layui-tree-cus li span').click(function () {
+                                        var ul = $(this).parent().parent().find("ul");
+                                        ul.is(':hidden') ? ul.show() : ul.hide();
+                                    });
+                                });
+                            } else {
+                                os.error(res.message);
+                            }
+                        });
+                    },
+                    saveMenu: function () {
+                        //os.log(vm.menuList);
+                        $('#submit').attr('disabled', true).find('i').removeClass('layui-hide');
+                        os.ajax('api/rolemenu/add/authorization', { list: vm.menuList, roleGuid: vm.roleGuid }, function (res) {
+                            $('#submit').attr('disabled', false).find('i').addClass('layui-hide');
+                            if (res.statusCode === 200) {
+                                os.success('授权成功~');
+                            } else {
+                                os.error(res.message);
+                            }
+                        });
+                    }
+                };
+                fun.initRole('');
+                fun.initTree();
+
+            });</script>
+</div>

@@ -1,0 +1,94 @@
+﻿<Project Sdk="Microsoft.NET.Sdk.Web">
+  <PropertyGroup>
+    <TargetFramework>netcoreapp2.2</TargetFramework>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
+    <DocumentationFile>bin\Release\netcoreapp2.1\FytSoa.Web.xml</DocumentationFile>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
+    <DocumentationFile></DocumentationFile>
+  </PropertyGroup>
+  <ItemGroup>
+    <Compile Remove="Api\Controllers\Wx\**" />
+    <Compile Remove="logs\**" />
+    <Compile Remove="wwwroot\db_back\**" />
+    <Content Remove="Api\Controllers\Wx\**" />
+    <Content Remove="logs\**" />
+    <Content Remove="wwwroot\db_back\**" />
+    <EmbeddedResource Remove="Api\Controllers\Wx\**" />
+    <EmbeddedResource Remove="logs\**" />
+    <EmbeddedResource Remove="wwwroot\db_back\**" />
+    <None Remove="Api\Controllers\Wx\**" />
+    <None Remove="logs\**" />
+    <None Remove="wwwroot\db_back\**" />
+    <Compile Remove="Pages\FytAdmin\Index.cshtml.cs" />
+    <Content Remove="wwwroot\build\admin\css\site.min.css" />
+    <Content Remove="wwwroot\build\admin\css\site.min.css" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Pages\FytAdmin\App\Setting.cshtml" />
+    <None Include="Pages\FytAdmin\App\SettingModify.cshtml" />
+    <None Include="wwwroot\dist\fonts\iconfont.svg" />
+    <None Include="wwwroot\dist\fonts\iconfont.woff2" />
+    <None Include="wwwroot\dist\js\mmenu.min.js" />
+    <None Include="wwwroot\dist\js\swiper.min.js" />
+    <None Include="wwwroot\dist\js\wow.min.js" />
+    <None Include="wwwroot\h5\case-list.shtml" />
+    <None Include="wwwroot\h5\case.shtml" />
+    <None Include="wwwroot\h5\index.shtml" />
+    <None Include="wwwroot\h5\new.shtml" />
+    <None Include="wwwroot\h5\news-list.shtml" />
+    <None Include="wwwroot\themes\layui\font\iconfont.svg" />
+    <None Include="wwwroot\themes\layui\layui.all.js" />
+    <None Include="wwwroot\themes\layui\layui.js" />
+    <None Include="wwwroot\themes\layui\lay\modules\carousel.js" />
+    <None Include="wwwroot\themes\layui\lay\modules\code.js" />
+    <None Include="wwwroot\themes\layui\lay\modules\colorpicker.js" />
+    <None Include="wwwroot\themes\layui\lay\modules\element.js" />
+    <None Include="wwwroot\themes\layui\lay\modules\flow.js" />
+    <None Include="wwwroot\themes\layui\lay\modules\form.js" />
+    <None Include="wwwroot\themes\layui\lay\modules\jquery.js" />
+    <None Include="wwwroot\themes\layui\lay\modules\laydate.js" />
+    <None Include="wwwroot\themes\layui\lay\modules\layedit.js" />
+    <None Include="wwwroot\themes\layui\lay\modules\layer.js" />
+    <None Include="wwwroot\themes\layui\lay\modules\laypage.js" />
+    <None Include="wwwroot\themes\layui\lay\modules\laytpl.js" />
+    <None Include="wwwroot\themes\layui\lay\modules\mobile.js" />
+    <None Include="wwwroot\themes\layui\lay\modules\rate.js" />
+    <None Include="wwwroot\themes\layui\lay\modules\slider.js" />
+    <None Include="wwwroot\themes\layui\lay\modules\table.js" />
+    <None Include="wwwroot\themes\layui\lay\modules\tree.js" />
+    <None Include="wwwroot\themes\layui\lay\modules\upload.js" />
+    <None Include="wwwroot\themes\layui\lay\modules\util.js" />
+    <None Include="wwwroot\themes\tinymce\plugins\filemanager\plugin.js" />
+    <None Include="wwwroot\themes\tinymce\plugins\filemanager\plugin.min.js" />
+  </ItemGroup>
+  <ItemGroup>
+    <PackageReference Include="BuildBundlerMinifier" Version="2.9.406" />
+    <PackageReference Include="Microsoft.AspNetCore.App" Version="2.2.0"><PrivateAssets Condition="'%(PackageReference.Version)' == ''">all</PrivateAssets>
+<Publish Condition="'%(PackageReference.Version)' == ''">true</Publish>
+</PackageReference>
+    <PackageReference Include="Microsoft.Extensions.Caching.Redis" Version="2.2.0" />
+    <PackageReference Include="Microsoft.Extensions.Logging" Version="2.2.0" />
+    <PackageReference Include="Microsoft.Extensions.PlatformAbstractions" Version="1.1.0" />
+    <PackageReference Include="Microsoft.VisualStudio.Web.CodeGeneration.Design" Version="2.2.4" />
+    <PackageReference Include="Newtonsoft.Json" Version="12.0.2" />
+    <PackageReference Include="NLog.Web.AspNetCore" Version="4.9.2" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\FytSoa.Core\FytSoa.Core.csproj" />
+    <ProjectReference Include="..\FytSoa.Extensions\FytSoa.Extensions.csproj" />
+    <ProjectReference Include="..\FytSoa.Service\FytSoa.Service.csproj" />
+    <ProjectReference Include="..\FytSoa.Tasks\FytSoa.Tasks.csproj" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Update="appsettings.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Pages\FytAdmin\Form\" />
+    <Folder Include="wwwroot\themes\404\" />
+  </ItemGroup>
+  <ProjectExtensions><VisualStudio><UserProperties appsettings_1json__JSONSchema="http://json.schemastore.org/bower" /></VisualStudio></ProjectExtensions>
+</Project>

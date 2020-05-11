@@ -1,0 +1,55 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.29609.76
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "FytSoa.Common", "FytSoa.Common\FytSoa.Common.csproj", "{02D78554-CCCC-46B3-85CE-3E58C31353AB}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "FytSoa.Extensions", "FytSoa.Extensions\FytSoa.Extensions.csproj", "{B2F4B896-2C10-48EB-A8C0-11BAE5842D73}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "FytSoa.Service", "FytSoa.Service\FytSoa.Service.csproj", "{47177B44-AA23-43EB-B3AF-E4E23078AD3B}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "FytSoa.Core", "FytSoa.Core\FytSoa.Core.csproj", "{6EE69736-8F13-4BE9-B720-FEE7C2CB9C5C}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "FytSoa.Web", "FytSoa.Web\FytSoa.Web.csproj", "{325FD02E-815E-4A79-98EB-0CB84B11A404}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "FytSoa.Tasks", "FytSoa.Tasks\FytSoa.Tasks.csproj", "{2E2D8A50-5B64-42D5-8C44-E9DCA2A1D769}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{02D78554-CCCC-46B3-85CE-3E58C31353AB}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{02D78554-CCCC-46B3-85CE-3E58C31353AB}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{02D78554-CCCC-46B3-85CE-3E58C31353AB}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{02D78554-CCCC-46B3-85CE-3E58C31353AB}.Release|Any CPU.Build.0 = Release|Any CPU
+		{B2F4B896-2C10-48EB-A8C0-11BAE5842D73}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B2F4B896-2C10-48EB-A8C0-11BAE5842D73}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B2F4B896-2C10-48EB-A8C0-11BAE5842D73}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B2F4B896-2C10-48EB-A8C0-11BAE5842D73}.Release|Any CPU.Build.0 = Release|Any CPU
+		{47177B44-AA23-43EB-B3AF-E4E23078AD3B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{47177B44-AA23-43EB-B3AF-E4E23078AD3B}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{47177B44-AA23-43EB-B3AF-E4E23078AD3B}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{47177B44-AA23-43EB-B3AF-E4E23078AD3B}.Release|Any CPU.Build.0 = Release|Any CPU
+		{6EE69736-8F13-4BE9-B720-FEE7C2CB9C5C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{6EE69736-8F13-4BE9-B720-FEE7C2CB9C5C}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{6EE69736-8F13-4BE9-B720-FEE7C2CB9C5C}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{6EE69736-8F13-4BE9-B720-FEE7C2CB9C5C}.Release|Any CPU.Build.0 = Release|Any CPU
+		{325FD02E-815E-4A79-98EB-0CB84B11A404}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{325FD02E-815E-4A79-98EB-0CB84B11A404}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{325FD02E-815E-4A79-98EB-0CB84B11A404}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{325FD02E-815E-4A79-98EB-0CB84B11A404}.Release|Any CPU.Build.0 = Release|Any CPU
+		{2E2D8A50-5B64-42D5-8C44-E9DCA2A1D769}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{2E2D8A50-5B64-42D5-8C44-E9DCA2A1D769}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{2E2D8A50-5B64-42D5-8C44-E9DCA2A1D769}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{2E2D8A50-5B64-42D5-8C44-E9DCA2A1D769}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {080FB29A-96A2-45F7-9076-3390E4B8FA98}
+	EndGlobalSection
+EndGlobal

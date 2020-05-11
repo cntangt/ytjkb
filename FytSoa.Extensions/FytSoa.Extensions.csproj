@@ -1,0 +1,32 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>netcoreapp2.2</TargetFramework>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Compile Remove="Weixin\**" />
+    <EmbeddedResource Remove="Weixin\**" />
+    <None Remove="Weixin\**" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Qiniu.Shared" Version="7.2.15" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\FytSoa.Common\FytSoa.Common.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Remove="FytSoa.Tasks\obj\FytSoa.Tasks.csproj.nuget.dgspec.json" />
+    <None Remove="FytSoa.Tasks\obj\FytSoa.Tasks.csproj.nuget.g.targets" />
+    <None Remove="FytSoa.Tasks\obj\FytSoa.Tasks.csproj.nuget.g.props" />
+    <None Remove="FytSoa.Tasks\obj\project.assets.json" />
+    <None Remove="FytSoa.Tasks\obj\FytSoa.Tasks.csproj.nuget.cache" />
+    <None Remove="FytSoa.Tasks\obj\Debug\netcoreapp2.2\FytSoa.Tasks.assets.cache" />
+    <None Remove="FytSoa.Tasks\obj\Debug\netcoreapp2.2\FytSoa.Tasks.csprojAssemblyReference.cache" />
+    <None Remove="FytSoa.Tasks\obj\Debug\netcoreapp2.2\FytSoa.Tasks.AssemblyInfoInputs.cache" />
+    <None Remove="FytSoa.Tasks\obj\Debug\netcoreapp2.2\FytSoa.Tasks.csproj.FileListAbsolute.txt" />
+  </ItemGroup>
+</Project>

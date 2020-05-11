@@ -1,0 +1,31 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>netcoreapp2.2</TargetFramework>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
+    <DocumentationFile>bin\Release\netcoreapp2.1\FytSoa.Core.xml</DocumentationFile>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
+    <DocumentationFile>bin\Debug\netcoreapp2.2\FytSoa.Core.xml</DocumentationFile>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.AspNetCore.App" Version="2.2.0"><PrivateAssets Condition="'%(PackageReference.Version)' == ''">all</PrivateAssets>
+<Publish Condition="'%(PackageReference.Version)' == ''">true</Publish>
+</PackageReference>
+    <PackageReference Include="MySql.Data" Version="8.0.17" />
+    <PackageReference Include="sqlSugarCore" Version="5.0.0.9" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\FytSoa.Common\FytSoa.Common.csproj" />
+    <ProjectReference Include="..\FytSoa.Extensions\FytSoa.Extensions.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="Model\Form\" />
+  </ItemGroup>
+</Project>
