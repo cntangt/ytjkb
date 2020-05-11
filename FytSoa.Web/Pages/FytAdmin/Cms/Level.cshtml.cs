@@ -1,10 +1,10 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 
-namespace FytSoa.Web.Pages.FytAdmin.Sys
+namespace FytSoa.Web.Pages.FytAdmin.Cms
 {
     [Authorize]
-    public class AdminModel : PageModel
+    public class LevelModel : PageModel
     {
         public void OnGet()
         {

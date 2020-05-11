@@ -1,0 +1,89 @@
+﻿@page
+@model LevelModifyModel
+@{
+    Layout = "_Layout";
+    ViewData["Title"] = "代理商等级管理";
+}
+@section styles{
+    <style>
+        .layui-form-label {
+            width: 165px;
+        }
+
+        .layui-input-block {
+            margin-left: 200px;
+        }
+    </style>
+}
+<form class="layui-form form-cus" action="">
+    <div class="layui-form-item">
+        <label class="layui-form-label">等级名称</label>
+        <div class="layui-input-block">
+            <input type="text" name="Name" value="@Model.Level.Name" maxlength="20" lay-verify="required" lay-verType="tips" autocomplete="off" class="layui-input">
+        </div>
+    </div>
+    <div class="layui-form-item">
+        <label class="layui-form-label">微信成本费率（万分之）</label>
+        <div class="layui-input-block">
+            <input type="number" name="WxPay" min="1" max="1000" value="@Model.Level.WxPay" lay-verify="required" lay-verType="tips" autocomplete="off" class="layui-input">
+        </div>
+    </div>
+    <div class="layui-form-item">
+        <label class="layui-form-label">支付宝成本费率（万分之）</label>
+        <div class="layui-input-block">
+            <input type="number" name="Alipay" min="1" max="1000" value="@Model.Level.Alipay" lay-verify="required" lay-verType="tips" autocomplete="off" class="layui-input">
+        </div>
+    </div>
+    <div class="layui-form-item">
+        <label class="layui-form-label">其它成本费率（万分之）</label>
+        <div class="layui-input-block">
+            <input type="number" name="OtherPay" min="1" max="1000" value="@Model.Level.OtherPay" lay-verify="required" lay-verType="tips" autocomplete="off" class="layui-input">
+        </div>
+    </div>
+    <div class="layui-form-item">
+        <label class="layui-form-label">是否启用</label>
+        <div class="layui-input-inline" style="width:80px;">
+            <input type="checkbox" name="status" @(Model.Level.Status ? "checked" : null) lay-text="是|否" lay-skin="switch" lay-filter="switch">
+        </div>
+    </div>
+    <div class="layui-form-item">
+        <div class="layui-input-block">
+            <button class="layui-btn" lay-submit="" lay-filter="submit" id="submit"><i class="layui-icon layui-icon-loading layui-icon layui-anim layui-anim-rotate layui-anim-loop layui-hide"></i>立即提交</button>
+            <button type="button" class="layui-btn layui-btn-primary btn-open-close">取消</button>
+        </div>
+    </div>
+    <input type="hidden" name="Id" id="Id" value="@Model.Level.Id" />
+</form>
+<link rel="stylesheet" href="~/themes/ztree/css/metroStyle/metroStyle.css" type="text/css">
+@section Scripts{
+    <script>
+        layui.config({
+            base: '/themes/js/modules/'
+        }).use(['layer', 'jquery', 'common', 'form'], function () {
+            var form = layui.form, $ = layui.jquery, os = layui.common;
+            var index = parent.layer.getFrameIndex(window.name);
+            //监听提交
+            form.on('submit(submit)', function (data) {
+                $('#submit').attr('disabled', true).find('i').removeClass('layui-hide');
+                var urls = "api/column/template/add";
+                if ($("#Id").val() !== '0') {
+                    urls = "api/column/template/edit";
+                }
+                data.field.IosAudit = data.field.IosAudit === 'on' ? 1 : 0;
+                os.ajax(urls, data.field, function (res) {
+                    $('#submit').attr('disabled', false).find('i').addClass('layui-hide');
+                    if (res.statusCode == 200) {
+                        parent.layer.close(index);
+                    }
+                    else {
+                        os.error(res.message);
+                    }
+                });
+                return false;
+            });
+            $(".btn-open-close").on('click', function () {
+                parent.layer.close(index);
+            });
+        });
+    </script>
+}
