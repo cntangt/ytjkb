@@ -206,7 +206,7 @@ namespace FytSoa.Api.Controllers
 
                 var site = await _siteService.GetListAsync(m => !m.IsDel, m => m.AddTime, DbOrderEnum.Asc);
 
-                await _cache.SetAsync(KeyHelper.NOWSITE, site);
+                await _cache.SetAsync(KeyHelper.NOWSITE, site.data.FirstOrDefault());
 
                 //把权限存到缓存里
                 await _cache.SetAsync(KeyHelper.ADMINMENU + "_" + dbres.data.admin.Guid, dbres.data.menu);

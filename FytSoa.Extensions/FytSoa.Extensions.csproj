@@ -11,10 +11,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="Qiniu.Shared" Version="7.2.15" />
-  </ItemGroup>
-
-  <ItemGroup>
     <ProjectReference Include="..\FytSoa.Common\FytSoa.Common.csproj" />
   </ItemGroup>
 

@@ -140,24 +140,12 @@ namespace FytSoa.Web
             LogManager.Configuration.Variables["connectionString"] = config["DBConnection:MySqlConnectionString"];
             Encoding.RegisterProvider(CodePagesEncodingProvider.Instance);  //避免日志中的中文输出乱码
 
-            #region  初始化七牛云参数
-            QiniuCloud.GetInstance().Setting(
-                new QiniuConfig()
-                {
-                    AK = config["QiNiu:AccessKey"],
-                    SK = config["QiNiu:SecretKey"],
-                    Bucket = config["QiNiu:Bucket"],
-                    BasePath = config["QiNiu:BasePath"],
-                    domain = config["QiNiu:Domain"]
-                });
-            #endregion
-
             app.UseAuthentication(); // 认证
             app.UseResponseCompression(); //性能压缩
             app.UseStaticFiles();
             app.UseCookiePolicy();
             app.UseCors("Any");
-            app.UseMvc();
+            app.UseMvcWithDefaultRoute();
         }
 
         public void AddAssembly(IServiceCollection services, string assemblyName)

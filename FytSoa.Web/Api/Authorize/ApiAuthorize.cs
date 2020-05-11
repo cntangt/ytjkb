@@ -102,7 +102,10 @@ namespace FytSoa.Api
                 ContextReturn(context, "您没有操作权限，请联系系统管理员！");
                 return;
             }
+
             base.OnActionExecuting(context);
+
+            await next();
         }
 
         /// <summary>
