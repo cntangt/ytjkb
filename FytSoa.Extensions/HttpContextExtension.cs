@@ -38,5 +38,36 @@ namespace FytSoa.Extensions
 
             return sid.Value;
         }
+
+        public async static Task<bool> IsSystem(this HttpContext context)
+        {
+            if (context == null)
+            {
+                return false;
+            }
+
+            var auth = await context.AuthenticateAsync();
+
+            if (auth == null || auth.Principal == null || auth.Principal.Identities == null)
+            {
+                return false;
+            }
+
+            var identity = auth.Principal.Identities.FirstOrDefault(p => p.IsAuthenticated);
+
+            if (identity == null)
+            {
+                return false;
+            }
+
+            var sid = identity.FindFirst(ClaimTypes.PrimarySid);
+
+            if (sid == null)
+            {
+                return false;
+            }
+
+            return bool.TryParse(sid.Value, out bool isSystem) && isSystem;
+        }
     }
 }

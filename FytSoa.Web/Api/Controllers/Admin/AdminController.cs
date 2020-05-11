@@ -51,6 +51,10 @@ namespace FytSoa.Api.Controllers
         [HttpGet("getpages")]
         public async Task<IActionResult> GetPages([FromQuery]PageParm parm)
         {
+            if (!await HttpContext.IsSystem())
+            {
+                parm.CreateBy = await HttpContext.LoginUserId();
+            }
             var res = await _adminService.GetPagesAsync(parm);
             return Ok(new { code = 0, msg = "success", count = res.data.TotalItems, data = res.data.Items });
         }
@@ -171,6 +175,7 @@ namespace FytSoa.Api.Controllers
                 var identity = new ClaimsPrincipal(
                  new ClaimsIdentity(new[]
                      {
+                              new Claim(ClaimTypes.PrimarySid,user.IsSystem.ToString()),
                               new Claim(ClaimTypes.Sid,user.Guid),
                               new Claim(ClaimTypes.Role,user.DepartmentName),
                               new Claim(ClaimTypes.Thumbprint,user.HeadPic),

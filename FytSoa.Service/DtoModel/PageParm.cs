@@ -140,6 +140,11 @@ namespace FytSoa.Service.DtoModel
         /// 英文名称
         /// </summary>
         public string number { get; set; }
+
+        /// <summary>
+        /// 创建人
+        /// </summary>
+        public string CreateBy { get; set; }
     }
 
     public class AppSearchParm

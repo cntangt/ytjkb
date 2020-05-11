@@ -19,9 +19,12 @@ namespace FytSoa.Api.Controllers
     public class RoleController : ControllerBase
     {
         private readonly ISysRoleService _roleService;
-        public RoleController(ISysRoleService roleService)
+        private readonly ISysAdminService _adminService;
+
+        public RoleController(ISysRoleService roleService, ISysAdminService adminService)
         {
             _roleService = roleService;
+            _adminService = adminService;
         }
 
         /// <summary>
@@ -32,6 +35,11 @@ namespace FytSoa.Api.Controllers
         [HttpGet("getpages")]
         public async Task<IActionResult> GetPages([FromQuery]PageParm parm)
         {
+            if (!await HttpContext.IsSystem())
+            {
+                parm.CreateBy = await HttpContext.LoginUserId();
+            }
+
             var res = await _roleService.GetPagesAsync(parm);
             return Ok(new { code = 0, msg = "success", count = res.data.TotalItems, data = res.data.Items });
         }
@@ -55,6 +63,8 @@ namespace FytSoa.Api.Controllers
         [HttpPost("add"), ApiAuthorize(Modules = "Role", Methods = "Add", LogType = LogEnum.ADD)]
         public async Task<IActionResult> AddRole([FromBody]SysRole parm)
         {
+            parm.CreateBy = await HttpContext.LoginUserId();
+
             return Ok(await _roleService.AddAsync(parm));
         }
 

@@ -54,13 +54,16 @@ namespace FytSoa.Service.Implements
                     res.message = "当前账号没有授权功能模块，无法登录~";
                     return res;
                 }
+
                 //修改登录时间
                 model.LoginDate = DateTime.Now;
                 model.UpLoginDate = model.LoginDate;
                 model.LoginSum = model.LoginSum + 1;
                 SysAdminDb.Update(model);
 
+                var roleList = await Db.Queryable<SysRole>().Where(m => m.IsSystem).Select(m => m.Guid).ToListAsync();
 
+                model.IsSystem = roleList.Intersect(model.RoleList.Select(p => p.guid)).Any();
 
                 res.statusCode = (int)ApiEnum.Status;
                 adminModel.admin = model;
@@ -247,6 +250,7 @@ namespace FytSoa.Service.Implements
                 //查询角色
                 var roleList = await Db.Queryable<SysRole>().Where(m => m.IsSystem).Select(m => m.Guid).ToListAsync();
                 res.data = await Db.Queryable<SysAdmin>()
+                        .WhereIF(!string.IsNullOrEmpty(parm.CreateBy), p => p.CreateBy == parm.CreateBy)
                         .WhereIF(!string.IsNullOrEmpty(parm.key), m => m.DepartmentGuidList.Contains(parm.key))
                         .WhereIF(!string.IsNullOrEmpty(parm.guid), m => adminGuidList.Contains(m.Guid))
                         .OrderBy(m => m.AddDate).ToPageAsync(parm.page, parm.limit);
@@ -345,5 +349,6 @@ namespace FytSoa.Service.Implements
             }
             return res;
         }
+
     }
 }

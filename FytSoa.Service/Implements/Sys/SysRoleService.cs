@@ -35,7 +35,7 @@ namespace FytSoa.Service.Implements
                 parm.Guid = Guid.NewGuid().ToString();
                 parm.EditTime = DateTime.Now;
                 parm.AddTime = DateTime.Now;
-                if (parm.Level==1)
+                if (parm.Level == 1)
                 {
                     //根据部门ID查询部门
                     var organizeModel = SysOrganizeDb.GetById(parm.DepartmentGuid);
@@ -61,26 +61,31 @@ namespace FytSoa.Service.Implements
             var res = new ApiResult<Page<SysRole>>();
             try
             {
-                var list=await Db.Queryable<SysRole>()
-                        //.WhereIF(!string.IsNullOrEmpty(parm.key), m => m.DepartmentGroup.Contains(parm.key))
-                        .OrderBy(m => m.Sort,OrderByType.Desc)
+                var list = await Db.Queryable<SysRole>()
+                        .WhereIF(!string.IsNullOrEmpty(parm.CreateBy), p => p.CreateBy == parm.CreateBy)
+                        .OrderBy(m => m.Sort, OrderByType.Desc)
                         .OrderBy(m => m.AddTime, OrderByType.Desc)
                         .ToPageAsync(parm.page, parm.limit);
 
                 var tree = list.Items;
                 var newList = new List<SysRole>();
-                foreach (var item in tree.Where(m=>m.Level==0).ToList())
+                foreach (var item in tree.Where(m => m.Level == 0).ToList())
                 {
                     //查询角色
                     var tempRole = tree.Where(m => m.ParentGuid == item.Guid && m.Level == 1).ToList();
                     if (!string.IsNullOrEmpty(parm.key))
                     {
-                        tempRole = tempRole.Where(m=>m.DepartmentGroup.Contains(parm.key)).ToList();
+                        tempRole = tempRole.Where(m => m.ParentGuid == parm.key).ToList();
+                        if (parm.key == item.Guid)
+                        {
+                            newList.Add(item);
+                        }
                     }
-                    //if (tempRole.Count>0)
-                    //{
+                    else
+                    {
                         newList.Add(item);
-                    //}
+                    }
+
                     foreach (var row in tempRole)
                     {
                         row.Name = "　|--" + row.Name;
@@ -104,12 +109,12 @@ namespace FytSoa.Service.Implements
         /// 获得列表
         /// </summary>
         /// <returns></returns>
-        public async Task<ApiResult<Page<SysRoleDto>>> GetPagesToRoleAsync(string key,string adminGuid)
+        public async Task<ApiResult<Page<SysRoleDto>>> GetPagesToRoleAsync(string key, string adminGuid)
         {
             var res = new ApiResult<Page<SysRoleDto>>();
             try
             {
-                var reslist =await Db.Queryable<SysRole>()
+                var reslist = await Db.Queryable<SysRole>()
                         //.WhereIF(!string.IsNullOrEmpty(key), m => m.DepartmentGroup.Contains(key))
                         .OrderBy(m => m.Sort, OrderByType.Desc)
                         .OrderBy(m => m.AddTime, OrderByType.Desc)
@@ -117,19 +122,20 @@ namespace FytSoa.Service.Implements
                         {
                             guid = it.Guid,
                             name = it.Name,
-                            DepartmentGroup=it.DepartmentGroup,
-                            ParentGuid=it.ParentGuid,
-                            sort=it.Sort,
-                            level=it.Level,
+                            DepartmentGroup = it.DepartmentGroup,
+                            ParentGuid = it.ParentGuid,
+                            sort = it.Sort,
+                            level = it.Level,
                             codes = it.Codes,
                             //status = SqlFunc.Subqueryable<SysPermissions>().Where(g => g.RoleGuid == it.Guid && g.AdminGuid == adminGuid && g.Types == 2).Any()
                         })
-                        .Mapper((it, cache) => {
+                        .Mapper((it, cache) =>
+                        {
                             var list = cache.Get(g =>
                               {
-                                  return Db.Queryable<SysPermissions>().Where(m=>m.AdminGuid==adminGuid && m.Types==2).ToList();
+                                  return Db.Queryable<SysPermissions>().Where(m => m.AdminGuid == adminGuid && m.Types == 2).ToList();
                               });
-                            if (list.Any(m=>m.RoleGuid==it.guid))
+                            if (list.Any(m => m.RoleGuid == it.guid))
                             {
                                 it.status = true;
                             }
@@ -179,12 +185,12 @@ namespace FytSoa.Service.Implements
         /// <param name="parm"></param>
         /// <returns></returns>
         public async Task<ApiResult<string>> ModifyAsync(SysRole parm)
-        {                    
+        {
             var res = new ApiResult<string>() { statusCode = 200 };
             try
             {
                 parm.EditTime = DateTime.Now;
-                if (parm.Level==1)
+                if (parm.Level == 1)
                 {
                     //根据部门ID查询部门组
                     var organizeModel = SysOrganizeDb.GetById(parm.DepartmentGuid);

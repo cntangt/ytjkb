@@ -5,6 +5,7 @@ using FytSoa.Service.DtoModel;
 using FytSoa.Service.Interfaces;
 using Microsoft.AspNetCore.Mvc;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 
 namespace FytSoa.Api.Controllers
@@ -15,9 +16,11 @@ namespace FytSoa.Api.Controllers
     public class OrganizeController : ControllerBase
     {
         private readonly ISysOrganizeService _sysOrganizeService;
-        public OrganizeController(ISysOrganizeService sysOrganizeService)
+        private readonly ISysRoleService _roleService;
+        public OrganizeController(ISysOrganizeService sysOrganizeService, ISysRoleService roleService)
         {
             _sysOrganizeService = sysOrganizeService;
+            _roleService = roleService;
         }
 
         /// <summary>
@@ -25,9 +28,14 @@ namespace FytSoa.Api.Controllers
         /// </summary>
         /// <returns></returns>
         [HttpPost("gettree")]
-        public List<SysOrganizeTree> GetListPage()
+        public async Task<List<SysOrganizeTree>> GetListPage()
         {
-            return _sysOrganizeService.GetListTreeAsync().Result.data;
+            var list = await _roleService.GetListAsync(p => p.ParentGuid == null, p => p.Sort, DbOrderEnum.Desc);
+
+            var tree = list.data.Select(p => new SysOrganizeTree { id = p.Guid, title = p.Name }).ToList();
+            tree.Insert(0, new SysOrganizeTree { title = "全部" });
+
+            return tree;
         }
 
         /// <summary>
@@ -66,7 +74,7 @@ namespace FytSoa.Api.Controllers
         /// 修改
         /// </summary>
         /// <returns></returns>
-        [HttpPost("edit"),ApiAuthorize(Modules = "Department", Methods = "Update", LogType = LogEnum.UPDATE)]
+        [HttpPost("edit"), ApiAuthorize(Modules = "Department", Methods = "Update", LogType = LogEnum.UPDATE)]
         public async Task<IActionResult> EditOrganize([FromBody]SysOrganize parm)
         {
             return Ok(await _sysOrganizeService.ModifyAsync(parm));

@@ -103,5 +103,10 @@ namespace FytSoa.Core.Model.Sys
         /// </summary>           
         public DateTime EditTime { get; set; }
 
+        /// <summary>
+        /// 创建人
+        /// </summary>
+        public string CreateBy { get; set; }
+
     }
 }
