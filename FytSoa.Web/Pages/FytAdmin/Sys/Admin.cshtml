@@ -54,12 +54,7 @@
         }
     </style>
     <div class="layui-col-220" id="app">
-        <div class="layui-nav-title">
-            <div class="layui-btn-group">
-                <button type="button" class="layui-btn active">组织架构</button>
-                <button type="button" class="layui-btn">　角色　</button>
-            </div>
-        </div>
+        <div class="layui-nav-title"> 角色 </div>
         <div class="role-tab">
             <div id="tree" class="layui-tree-cus" style="overflow:auto;"></div>
             <div id="role" class="layui-collapse" style="overflow:auto; display:none">
@@ -163,7 +158,8 @@
                         $("#role").show();
                     }
                 });
-
+                $("#tree").hide();
+                $("#role").show();
                 var guid = '', typeName = '';
                 active = {
                     initTree() {
