@@ -21,7 +21,6 @@
     <None Remove="Api\Controllers\Wx\**" />
     <None Remove="logs\**" />
     <None Remove="wwwroot\db_back\**" />
-    <Compile Remove="Pages\FytAdmin\Index.cshtml.cs" />
     <Content Remove="wwwroot\build\admin\css\site.min.css" />
     <Content Remove="wwwroot\build\admin\css\site.min.css" />
   </ItemGroup>

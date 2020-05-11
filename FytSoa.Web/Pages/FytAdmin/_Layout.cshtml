@@ -10,7 +10,7 @@
     <link rel="stylesheet" href="~/build/admin/css/site.min.css" asp-append-version="true">
     <script type="text/javascript" src="~/themes/js/modules/vue.js"></script>
     <script src="~/themes/layui/layui.js"></script>
-    <title>@Html.Raw(ViewBag.Title)</title>
+    <title>@ViewBag.Title @ViewBag.SiteName</title>
 </head>
 <body>
     @RenderBody()    

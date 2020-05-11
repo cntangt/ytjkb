@@ -1,4 +1,3 @@
-using FytSoa.Common;
 using FytSoa.Extensions;
 using FytSoa.Tasks;
 using Microsoft.AspNetCore.Authentication.Cookies;
@@ -186,7 +185,7 @@ namespace FytSoa.Web
         {
             string dbProviderName = config.GetSection("Quartz")["dbProviderName"];
             string connectionString = config.GetSection("Quartz")["connectionString"];
-            string driverDelegateType = string.Empty;
+            string driverDelegateType;
             switch (dbProviderName)
             {
                 case "SQLite-Microsoft":

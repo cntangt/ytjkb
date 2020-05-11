@@ -1,7 +1,4 @@
 ﻿@using System.Security.Claims;
-@{ 
-    ViewBag.SiteName = "勇拓 - 聚客宝";
-}
 <!DOCTYPE html>
 
 <html>
@@ -14,7 +11,7 @@
     <link rel="stylesheet" href="~/build/admin/css/site.min.css" asp-append-version="true">
     <script type="text/javascript" src="~/themes/js/modules/vue.js"></script>
     <script src="~/themes/layui/layui.js"></script>
-    <title>@Html.Raw(ViewBag.Title)</title>
+    <title>@ViewBag.Title - @ViewBag.SiteName</title>
 </head>
 <body>
     <div class="layui-layout layui-layout-admin">
@@ -26,7 +23,7 @@
             </ul>
             <ul class="layui-nav layui-layout-right">
                 <li class="layui-nav-item">
-                    <a data-pjax href="/fytadmin/default"><i class="layui-icon"></i></a>
+                    <a data-pjax href="/fytadmin"><i class="layui-icon"></i></a>
                 </li>
                 <li class="layui-nav-item">
                     <a href="javascript:void(0)" @@click="clearCache"><i class="layui-icon layui-icon-fonts-clear"></i>清除缓存</a>

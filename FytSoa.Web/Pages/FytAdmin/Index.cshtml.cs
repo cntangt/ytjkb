@@ -1,9 +1,9 @@
-﻿using FytSoa.Core.Model.Sys;
+﻿using FytSoa.Core.Model.Cms;
+using FytSoa.Core.Model.Sys;
 using FytSoa.Service.Interfaces;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
-using System.Collections.Generic;
 using System.Linq;
 using System.Security.Claims;
 using System.Threading.Tasks;
@@ -13,26 +13,27 @@ namespace FytSoa.Web.Pages.FytAdmin
     [Authorize]
     public class IndexModel : PageModel
     {
-        private readonly ISysMenuService _sysMenuService;
+        private readonly ICmsSiteService _siteService;
+        private readonly ISysAdminService _adminService;
 
-        public IndexModel(ISysMenuService sysMenuService)
+        public IndexModel(ICmsSiteService siteService, ISysAdminService adminService)
         {
-            _sysMenuService = sysMenuService;
+            _siteService = siteService;
+            _adminService = adminService;
         }
 
         [BindProperty]
-        public List<SysMenu> list { get; set; }
+        public CmsSite Site { get; set; }
 
         [BindProperty]
-        public string adminGuid { get; set; }
+        public SysAdmin Admin { get; set; }
 
         public async Task OnGetAsync()
         {
-            var page = await _sysMenuService.GetPagesAsync(new Service.DtoModel.PageParm() { limit = 1000 });
-
-            list = page.data.Items;
-
-            adminGuid = User.Identities.First(u => u.IsAuthenticated).FindFirst(ClaimTypes.Sid).Value;
+            var site = await _siteService.GetModelAsync(m => m.Guid == "78756a6c-50c8-47a5-b898-5d6d24a20327");
+            Site = site.data;
+            var adminGuid = User.Identities.First(u => u.IsAuthenticated).FindFirst(ClaimTypes.Sid).Value;
+            Admin = _adminService.GetModelAsync(m => m.Guid == adminGuid).Result.data;
         }
     }
 }

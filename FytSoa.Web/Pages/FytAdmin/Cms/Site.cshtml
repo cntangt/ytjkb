@@ -53,9 +53,9 @@
     </style>
     <div id="app">
         <div class="layui-col-220 site-list">
-            <div class="layui-nav-title"><span>站点列表</span><button @@click="addSite" class="layui-btn layui-btn-sm"><i class="layui-icon"></i>添加站点</button></div>
+            <div class="layui-nav-title"><span>站点列表</span></div>
             <ul>
-                <li v-cloak @@click.stop="selSite(it)" v-for="it in list" :class="it.siteName==m.siteName?'active':''">{{it.siteName}}<span class="tool"><a title="编辑" @@click.stop="selSite(it)" class="layui-icon layui-icon-edit"></a><a title="删除" @@click.stop="delSite(it)" class="layui-icon layui-icon-delete"></a></span></li>
+                <li v-cloak @@click.stop="selSite(it)" v-for="it in list" :class="it.siteName==m.siteName?'active':''">{{it.siteName}}<span class="tool"><a title="编辑" @@click.stop="selSite(it)" class="layui-icon layui-icon-edit"></a></span></li>
             </ul>
         </div>
         <div class="right-col-body">

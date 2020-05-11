@@ -198,20 +198,14 @@ namespace FytSoa.Api.Controllers
                         AllowRefresh = false
                     });
                 }
-                //获得第一条站点，并保存到session中
+
                 var site = await _siteService.GetListAsync(m => !m.IsDel, m => m.AddTime, DbOrderEnum.Asc);
+
+                await _cache.SetAsync(KeyHelper.NOWSITE, site);
+
                 //把权限存到缓存里
-                var menuSaveType = _config[KeyHelper.LOGINAUTHORIZE];
-                if (menuSaveType == "Redis")
-                {
-                    await _cache.SetAsync(KeyHelper.ADMINMENU + "_" + dbres.data.admin.Guid, dbres.data.menu);
-                    await _cache.SetAsync(KeyHelper.NOWSITE, site.data.FirstOrDefault());
-                }
-                else
-                {
-                    await _cache.SetAsync(KeyHelper.NOWSITE, site.data.FirstOrDefault());
-                    await _cache.SetAsync(KeyHelper.ADMINMENU + "_" + dbres.data.admin.Guid, dbres.data.menu, 600);
-                }
+                await _cache.SetAsync(KeyHelper.ADMINMENU + "_" + dbres.data.admin.Guid, dbres.data.menu);
+
                 token = JwtHelper.IssueJWT(new TokenModel()
                 {
                     Uid = user.Guid,
