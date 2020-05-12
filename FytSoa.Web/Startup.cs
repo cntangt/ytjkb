@@ -42,8 +42,6 @@ namespace FytSoa.Web
             //解决视图输出内容中文编码问题
             services.AddSingleton(HtmlEncoder.Create(UnicodeRanges.All));
 
-            services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
-
             #region 认证
 
             services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
@@ -91,15 +89,16 @@ namespace FytSoa.Web
             #endregion
 
             #region 缓存配置
-#if DEBUG
+#if !DEBUG
             services.AddMemoryCache();
 #else
             services.AddDistributedRedisCache(p => p.Configuration = config["Cache:Configuration"]);
 #endif
             #endregion
 
-            services.AddMvc(p => p.EnableEndpointRouting = false);
-            services.AddControllersWithViews();
+            services.AddMvc(p => {
+                p.EnableEndpointRouting = false;
+            }).AddNewtonsoftJson();
 
             services.AddSingleton(GetScheduler());
 

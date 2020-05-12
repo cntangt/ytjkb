@@ -1,8 +1,6 @@
 ﻿using SqlSugar;
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 
 namespace FytSoa.Core.Model.Sys
 {
@@ -12,11 +10,6 @@ namespace FytSoa.Core.Model.Sys
     [MySugarTable("Sys_Menu")]
     public partial class SysMenu
     {
-        public SysMenu()
-        {
-
-
-        }
         /// <summary>
         /// Desc:唯一标识Guid
         /// Default:
