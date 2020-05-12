@@ -19,11 +19,6 @@ namespace FytSoa.Api.Controllers.Cms
             this.levelService = levelService;
         }
 
-        /// <summary>
-        /// 查询列表
-        /// </summary>
-        /// <param name="parm"></param>
-        /// <returns></returns>
         [HttpGet("getpages")]
         public async Task<IActionResult> GetPages([FromQuery]PageParm parm)
         {
@@ -38,10 +33,6 @@ namespace FytSoa.Api.Controllers.Cms
             return Ok(await levelService.AddAsync(parm));
         }
 
-        /// <summary>
-        /// 删除
-        /// </summary>
-        /// <returns></returns>
         [HttpPost("delete"), ApiAuthorize(Modules = "Level", Methods = "Delete", LogType = LogEnum.DELETE)]
         public async Task<IActionResult> Delete([FromBody]ParmString obj)
         {

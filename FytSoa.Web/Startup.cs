@@ -42,8 +42,6 @@ namespace FytSoa.Web
             //解决视图输出内容中文编码问题
             services.AddSingleton(HtmlEncoder.Create(UnicodeRanges.All));
 
-            #region 认证
-
             services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
                 .AddCookie(CookieAuthenticationDefaults.AuthenticationScheme, o => o.LoginPath = new PathString("/fytadmin/login"))
                 .AddJwtBearer(JwtAuthorizeAttribute.JwtAuthenticationScheme, o =>
@@ -75,10 +73,6 @@ namespace FytSoa.Web
                     };
                 });
 
-            #endregion
-
-            #region 授权
-
             services.AddAuthorization(options =>
             {
                 options.AddPolicy("App", policy => policy.RequireRole("App").Build());
@@ -86,15 +80,7 @@ namespace FytSoa.Web
                 options.AddPolicy("AdminOrApp", policy => policy.RequireRole("Admin,App").Build());
             });
 
-            #endregion
-
-            #region 缓存配置
-#if !DEBUG
-            services.AddMemoryCache();
-#else
             services.AddDistributedRedisCache(p => p.Configuration = config["Cache:Configuration"]);
-#endif
-            #endregion
 
             services.AddMvc(p => {
                 p.EnableEndpointRouting = false;
