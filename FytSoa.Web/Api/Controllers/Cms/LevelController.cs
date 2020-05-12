@@ -14,7 +14,7 @@ namespace FytSoa.Api.Controllers.Cms
     public class LevelController : ControllerBase
     {
         private readonly ICmsLevelService levelService;
-        public LevelController(ICmsLevelService levelService) 
+        public LevelController(ICmsLevelService levelService)
         {
             this.levelService = levelService;
         }
@@ -28,7 +28,7 @@ namespace FytSoa.Api.Controllers.Cms
         public async Task<IActionResult> GetPages([FromQuery]PageParm parm)
         {
             var list = await levelService.GetListAsync();
-            
+
             return Ok(new { code = 0, msg = "success", count = 1, data = list.data });
         }
 
@@ -42,10 +42,11 @@ namespace FytSoa.Api.Controllers.Cms
         /// 删除
         /// </summary>
         /// <returns></returns>
-        [HttpPost("delete")]
+        [HttpPost("delete"), ApiAuthorize(Modules = "Level", Methods = "Delete", LogType = LogEnum.DELETE)]
         public async Task<IActionResult> Delete([FromBody]ParmString obj)
         {
-            return Ok(await levelService.DeleteAsync(obj.parm));
+            var list = Utils.StrToListInt(obj.parm);
+            return Ok(await levelService.DeleteAsync(p => list.Contains(p.Id)));
         }
 
         [HttpPost("edit"), ApiAuthorize(Modules = "Level", Methods = "Update", LogType = LogEnum.ADD)]
