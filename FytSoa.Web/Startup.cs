@@ -27,7 +27,7 @@ namespace FytSoa.Web
     public class Startup
     {
         private readonly IConfiguration config;
-        public Startup(IConfiguration configuration, IHostingEnvironment env)
+        public Startup(IConfiguration configuration, IWebHostEnvironment env)
         {
             config = configuration;
 
@@ -45,59 +45,61 @@ namespace FytSoa.Web
             services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
 
             #region 认证
+
             services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
-            .AddCookie(CookieAuthenticationDefaults.AuthenticationScheme, o => o.LoginPath = new PathString("/fytadmin/login"))
-            .AddJwtBearer(JwtAuthorizeAttribute.JwtAuthenticationScheme, o =>
-            {
-                var jwtConfig = new JwtAuthConfigModel();
-                o.TokenValidationParameters = new TokenValidationParameters
+                .AddCookie(CookieAuthenticationDefaults.AuthenticationScheme, o => o.LoginPath = new PathString("/fytadmin/login"))
+                .AddJwtBearer(JwtAuthorizeAttribute.JwtAuthenticationScheme, o =>
                 {
-                    ValidateIssuer = true,//是否验证Issuer
-                    ValidateAudience = true,//是否验证Audience
-                    ValidateIssuerSigningKey = true,//是否验证SecurityKey
-                    ValidateLifetime = true,//是否验证超时  当设置exp和nbf时有效 同时启用ClockSkew 
-                    ClockSkew = TimeSpan.FromSeconds(30),//注意这是缓冲过期时间，总的有效时间等于这个时间加上jwt的过期时间，如果不配置，默认是5分钟
-                    ValidAudience = jwtConfig.Audience,//Audience
-                    ValidIssuer = jwtConfig.Issuer,//Issuer，这两项和前面签发jwt的设置一致
-                    RequireExpirationTime = true,
-                    IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(config["JwtAuth:SecurityKey"]))//拿到SecurityKey
-                };
-                o.Events = new JwtBearerEvents
-                {
-                    OnAuthenticationFailed = context =>
+                    var jwtConfig = new JwtAuthConfigModel();
+                    o.TokenValidationParameters = new TokenValidationParameters
                     {
-                        // 如果过期，则把<是否过期>添加到，返回头信息中
-                        if (context.Exception.GetType() == typeof(SecurityTokenExpiredException))
+                        ValidateIssuer = true,//是否验证Issuer
+                        ValidateAudience = true,//是否验证Audience
+                        ValidateIssuerSigningKey = true,//是否验证SecurityKey
+                        ValidateLifetime = true,//是否验证超时  当设置exp和nbf时有效 同时启用ClockSkew 
+                        ClockSkew = TimeSpan.FromSeconds(30),//注意这是缓冲过期时间，总的有效时间等于这个时间加上jwt的过期时间，如果不配置，默认是5分钟
+                        ValidAudience = jwtConfig.Audience,//Audience
+                        ValidIssuer = jwtConfig.Issuer,//Issuer，这两项和前面签发jwt的设置一致
+                        RequireExpirationTime = true,
+                        IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(config["JwtAuth:SecurityKey"]))//拿到SecurityKey
+                    };
+                    o.Events = new JwtBearerEvents
+                    {
+                        OnAuthenticationFailed = context =>
                         {
-                            context.Response.Headers.Add("Token-Expired", "true");
+                            // 如果过期，则把<是否过期>添加到，返回头信息中
+                            if (context.Exception.GetType() == typeof(SecurityTokenExpiredException))
+                            {
+                                context.Response.Headers.Add("Token-Expired", "true");
+                            }
+                            return Task.CompletedTask;
                         }
-                        return Task.CompletedTask;
-                    }
-                };
-            });
+                    };
+                });
+
             #endregion
 
             #region 授权
+
             services.AddAuthorization(options =>
             {
                 options.AddPolicy("App", policy => policy.RequireRole("App").Build());
                 options.AddPolicy("Admin", policy => policy.RequireRole("Admin").Build());
                 options.AddPolicy("AdminOrApp", policy => policy.RequireRole("Admin,App").Build());
             });
+
             #endregion
 
             #region 缓存配置
-#if !DEBUG
+#if DEBUG
             services.AddMemoryCache();
 #else
             services.AddDistributedRedisCache(p => p.Configuration = config["Cache:Configuration"]);
 #endif
             #endregion
 
-            services.AddMvc().AddJsonOptions(option =>
-            {
-                option.SerializerSettings.DateFormatString = "yyyy-MM-dd HH:mm:ss";
-            });
+            services.AddMvc(p => p.EnableEndpointRouting = false);
+            services.AddControllersWithViews();
 
             services.AddSingleton(GetScheduler());
 
@@ -108,7 +110,7 @@ namespace FytSoa.Web
             {
                 c.AddPolicy("Any", policy =>
                 {
-                    policy.AllowAnyOrigin()
+                    policy.SetIsOriginAllowed(p => true)
                     .AllowAnyMethod()
                     .AllowAnyHeader()
                     .AllowCredentials();
@@ -116,17 +118,13 @@ namespace FytSoa.Web
             });
         }
 
-        public void Configure(IApplicationBuilder app, IHostingEnvironment env, ILoggerFactory loggerFactory)
+        public void Configure(IApplicationBuilder app, IWebHostEnvironment env, ILoggerFactory loggerFactory)
         {
-            if (env.IsDevelopment())
-            {
-                app.UseDeveloperExceptionPage();
-            }
-            else
-            {
-                app.UseExceptionHandler("/Error");
-            }
-
+#if DEBUG
+            app.UseDeveloperExceptionPage();
+#else
+            app.UseExceptionHandler("/Error");
+#endif
             app.UseStatusCodePagesWithReExecute("/Error");
 
             // 解决Ubuntu Nginx 代理不能获取IP问题
@@ -145,7 +143,7 @@ namespace FytSoa.Web
             app.UseStaticFiles();
             app.UseCookiePolicy();
             app.UseCors("Any");
-            app.UseMvcWithDefaultRoute();
+            app.UseMvc();
         }
 
         public void AddAssembly(IServiceCollection services, string assemblyName)

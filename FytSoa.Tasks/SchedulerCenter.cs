@@ -1,19 +1,13 @@
-﻿using System;
+﻿using FytSoa.Common;
 using Quartz;
 using Quartz.Impl;
-using Quartz.Impl.AdoJobStore;
 using Quartz.Impl.AdoJobStore.Common;
 using Quartz.Impl.Matchers;
 using Quartz.Impl.Triggers;
-using Quartz.Simpl;
-using Quartz.Util;
+using System;
 using System.Collections.Generic;
-using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
-using FytSoa.Common;
-using Newtonsoft;
-using System.Collections.Specialized;
 
 namespace FytSoa.Tasks
 {

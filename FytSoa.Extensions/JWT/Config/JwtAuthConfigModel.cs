@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-
-namespace FytSoa.Extensions
+﻿namespace FytSoa.Extensions
 {
     public class JwtAuthConfigModel : BaseConfigModel
     {
@@ -12,21 +7,13 @@ namespace FytSoa.Extensions
         /// </summary>
         public JwtAuthConfigModel()
         {
-            try
-            {
-                JWTSecretKey = Configuration["JwtAuth:SecurityKey"];
-                WebExp = double.Parse(Configuration["JwtAuth:WebExp"]);
-                AppExp = double.Parse(Configuration["JwtAuth:AppExp"]);
-                WxExp = double.Parse(Configuration["JwtAuth:WxExp"]);
-                OtherExp = double.Parse(Configuration["JwtAuth:OtherExp"]);
-                Issuer= Configuration["JwtAuth:Issuer"];
-                Audience = Configuration["JwtAuth:Audience"];
-            }
-            catch (Exception e)
-            {
-                Console.WriteLine(e);
-                throw;
-            }
+            JWTSecretKey = Configuration["JwtAuth:SecurityKey"];
+            WebExp = double.Parse(Configuration["JwtAuth:WebExp"]);
+            AppExp = double.Parse(Configuration["JwtAuth:AppExp"]);
+            WxExp = double.Parse(Configuration["JwtAuth:WxExp"]);
+            OtherExp = double.Parse(Configuration["JwtAuth:OtherExp"]);
+            Issuer = Configuration["JwtAuth:Issuer"];
+            Audience = Configuration["JwtAuth:Audience"];
         }
         /// <summary>
         /// 

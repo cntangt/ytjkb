@@ -69,5 +69,15 @@ namespace FytSoa.Extensions
 
             return bool.TryParse(sid.Value, out bool isSystem) && isSystem;
         }
+
+        public static string GetIP(this HttpContext context)
+        {
+            var ip = context.Request.Headers["X-Forwarded-For"].ToString();
+            if (string.IsNullOrEmpty(ip))
+            {
+                ip = context.Connection.RemoteIpAddress.ToString();
+            }
+            return ip;
+        }
     }
 }

@@ -1,7 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFramework>netcoreapp2.2</TargetFramework>
+    <TargetFramework>netcoreapp3.1</TargetFramework>
   </PropertyGroup>
 
   <ItemGroup>
@@ -10,9 +10,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="Microsoft.AspNetCore.App" Version="2.2.0"><PrivateAssets Condition="'%(PackageReference.Version)' == ''">all</PrivateAssets>
-<Publish Condition="'%(PackageReference.Version)' == ''">true</Publish>
-</PackageReference>
     <PackageReference Include="Microsoft.Extensions.Caching.Redis" Version="2.2.0" />
     <PackageReference Include="NLog" Version="4.7.0" />
     <PackageReference Include="XC.Framework.Security.RSAUtil" Version="1.0.1" />

@@ -1,8 +1,4 @@
-﻿using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.Http;
-using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.FileProviders;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Threading.Tasks;
@@ -14,8 +10,6 @@ namespace FytSoa.Common
     /// </summary>
     public class FileHelperCore
     {
-        private static IHostingEnvironment _hostingEnvironment= new HttpContextAccessor().HttpContext.RequestServices.GetService(typeof(IHostingEnvironment)) as IHostingEnvironment;
-
         /// <summary>
         /// 目录分隔符
         /// windows "\" OSX and Linux  "/"
@@ -24,7 +18,7 @@ namespace FytSoa.Common
         /// <summary>
         /// 包含应用程序的目录的绝对路径
         /// </summary>
-        private static string _ContentRootPath = _hostingEnvironment.ContentRootPath;
+        private static string _ContentRootPath = AppContext.BaseDirectory; //_hostingEnvironment.ContentRootPath;
 
         #region 检测指定路径是否存在
 

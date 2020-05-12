@@ -23,9 +23,12 @@ namespace FytSoa.Api.Controllers
         private readonly IConfiguration _config;
         private readonly IDistributedCache _cache;
 
-        public MenuController(ISysMenuService sysMenuService, ISysAuthorizeService authorizeService
-            , ISysPermissionsService sysPermissionsService,
-            IConfiguration config, IDistributedCache cache)
+        public MenuController(
+            ISysMenuService sysMenuService,
+            ISysAuthorizeService authorizeService,
+            ISysPermissionsService sysPermissionsService,
+            IConfiguration config,
+            IDistributedCache cache)
         {
             _sysMenuService = sysMenuService;
             _authorizeService = authorizeService;
@@ -101,21 +104,14 @@ namespace FytSoa.Api.Controllers
 
             var userGuid = await HttpContext.LoginUserId();
 
-            //res.data = JsonConvert.DeserializeObject<List<SysMenuDto>>(menu);
-            var menuSaveType = _config[KeyHelper.LOGINAUTHORIZE];
-            if (menuSaveType == "Redis")
-            {
-                res.data = await _cache.GetAsync<List<SysMenuDto>>(KeyHelper.ADMINMENU + "_" + userGuid);
-            }
-            else
-            {
-                res.data = await _cache.GetAsync<List<SysMenuDto>>(KeyHelper.ADMINMENU + "_" + userGuid);
-            }
+            res.data = await _cache.GetAsync<List<SysMenuDto>>(KeyHelper.ADMINMENU + "_" + userGuid);
+
             if (res.data == null)
             {
                 res.statusCode = (int)ApiEnum.URLExpireError;
                 res.message = "Session已过期，请重新登录";
             }
+
             return Ok(res);
         }
 

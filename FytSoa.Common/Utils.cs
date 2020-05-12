@@ -1,5 +1,4 @@
-﻿using Microsoft.AspNetCore.Http;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Text;
 using System.Text.RegularExpressions;
@@ -353,34 +352,34 @@ namespace FytSoa.Common
         }
         #endregion
 
-        #region 获得IP地址
-        /// <summary>
-        /// 获得IP地址
-        /// </summary>
-        /// <returns>字符串数组</returns>
-        public static string GetIp()
-        {
-            HttpContextAccessor _context = new HttpContextAccessor();
-            var ip = _context.HttpContext.Request.Headers["X-Forwarded-For"].ToString();
-            if (string.IsNullOrEmpty(ip))
-            {
-                ip = _context.HttpContext.Connection.RemoteIpAddress.ToString();
-            }
-            return ip;
-        }
-        #endregion
+        //#region 获得IP地址
+        ///// <summary>
+        ///// 获得IP地址
+        ///// </summary>
+        ///// <returns>字符串数组</returns>
+        //public static string GetIp()
+        //{
+        //    HttpContextAccessor _context = new HttpContextAccessor();
+        //    var ip = _context.HttpContext.Request.Headers["X-Forwarded-For"].ToString();
+        //    if (string.IsNullOrEmpty(ip))
+        //    {
+        //        ip = _context.HttpContext.Connection.RemoteIpAddress.ToString();
+        //    }
+        //    return ip;
+        //}
+        //#endregion
 
-        #region 获得当前访问的URL地址
-        /// <summary>
-        /// 获得当前访问的URL地址
-        /// </summary>
-        /// <returns>字符串数组</returns>
-        public static string GetUrl()
-        {
-            HttpContextAccessor _context = new HttpContextAccessor();
-            return _context.HttpContext.Request.Path.ToString();
-        }
-        #endregion
+        //#region 获得当前访问的URL地址
+        ///// <summary>
+        ///// 获得当前访问的URL地址
+        ///// </summary>
+        ///// <returns>字符串数组</returns>
+        //public static string GetUrl()
+        //{
+        //    HttpContextAccessor _context = new HttpContextAccessor();
+        //    return _context.HttpContext.Request.Path.ToString();
+        //}
+        //#endregion
 
         #region 分割字符串
         public static string[] SplitString(string strContent, char strSplit)

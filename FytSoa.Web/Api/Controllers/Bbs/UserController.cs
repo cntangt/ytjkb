@@ -95,7 +95,7 @@ namespace FytSoa.Api.Controllers.Bbs
         /// <param name="param"></param>
         /// <returns></returns>
         [HttpPost("forgotpass")]
-        public async Task<IActionResult> ForgotPassword([FromBody]List<FormParam> param)
+        public IActionResult ForgotPassword([FromBody]List<FormParam> param)
         {
             if (param == null)
             {

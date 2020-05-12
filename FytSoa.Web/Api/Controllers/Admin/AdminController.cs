@@ -231,7 +231,7 @@ namespace FytSoa.Api.Controllers
                     Level = "Info",
                     Message = "登录：" + parm.loginname,
                     Callsite = "/fytadmin/login",
-                    IP = Utils.GetIp(),
+                    IP = HttpContext.GetIP(),
                     User = parm.loginname,
                     Browser = agent.ToString()
                 };
@@ -254,7 +254,7 @@ namespace FytSoa.Api.Controllers
                     Message = "登录失败！" + ex.Message,
                     Exception = ex.Message,
                     Callsite = "/fytadmin/login",
-                    IP = Utils.GetIp(),
+                    IP = HttpContext.GetIP(),
                     User = parm.loginname,
                     Browser = agent.ToString()
                 };
