@@ -2,6 +2,7 @@
 using FytSoa.Service.Interfaces.Wx;
 using Microsoft.Extensions.Configuration;
 using Newtonsoft.Json;
+using Newtonsoft.Json.Converters;
 using Newtonsoft.Json.Linq;
 using System.Net.Http;
 using System.Security.Cryptography;
@@ -27,7 +28,7 @@ namespace FytSoa.Service.Implements.Wx
         {
             var result = new WxResponse<T>();
 
-            var req_content = JsonConvert.SerializeObject(req);
+            var req_content = JsonConvert.SerializeObject(req, jss);
 
             var req_data = new
             {
@@ -36,29 +37,30 @@ namespace FytSoa.Service.Implements.Wx
                     a = new
                     {
                         authen_type = 1,
-                        authen_code = SHA256(req_content)
+                        authen_code = SHA256(req_content, req.AuthenKey)
                     }
                 },
                 request_content = req_content
             };
 
             var client = factory.CreateClient();
-            var data = new StringContent(JsonConvert.SerializeObject(req_data), Encoding.UTF8, "application/json");
+            var data = new StringContent(JsonConvert.SerializeObject(req_data, jss), Encoding.UTF8, "application/json");
             var msg = await client.PostAsync($"{domain}{req.ApiName}", data);
             var json = await msg.Content.ReadAsStringAsync();
             var res = JObject.Parse(json);
 
-            var res_content = res["response_content"];
-
-            if (res_content == null)
+            if (res["response_content"] == null)
             {
                 result.Status = -1;
                 result.Description = "请求结果为空";
                 return result;
             }
+
+            var res_content = JObject.Parse(res["response_content"].ToString());
+
             if ((int)res_content["status"] == 0)
             {
-                result.Data = res_content[req.ApiName].ToObject<T>();
+                result.Data = JsonConvert.DeserializeObject<T>(res_content[req.ApiName].ToString(), jss);
             }
 
             result.Status = (int)res_content["status"];
@@ -67,18 +69,30 @@ namespace FytSoa.Service.Implements.Wx
             return result;
         }
 
-        private string SHA256(string content)
+        private string SHA256(string content, string authenKey)
         {
-            var key = Encoding.UTF8.GetBytes(config["AUTHEN_KEY"]);
+            var key = Encoding.UTF8.GetBytes(authenKey);
             var payload = Encoding.UTF8.GetBytes(content);
             var hmacsha256 = new HMACSHA256(key);
             var bs = hmacsha256.ComputeHash(payload, 0, payload.Length);
             var sb = new StringBuilder();
             foreach (byte b in bs)
             {
-                sb.Append(b.ToString("x2"));
+                sb.Append(b.ToString("X2"));
             }
             return sb.ToString();
+        }
+
+        private JsonSerializerSettings jss
+        {
+            get
+            {
+                var setting = new JsonSerializerSettings();
+
+                setting.Converters.Add(new UnixDateTimeConverter());
+
+                return setting;
+            }
         }
     }
 }

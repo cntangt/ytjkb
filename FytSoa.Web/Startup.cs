@@ -39,9 +39,6 @@ namespace FytSoa.Web
             //自定注册
             AddAssembly(services, "FytSoa.Service");
 
-            //解决视图输出内容中文编码问题
-            services.AddSingleton(HtmlEncoder.Create(UnicodeRanges.All));
-
             services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
                 .AddCookie(CookieAuthenticationDefaults.AuthenticationScheme, o => o.LoginPath = new PathString("/fytadmin/login"))
                 .AddJwtBearer(JwtAuthorizeAttribute.JwtAuthenticationScheme, o =>
@@ -73,34 +70,33 @@ namespace FytSoa.Web
                     };
                 });
 
-            services.AddAuthorization(options =>
-            {
-                options.AddPolicy("App", policy => policy.RequireRole("App").Build());
-                options.AddPolicy("Admin", policy => policy.RequireRole("Admin").Build());
-                options.AddPolicy("AdminOrApp", policy => policy.RequireRole("Admin,App").Build());
-            });
-
-            services.AddDistributedRedisCache(p => p.Configuration = config["Cache:Configuration"]);
-
-            services.AddMvc(p => {
-                p.EnableEndpointRouting = false;
-            }).AddNewtonsoftJson();
-
-            services.AddSingleton(GetScheduler());
-
-            // 性能 压缩
-            services.AddResponseCompression();
-
-            services.AddCors(c =>
-            {
-                c.AddPolicy("Any", policy =>
+            services
+                .AddAuthorization(options =>
                 {
-                    policy.SetIsOriginAllowed(p => true)
-                    .AllowAnyMethod()
-                    .AllowAnyHeader()
-                    .AllowCredentials();
-                });
-            });
+                    options.AddPolicy("App", policy => policy.RequireRole("App").Build());
+                    options.AddPolicy("Admin", policy => policy.RequireRole("Admin").Build());
+                    options.AddPolicy("AdminOrApp", policy => policy.RequireRole("Admin,App").Build());
+                })
+                .AddDistributedRedisCache(p => p.Configuration = config["Cache:Configuration"])
+                .AddSingleton(HtmlEncoder.Create(UnicodeRanges.All))
+                .AddSingleton(GetScheduler())
+                .AddResponseCompression()
+                .AddHttpClient()
+                .AddCors(c =>
+                {
+                    c.AddPolicy("Any", policy =>
+                    {
+                        policy.SetIsOriginAllowed(p => true)
+                        .AllowAnyMethod()
+                        .AllowAnyHeader()
+                        .AllowCredentials();
+                    });
+                })
+                .AddMvc(p =>
+                {
+                    p.EnableEndpointRouting = false;
+                })
+                .AddNewtonsoftJson();
         }
 
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env, ILoggerFactory loggerFactory)

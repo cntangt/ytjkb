@@ -1,5 +1,5 @@
-﻿using System;
-using System.Text.Json.Serialization;
+﻿using Newtonsoft.Json;
+using System;
 
 namespace FytSoa.Service.DtoModel.Wx
 {
@@ -8,6 +8,13 @@ namespace FytSoa.Service.DtoModel.Wx
         [JsonIgnore]
         public abstract string ApiName { get; }
 
+        [JsonIgnore]
+        public abstract string DataName { get; }
+
+        [JsonIgnore]
+        public string AuthenKey { get; set; }
+
         public string nonce_str => Guid.NewGuid().ToString("n");
+
     }
 }
