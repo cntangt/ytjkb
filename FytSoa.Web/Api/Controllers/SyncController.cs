@@ -22,10 +22,10 @@ namespace FytSoa.Api.Controllers
             var req = new QueryOrderListRequest
             {
                 order_type = OrderType.全部单据,
-                start_time = DateTime.Now.Date.AddDays(-1),
+                start_time = DateTime.Now.Date.AddDays(-3),
                 end_time = DateTime.Now.Date,
                 page_num = 1,
-                page_size = 10,
+                page_size = 100,
                 out_sub_mch_id = "sz01ELTR281OFpmdAp6J",
                 AuthenKey = "lSCp1M5grGWFD7rJzaZaqixsvOhORp2P"
             };
@@ -42,6 +42,19 @@ namespace FytSoa.Api.Controllers
                 out_sub_mch_id = "sz01ELTR281OFpmdAp6J",
                 out_mch_id = "sz013NzuonO6CMJd0rCB",
                 AuthenKey = "lSCp1M5grGWFD7rJzaZaqixsvOhORp2P"
+            };
+
+            return wx.QueryAsync(req);
+        }
+
+        public Task<WxResponse<RefundResponse>> Refund()
+        {
+            var req = new RefundRequest
+            {
+                refund_content = new Refund_Content
+                {
+                    out_refund_no = ""
+                }
             };
 
             return wx.QueryAsync(req);
