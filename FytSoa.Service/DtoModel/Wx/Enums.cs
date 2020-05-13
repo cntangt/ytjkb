@@ -8,4 +8,13 @@
         冻结单 = 4,
         解冻单 = 5
     }
+
+    public enum TerminalType
+    {
+        Windows = 1,
+        Andriod = 2,
+        iOS = 3,
+        Linux = 4,
+        其他 = 100
+    }
 }

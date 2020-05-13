@@ -6,7 +6,9 @@ using Newtonsoft.Json.Converters;
 using Newtonsoft.Json.Linq;
 using System.Net.Http;
 using System.Security.Cryptography;
+using System.Security.Cryptography.X509Certificates;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace FytSoa.Service.Implements.Wx
@@ -43,7 +45,20 @@ namespace FytSoa.Service.Implements.Wx
                 request_content = req_content
             };
 
-            var client = factory.CreateClient();
+            HttpClient client;
+
+            if (req.Cert == null || req.Cert.Length == 0)
+            {
+                client = factory.CreateClient();
+            }
+            else
+            {
+                var handler = new HttpClientHandler();
+                var cert = new X509Certificate2(req.Cert, req.Password);
+                handler.ClientCertificates.Add(cert);
+                client = new HttpClient(handler);
+            }
+
             var data = new StringContent(JsonConvert.SerializeObject(req_data, jss), Encoding.UTF8, "application/json");
             var msg = await client.PostAsync($"{domain}{req.ApiName}", data);
             var json = await msg.Content.ReadAsStringAsync();
@@ -60,7 +75,7 @@ namespace FytSoa.Service.Implements.Wx
 
             if ((int)res_content["status"] == 0)
             {
-                result.Data = JsonConvert.DeserializeObject<T>(res_content[req.ApiName].ToString(), jss);
+                result.Data = JsonConvert.DeserializeObject<T>(res_content[req.DataName].ToString(), jss);
             }
 
             result.Status = (int)res_content["status"];

@@ -17,7 +17,7 @@ namespace FytSoa.Api.Controllers
             this.wx = wx;
         }
 
-        public async Task OrderList()
+        public Task<WxResponse<QueryOrderListResponse>> OrderList()
         {
             var req = new QueryOrderListRequest
             {
@@ -30,7 +30,21 @@ namespace FytSoa.Api.Controllers
                 AuthenKey = "lSCp1M5grGWFD7rJzaZaqixsvOhORp2P"
             };
 
-            var res = await wx.QueryAsync(req);
+            return wx.QueryAsync(req);
+        }
+
+        public Task<WxResponse<QueryShopInfoResponse>> ShopInfo()
+        {
+            var req = new QueryShopInfoRequest
+            {
+                page_num = 1,
+                page_size = 10,
+                out_sub_mch_id = "sz01ELTR281OFpmdAp6J",
+                out_mch_id = "sz013NzuonO6CMJd0rCB",
+                AuthenKey = "lSCp1M5grGWFD7rJzaZaqixsvOhORp2P"
+            };
+
+            return wx.QueryAsync(req);
         }
 
     }
