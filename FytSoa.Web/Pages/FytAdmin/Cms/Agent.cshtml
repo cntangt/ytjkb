@@ -1,15 +1,114 @@
 ﻿@page
+@model LevelModel
 @{
-    Layout = null;
+    ViewData["Title"] = "代理商等级";
 }
+<div id="container">
+    <div class="list-wall">
+        <div class="layui-form list-search" style="margin-top:10px;">
+            <button type="button" class="layui-btn layui-btn-sm" data-type="toolAdd"><i class="layui-icon"></i> 新增</button>
+            <button type="button" class="layui-btn layui-btn-sm" data-type="toolDel"><i class="layui-icon"></i> 删除</button>
+        </div>
+        <table class="layui-hide" id="tablist" lay-filter="tool"></table>
+    </div>
+    <script type="text/html" id="switchTpl">
+        <input type="checkbox" name="status" value="{{d.guid}}" lay-skin="switch" lay-text="开|关" lay-filter="statusedit" {{ d.iosAudit==1?'checked':''}}>
+    </script>
+    <script>
+        layui.config({
+            base: '/themes/js/modules/'
+        }).use(['table', 'layer', 'jquery', 'common'],
+            function () {
+                var table = layui.table,
+                    layer = layui.layer,
+                    $ = layui.jquery,
+                    os = layui.common;
+                table.render({
+                    elem: '#tablist',
+                    headers: os.getToken(),
+                    url: '/api/level/getpages',
+                    cols: [
+                        [
+                            { type: 'checkbox', fixed: 'left' },
+                            { field: 'admin_guid', title: '账号', fixed: 'left' },
+                            { field: 'name', title: '姓名', fixed: 'left' },
+                            { field: 'level_id', title: '等级', fixed: 'left' },
+                            { field: 'tel', title: '电话', fixed: 'left' },
+                            {
+                                field: 'feilv', title: '支付渠道成本（万分之）', templet: function (d) {
+                                    return "微信:" + d.wxpay + "支付宝:" + d.alipay + "其他:" + d.otherpay + "";
+                                }
+                            },
+                            { field: 'settle_type', title: '结算方式', fixed: 'left' },
+                            { field: 'account_no', title: '结算账号', fixed: 'left' },
+                            { field: 'business_area', title: '区域', fixed: 'left' },
+                            { field: 'create_time', title: '加入时间', fixed: 'left' },
+                            { width: 100, title: '操作', templet: '#tool' }
+                        ]
+                    ],
+                    page: true,
+                    id: 'tables'
+                });
 
-<!DOCTYPE html>
+                var guid = '', active = {
+                    reload: function () {
+                        table.reload('tables',
+                            {
+                                page: {
+                                    curr: 1
+                                }
+                            });
+                    },
+                    toolAdd: function () {
+                        os.Open('添加代理商信息', '/fytadmin/cms/levelmodify', '600px', '410px', function () {
+                            active.reload();
+                        });
+                    },
+                    toolDel: function () {
+                        var checkStatus = table.checkStatus('tables')
+                            , data = checkStatus.data;
+                        if (data.length === 0) {
+                            os.error("请选择要删除的项目~");
+                            return;
+                        }
+                        var str = '';
+                        $.each(data, function (i, item) {
+                            str += item.id + ",";
+                        });
+                        layer.confirm('确定要执行批量删除吗？', function (index) {
+                            layer.close(index);
+                            var loadindex = layer.load(1, {
+                                shade: [0.1, '#000']
+                            });
+                            os.ajax('api/level/delete/', { parm: str }, function (res) {
+                                layer.close(loadindex);
+                                if (res.statusCode === 200) {
+                                    active.reload();
+                                    os.success('删除成功！');
+                                } else {
+                                    os.error(res.message);
+                                }
+                            });
+                        });
 
-<html>
-<head>
-    <meta name="viewport" content="width=device-width" />
-    <title>Agent</title>
-</head>
-<body>
-</body>
-</html>
+                    }
+                };
+                $('.list-search .layui-btn').on('click', function () {
+                    var type = $(this).data('type');
+                    active[type] ? active[type].call(this) : '';
+                });
+                //监听工具条
+                table.on('tool(tool)', function (obj) {
+                    var data = obj.data;
+                    if (obj.event === 'edit') {
+                        os.Open('修改模型信息', '/fytadmin/cms/levelmodify/?id=' + data.id, '600px', '410px', function () {
+                            active.reload();
+                        });
+                    }
+                });
+            });
+    </script>
+    <script type="text/html" id="tool">
+        <a class="layui-btn layui-btn-primary layui-btn-xs" lay-event="edit"><i class="layui-icon"></i> 修改</a>
+    </script>
+</div>

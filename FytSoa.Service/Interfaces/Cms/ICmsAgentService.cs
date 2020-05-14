@@ -1,10 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-
-namespace FytSoa.Service.Interfaces.Cms
+﻿using FytSoa.Core.Model.Cms;
+namespace FytSoa.Service.Interfaces
 {
-    class ICmsAgentService
-    {
-    }
+	public interface ICmsAgentService : IBaseService<CmsAgent>
+	{
+	}
 }
