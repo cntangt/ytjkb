@@ -1,15 +1,11 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using FytSoa.Common;
+﻿using FytSoa.Common;
 using FytSoa.Core.Model.Sys;
 using FytSoa.Extensions;
 using FytSoa.Service.DtoModel;
 using FytSoa.Service.Interfaces;
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using System.Threading.Tasks;
 
 namespace FytSoa.Api.Controllers
 {
@@ -41,6 +37,7 @@ namespace FytSoa.Api.Controllers
             }
 
             var res = await _roleService.GetPagesAsync(parm);
+
             return Ok(new { code = 0, msg = "success", count = res.data.TotalItems, data = res.data.Items });
         }
 
@@ -50,9 +47,15 @@ namespace FytSoa.Api.Controllers
         /// <param name="param"></param>
         /// <returns></returns>
         [HttpGet("torolelist")]
-        public async Task<IActionResult> GetToRolePages([FromQuery]RoleByAdminParam param)
+        public async Task<IActionResult> GetToRolePages([FromQuery]PageParm parm)
         {
-            var res = await _roleService.GetPagesToRoleAsync(param.key, param.adminGuid);
+            if (!await HttpContext.IsSystem())
+            {
+                parm.CreateBy = await HttpContext.LoginUserId();
+            }
+
+            var res = await _roleService.GetPagesToRoleAsync(parm);
+
             return Ok(new { code = 0, msg = "success", count = res.data.TotalItems, data = res.data.Items });
         }
 
@@ -64,6 +67,11 @@ namespace FytSoa.Api.Controllers
         public async Task<IActionResult> AddRole([FromBody]SysRole parm)
         {
             parm.CreateBy = await HttpContext.LoginUserId();
+
+            if (!await HttpContext.IsSystem())
+            {
+                parm.IsSystem = false;
+            }
 
             return Ok(await _roleService.AddAsync(parm));
         }

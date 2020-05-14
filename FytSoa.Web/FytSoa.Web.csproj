@@ -21,6 +21,11 @@
     <None Remove="Api\Controllers\Wx\**" />
     <None Remove="logs\**" />
     <None Remove="wwwroot\db_back\**" />
+    <Compile Remove="Api\Controllers\Admin\OrganizeController.cs" />
+    <Compile Remove="Pages\FytAdmin\Sys\Organize.cshtml.cs" />
+    <Compile Remove="Pages\FytAdmin\Sys\OrganizeModify.cshtml.cs" />
+    <Content Remove="Pages\FytAdmin\Sys\Organize.cshtml" />
+    <Content Remove="Pages\FytAdmin\Sys\OrganizeModify.cshtml" />
     <Content Remove="wwwroot\build\admin\css\site.min.css" />
     <Content Remove="wwwroot\build\admin\css\site.min.css" />
   </ItemGroup>

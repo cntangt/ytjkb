@@ -58,9 +58,9 @@ namespace FytSoa.Service.Implements
                 parm.ParentGuidList = "," + parm.Guid + ",";
                 parm.Layer = 1;
             }
-            
+
             //更新  新的对象
-            await Db.Updateable(parm).ExecuteCommandAsync() ;
+            await Db.Updateable(parm).ExecuteCommandAsync();
             return res;
         }
 
@@ -71,7 +71,7 @@ namespace FytSoa.Service.Implements
         /// <returns></returns>
         public async Task<ApiResult<SysMenu>> GetByGuidAsync(string parm)
         {
-            var model =await Db.Queryable<SysMenu>().SingleAsync(m=>m.Guid==parm);
+            var model = await Db.Queryable<SysMenu>().SingleAsync(m => m.Guid == parm);
             var res = new ApiResult<SysMenu>
             {
                 statusCode = 200
@@ -85,39 +85,47 @@ namespace FytSoa.Service.Implements
         /// 查询Tree
         /// </summary>
         /// <returns></returns>
-        public async Task<ApiResult<List<SysMenuTree>>> GetListTreeAsync(string roleGuid)
+        public async Task<ApiResult<List<SysMenuTree>>> GetListTreeAsync(string roleGuid, string adminGuid = null)
         {
-            var list =await Db.Queryable<SysMenu>().Select(m => new SysMenuTree()
-            {
-                id = m.Guid,
-                title = m.Name,
-                layer = m.Layer,
-                parentGuid = m.ParentGuid,
-                sort=m.Sort,
-                isChecked= false
-            }).ToListAsync();
+
+            var list = (await this.GetMenusAsync(adminGuid))
+                .Select(m => new SysMenuTree()
+                {
+                    id = m.Guid,
+                    title = m.Name,
+                    layer = m.Layer,
+                    parentGuid = m.ParentGuid,
+                    sort = m.Sort,
+                    isChecked = false
+                }).ToList();
+
             //根据角色查询授权的菜单
-            var menuListByRole = await Db.Queryable<SysPermissions>().Where(m => m.RoleGuid == roleGuid && m.Types == 1).Select(m => m.MenuGuid).ToListAsync();
+            var menuListByRole = await Db.Queryable<SysPermissions>()
+                .Where(m => m.RoleGuid == roleGuid && m.Types == 1)
+                .Select(m => m.MenuGuid)
+                .ToListAsync();
 
             var treeList = new List<SysMenuTree>();
             foreach (var item in list.Where(m => m.layer == 1).OrderBy(m => m.sort))
             {
                 //获得子级
-                var children = RecursionOrganize(list, new List<SysMenuTree>(), item.id,menuListByRole);
+                var children = RecursionOrganize(list, new List<SysMenuTree>(), item.id, menuListByRole);
                 treeList.Add(new SysMenuTree()
                 {
                     id = item.id,
                     title = item.title,
                     spread = children.Count > 0,
-                    isChecked=false, //menuListByRole.Any(m=>m==item.id),
+                    isChecked = false,
                     children = children.Count == 0 ? null : children
                 });
             }
+
             var res = new ApiResult<List<SysMenuTree>>
             {
                 statusCode = 200,
                 data = treeList
             };
+
             return res;
         }
 
@@ -128,7 +136,7 @@ namespace FytSoa.Service.Implements
         /// <param name="list">新集合</param>
         /// <param name="guid">父节点</param>
         /// <returns></returns>
-        List<SysMenuTree> RecursionOrganize(List<SysMenuTree> sourceList, List<SysMenuTree> list, string guid,List<string> authority)
+        List<SysMenuTree> RecursionOrganize(List<SysMenuTree> sourceList, List<SysMenuTree> list, string guid, List<string> authority)
         {
             foreach (var row in sourceList.Where(m => m.parentGuid == guid).OrderBy(m => m.sort))
             {
@@ -153,21 +161,22 @@ namespace FytSoa.Service.Implements
         {
             var res = new ApiResult<Page<SysMenu>>();
             try
-            {                
-                var query =await Db.Queryable<SysMenu>()
+            {
+                var query = await Db.Queryable<SysMenu>()
                         .WhereIF(!string.IsNullOrEmpty(parm.key), m => m.ParentGuidList.Contains(parm.key))
                         .OrderBy(m => m.Sort)
-                        .Mapper((it, cache)=> {
+                        .Mapper((it, cache) =>
+                        {
                             var codeList = cache.Get(t =>
                               {
-                                  return Db.Queryable<SysCode>().Where(m=>m.ParentGuid== "a88fa4d3-3658-4449-8f4a-7f438964d716").ToList();
+                                  return Db.Queryable<SysCode>().Where(m => m.ParentGuid == "a88fa4d3-3658-4449-8f4a-7f438964d716").ToList();
                               });
                             var list = new List<string>();
                             if (!string.IsNullOrEmpty(it.BtnFunJson))
                             {
                                 list = JsonConvert.DeserializeObject<List<string>>(it.BtnFunJson);
                             }
-                            if (list.Count>0)
+                            if (list.Count > 0)
                             {
                                 it.BtnFunJson = string.Join(',', codeList.Where(g => list.Contains(g.Guid)).Select(g => g.Name).ToList());
                             }
@@ -185,7 +194,7 @@ namespace FytSoa.Service.Implements
                 {
                     ChildModule(query.Items, result, null);
                 }
-                
+
                 query.Items = result;
                 res.data = query;
             }
@@ -223,7 +232,7 @@ namespace FytSoa.Service.Implements
                 statusCode = 200
             };
             //判断别名是否存在，要不一样的
-            var isCodeExis = SysMenuDb.GetSingle(m => m.NameCode == parm.NameCode && m.Guid!=parm.Guid);
+            var isCodeExis = SysMenuDb.GetSingle(m => m.NameCode == parm.NameCode && m.Guid != parm.Guid);
             if (isCodeExis != null)
             {
                 res.statusCode = (int)ApiEnum.Error;
@@ -251,63 +260,66 @@ namespace FytSoa.Service.Implements
         /// 获得菜单列表，提供给权限管理，根据角色查询所有菜单
         /// </summary>
         /// <returns></returns>
-        public async Task<ApiResult<List<SysMenuDto>>> GetMenuByRole(string role)
+        public async Task<ApiResult<List<SysMenuDto>>> GetMenuByRole(string role, string adminGuid)
         {
             var res = new ApiResult<List<SysMenuDto>>();
+
             try
             {
-                res.data = await Db.Queryable<SysMenu>()                        
-                        .OrderBy(m => m.Sort)
-                        .Select(m=>new SysMenuDto() {
-                            guid=m.Guid,
-                            parentGuid=m.ParentGuid,
-                            parentGuidList=m.ParentGuidList,
-                            name=m.Name,
-                            layer=m.Layer,
-                            icon=m.Icon,
-                            btnJson=m.BtnFunJson
-                        })
-                        .Mapper((it, cache) => {
-                            //根据角色查询已授权的选项
-                            var codeList = cache.Get(t =>
+                res.data = (await this.GetMenusAsync(adminGuid))
+                    .Select(m => new SysMenuDto()
+                    {
+                        guid = m.Guid,
+                        parentGuid = m.ParentGuid,
+                        parentGuidList = m.ParentGuidList,
+                        name = m.Name,
+                        layer = m.Layer,
+                        icon = m.Icon,
+                        btnJson = m.BtnFunJson
+                    })
+                    .ToList();
+
+                //根据角色查询已授权的选项
+                var codeList = await Db.Queryable<SysCode>()
+                    .Where(m => m.ParentGuid == "a88fa4d3-3658-4449-8f4a-7f438964d716")
+                    .ToListAsync();
+
+                var allPerMenu = await Db.Queryable<SysPermissions>().Where(p => p.Types == 1).ToListAsync();
+
+                res.data.ForEach(it =>
+                {
+                    var list = new List<string>();
+                    if (!string.IsNullOrEmpty(it.btnJson))
+                    {
+                        list = JsonConvert.DeserializeObject<List<string>>(it.btnJson);
+                    }
+                    //判断菜单权限里是否包含当前按钮权限
+                    var permissionModel = allPerMenu.Where(p => p.RoleGuid == role).FirstOrDefault(g => g.MenuGuid == it.guid && g.RoleGuid == role);
+                    if (permissionModel != null)
+                    {
+                        it.isChecked = true;
+                    }
+                    if (list.Count > 0)
+                    {
+                        var btnList = new List<SysCodeDto>();
+                        //查询当前菜单里面包含的按钮权限组
+                        foreach (var item in codeList.Where(g => list.Contains(g.Guid)))
+                        {
+                            var btnIsChecied = false;
+                            if (permissionModel != null && !string.IsNullOrEmpty(permissionModel.BtnFunJson) && permissionModel.BtnFunJson.Contains(item.Guid))
                             {
-                                return Db.Queryable<SysCode>().Where(m => m.ParentGuid == "a88fa4d3-3658-4449-8f4a-7f438964d716").ToList();
+                                btnIsChecied = true;
+                            }
+                            btnList.Add(new SysCodeDto()
+                            {
+                                guid = item.Guid,
+                                name = item.Name,
+                                status = btnIsChecied
                             });
-                            var menuList = cache.Get(t =>
-                            {
-                                return Db.Queryable<SysPermissions>().Where(m => m.RoleGuid == role && m.Types==1).ToList();
-                            });
-                            var list = new List<string>();
-                            if (!string.IsNullOrEmpty(it.btnJson))
-                            {
-                                list = JsonConvert.DeserializeObject<List<string>>(it.btnJson);
-                            }
-                            //判断菜单权限里是否包含当前按钮权限
-                            var permissionModel = menuList.Find(g => g.MenuGuid == it.guid && g.RoleGuid == role);
-                            if (permissionModel!=null)
-                            {
-                                it.isChecked = true;
-                            }
-                            if (list.Count > 0)
-                            {
-                                var btnList = new List<SysCodeDto>();
-                                //查询当前菜单里面包含的按钮权限组
-                                foreach (var item in codeList.Where(g=>list.Contains(g.Guid)))
-                                {
-                                    var btnIsChecied = false;
-                                    if (permissionModel!=null && !string.IsNullOrEmpty(permissionModel.BtnFunJson) && permissionModel.BtnFunJson.Contains(item.Guid))
-                                    {
-                                        btnIsChecied = true;
-                                    }
-                                    btnList.Add(new SysCodeDto() {
-                                        guid= item.Guid,
-                                        name= item.Name,
-                                        status= btnIsChecied
-                                    });
-                                }
-                                it.btnFun = btnList;
-                            }
-                        }).ToListAsync();
+                        }
+                        it.btnFun = btnList;
+                    }
+                });
             }
             catch (Exception ex)
             {
@@ -421,6 +433,27 @@ namespace FytSoa.Service.Implements
                 res.message = ApiEnum.Error.GetEnumText() + ex.Message;
             }
             return res;
+        }
+
+        private async Task<List<SysMenu>> GetMenusAsync(string adminGuid)
+        {
+            var query = Db.Queryable<SysMenu>();
+
+            if (!string.IsNullOrEmpty(adminGuid))
+            {
+                var roles = await Db.Queryable<SysPermissions>().Where(p => p.AdminGuid == adminGuid && p.Types == 2).ToListAsync();
+                if (roles.Count > 0)
+                {
+                    var menus = await Db.Queryable<SysPermissions>().In(p => p.RoleGuid, roles.Select(p => p.RoleGuid).ToArray()).ToListAsync();
+                    if (menus.Count > 0)
+                    {
+                        var menuGuids = menus.Select(p => p.MenuGuid).ToArray();
+                        query.In(p => p.Guid, menuGuids);
+                    }
+                }
+            }
+
+            return await query.OrderBy(m => m.Sort).ToListAsync();
         }
     }
 }

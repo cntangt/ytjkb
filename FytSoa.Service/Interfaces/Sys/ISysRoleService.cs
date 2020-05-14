@@ -1,9 +1,6 @@
 ﻿using FytSoa.Common;
 using FytSoa.Core.Model.Sys;
 using FytSoa.Service.DtoModel;
-using System;
-using System.Collections.Generic;
-using System.Text;
 using System.Threading.Tasks;
 
 namespace FytSoa.Service.Interfaces
@@ -19,14 +16,7 @@ namespace FytSoa.Service.Interfaces
         /// <returns></returns>
         Task<ApiResult<Page<SysRole>>> GetPagesAsync(PageParm parm);
 
-        /// <summary>
-        /// 查询列表，并获得权限值状态
-        /// </summary>
-        /// <param name="key">父级</param>
-        /// <param name="adminGuid">用户的唯一编号</param>
-        /// <returns></returns>
-        Task<ApiResult<Page<SysRoleDto>>> GetPagesToRoleAsync(string key, string adminGuid);
-
+        Task<ApiResult<Page<SysRoleDto>>> GetPagesToRoleAsync(PageParm parm);
 
         /// <summary>
         /// 添加一条数据

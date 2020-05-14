@@ -11,6 +11,8 @@ using FytSoa.Service.Interfaces;
 using SqlSugar;
 using Microsoft.Extensions.Configuration;
 
+using System.Linq;
+
 namespace FytSoa.Service.Implements
 {
     /// <summary>
@@ -35,12 +37,12 @@ namespace FytSoa.Service.Implements
                 parm.Guid = Guid.NewGuid().ToString();
                 parm.EditTime = DateTime.Now;
                 parm.AddTime = DateTime.Now;
-                if (parm.Level == 1)
-                {
-                    //根据部门ID查询部门
-                    var organizeModel = SysOrganizeDb.GetById(parm.DepartmentGuid);
-                    parm.DepartmentGroup = organizeModel.ParentGuidList;
-                }
+                //if (parm.Level == 1)
+                //{
+                //    //根据部门ID查询部门
+                //    var organizeModel = SysOrganizeDb.GetById(parm.DepartmentGuid);
+                //    parm.DepartmentGroup = organizeModel.ParentGuidList;
+                //}
                 await Db.Insertable(parm).ExecuteCommandAsync();
             }
             catch (Exception ex)
@@ -61,39 +63,26 @@ namespace FytSoa.Service.Implements
             var res = new ApiResult<Page<SysRole>>();
             try
             {
+                var groups = await Db.Queryable<SysRole>()
+                    .Where(p => p.Level == 0)
+                    .ToListAsync();
+
                 var list = await Db.Queryable<SysRole>()
+                        .Where(p => p.Level > 0)
                         .WhereIF(!string.IsNullOrEmpty(parm.CreateBy), p => p.CreateBy == parm.CreateBy)
                         .OrderBy(m => m.Sort, OrderByType.Desc)
                         .OrderBy(m => m.AddTime, OrderByType.Desc)
                         .ToPageAsync(parm.page, parm.limit);
 
-                var tree = list.Items;
-                var newList = new List<SysRole>();
-                foreach (var item in tree.Where(m => m.Level == 0).ToList())
+                list.Items.ForEach(p =>
                 {
-                    //查询角色
-                    var tempRole = tree.Where(m => m.ParentGuid == item.Guid && m.Level == 1).ToList();
-                    if (!string.IsNullOrEmpty(parm.key))
+                    var group = groups.FirstOrDefault(g => g.Guid == p.ParentGuid);
+                    if (group != null)
                     {
-                        tempRole = tempRole.Where(m => m.ParentGuid == parm.key).ToList();
-                        if (parm.key == item.Guid)
-                        {
-                            newList.Add(item);
-                        }
+                        p.DepartmentGroup = group.Name;
                     }
-                    else
-                    {
-                        newList.Add(item);
-                    }
+                });
 
-                    foreach (var row in tempRole)
-                    {
-                        row.Name = "　|--" + row.Name;
-                        newList.Add(row);
-                    }
-                }
-                //赋值新的数组
-                list.Items = newList;
                 res.data = list;
             }
             catch (Exception ex)
@@ -109,13 +98,14 @@ namespace FytSoa.Service.Implements
         /// 获得列表
         /// </summary>
         /// <returns></returns>
-        public async Task<ApiResult<Page<SysRoleDto>>> GetPagesToRoleAsync(string key, string adminGuid)
+        public async Task<ApiResult<Page<SysRoleDto>>> GetPagesToRoleAsync(PageParm parm)
         {
             var res = new ApiResult<Page<SysRoleDto>>();
             try
             {
                 var reslist = await Db.Queryable<SysRole>()
-                        //.WhereIF(!string.IsNullOrEmpty(key), m => m.DepartmentGroup.Contains(key))
+                        .Where(p => p.Level > 0)
+                        .WhereIF(!string.IsNullOrEmpty(parm.CreateBy), p => p.CreateBy == parm.CreateBy)
                         .OrderBy(m => m.Sort, OrderByType.Desc)
                         .OrderBy(m => m.AddTime, OrderByType.Desc)
                         .Select(it => new SysRoleDto()
@@ -127,47 +117,15 @@ namespace FytSoa.Service.Implements
                             sort = it.Sort,
                             level = it.Level,
                             codes = it.Codes,
-                            //status = SqlFunc.Subqueryable<SysPermissions>().Where(g => g.RoleGuid == it.Guid && g.AdminGuid == adminGuid && g.Types == 2).Any()
                         })
-                        .Mapper((it, cache) =>
-                        {
-                            var list = cache.Get(g =>
-                              {
-                                  return Db.Queryable<SysPermissions>().Where(m => m.AdminGuid == adminGuid && m.Types == 2).ToList();
-                              });
-                            if (list.Any(m => m.RoleGuid == it.guid))
-                            {
-                                it.status = true;
-                            }
-                            else
-                            {
-                                it.status = false;
-                            }
-                        })
-                        .ToPageAsync(1, 10000);
+                        .ToPageAsync(parm.page, parm.limit);
 
-                var tree = reslist.Items;
-                var newList = new List<SysRoleDto>();
-                foreach (var item in tree.Where(m => m.level == 0).ToList())
-                {
-                    //查询角色
-                    var tempRole = tree.Where(m => m.ParentGuid == item.guid && m.level == 1).ToList();
-                    if (!string.IsNullOrEmpty(key))
-                    {
-                        tempRole = tempRole.Where(m => m.DepartmentGroup.Contains(key)).ToList();
-                    }
-                    if (tempRole.Count > 0)
-                    {
-                        newList.Add(item);
-                    }
-                    foreach (var row in tempRole)
-                    {
-                        row.name = "　|--" + row.name;
-                        newList.Add(row);
-                    }
-                }
-                //赋值新的数组
-                reslist.Items = newList;
+                var ps = await Db.Queryable<SysPermissions>().Where(m => m.AdminGuid == parm.guid && m.Types == 2).ToListAsync();
+
+                reslist.Items.ForEach(p => {
+                    p.status = ps.Any(q => p.guid == q.RoleGuid);
+                });
+
                 res.data = reslist;
             }
             catch (Exception ex)
@@ -190,12 +148,12 @@ namespace FytSoa.Service.Implements
             try
             {
                 parm.EditTime = DateTime.Now;
-                if (parm.Level == 1)
-                {
-                    //根据部门ID查询部门组
-                    var organizeModel = SysOrganizeDb.GetById(parm.DepartmentGuid);
-                    parm.DepartmentGroup = organizeModel.ParentGuidList;
-                }
+                //if (parm.Level == 1)
+                //{
+                //    //根据部门ID查询部门组
+                //    var organizeModel = SysOrganizeDb.GetById(parm.DepartmentGuid);
+                //    parm.DepartmentGroup = organizeModel.ParentGuidList;
+                //}
                 await Db.Updateable(parm).ExecuteCommandAsync();
             }
             catch (Exception ex)

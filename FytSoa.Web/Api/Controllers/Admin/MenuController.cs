@@ -45,6 +45,7 @@ namespace FytSoa.Api.Controllers
         public IActionResult GetCodeByMenu([FromQuery]MenuGetParm param)
         {
             var res = _authorizeService.GetCodeByMenu(param.role, param.menu);
+
             return Ok(new { code = 0, msg = "success", count = 1, res.data });
         }
 
@@ -66,7 +67,13 @@ namespace FytSoa.Api.Controllers
         [HttpPost("menubyrole")]
         public async Task<IActionResult> GetMenuByRole([FromBody]MenuTreeParm param)
         {
-            var menu = await _sysMenuService.GetListTreeAsync(param.roleGuid);
+            if (!await HttpContext.IsSystem())
+            {
+                param.AdminGuid = await HttpContext.LoginUserId();
+            }
+
+            var menu = await _sysMenuService.GetListTreeAsync(param.roleGuid, param.AdminGuid);
+
             var res = new MenuRoleDto()
             {
                 menu = menu.data
@@ -161,10 +168,17 @@ namespace FytSoa.Api.Controllers
         /// </summary>
         /// <returns></returns>
         [HttpPost("authorizaion")]
-        [ApiAuthorize(Modules = "Menu", Methods = "Update", LogType = LogEnum.STATUS)]
+        //[ApiAuthorize(Modules = "Menu", Methods = "Update", LogType = LogEnum.STATUS)]
         public async Task<IActionResult> GetAuthorizaionMenu([FromBody]ParmString obj)
         {
-            return Ok(await _sysMenuService.GetMenuByRole(obj.parm));
+            if (!await HttpContext.IsSystem())
+            {
+                obj.adminGuid = await HttpContext.LoginUserId();
+            }
+
+            var res = await _sysMenuService.GetMenuByRole(obj.parm, obj.adminGuid);
+
+            return Ok(res);
         }
     }
 }

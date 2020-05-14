@@ -169,12 +169,12 @@ namespace FytSoa.Service.Implements
                 parm.Guid = Guid.NewGuid().ToString();
                 parm.AddDate = DateTime.Now;
 
-                if (!string.IsNullOrEmpty(parm.DepartmentGuid))
-                {
-                    // 说明有父级  根据父级，查询对应的模型
-                    var model = SysOrganizeDb.GetById(parm.DepartmentGuid);
-                    parm.DepartmentGuidList = model.ParentGuidList;
-                }
+                //if (!string.IsNullOrEmpty(parm.DepartmentGuid))
+                //{
+                //    // 说明有父级  根据父级，查询对应的模型
+                //    var model = SysOrganizeDb.GetById(parm.DepartmentGuid);
+                //    parm.DepartmentGuidList = model.ParentGuidList;
+                //}
 
                 SysAdminDb.Insert(parm);
 
@@ -294,12 +294,12 @@ namespace FytSoa.Service.Implements
                 }
 
                 parm.LoginPwd = DES3Encrypt.EncryptString(parm.LoginPwd);
-                if (!string.IsNullOrEmpty(parm.DepartmentGuid))
-                {
-                    // 说明有父级  根据父级，查询对应的模型
-                    var model = SysOrganizeDb.GetById(parm.DepartmentGuid);
-                    parm.DepartmentGuidList = model.ParentGuidList;
-                }
+                //if (!string.IsNullOrEmpty(parm.DepartmentGuid))
+                //{
+                //    // 说明有父级  根据父级，查询对应的模型
+                //    var model = SysOrganizeDb.GetById(parm.DepartmentGuid);
+                //    parm.DepartmentGuidList = model.ParentGuidList;
+                //}
                 //查询授权表，type=2 更新新的权限值
                 //删除
                 var authority = await Db.Deleteable<SysPermissions>().Where(m => m.AdminGuid == parm.Guid && m.Types == 2).ExecuteCommandAsync();

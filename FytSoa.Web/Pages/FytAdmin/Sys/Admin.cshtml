@@ -53,44 +53,24 @@
             border-color: transparent;
         }
     </style>
-    <div class="layui-col-220" id="app">
-        <div class="layui-nav-title"> 角色 </div>
-        <div class="role-tab">
-            <div id="tree" class="layui-tree-cus" style="overflow:auto;"></div>
-            <div id="role" class="layui-collapse" style="overflow:auto; display:none">
-                <div class="layui-colla-item" v-for="it in list" v-if="it.level==0">
-                    <h2 class="layui-colla-title"><i class="layui-icon layui-icon-export"></i>{{it.name}}</h2>
-                    <div class="layui-colla-content layui-show">
-                        <div class="role-item" :class="active==row.guid?'active':''" v-for="row in list"
-                             v-if="row.level==1 && row.parentGuid==it.guid" @@click="loaduser(row)">
-                            <i class="layui-icon layui-icon-friends"></i>{{glnode(row.name)}}
-                        </div>
-                    </div>
-                </div>
-            </div>
+    <div class="list-wall">
+        <div class="layui-form list-search">
+            <button type="button" class="layui-btn layui-btn-sm" data-type="organizeAdd">
+                <i class="layui-icon"></i>
+                新增
+            </button>
+            <button type="button" class="layui-btn layui-btn-sm" data-type="organizeDel">
+                <i class="layui-icon"></i>
+                删除
+            </button>
+            <button type="button" class="layui-btn layui-btn-sm" data-type="toolToRole">
+                <i class="layui-icon layui-icon-template"></i> 用户分配角色
+            </button>
         </div>
-    </div>
-    <div class="right-col-body">
-        <div class="list-wall">
-            <div class="layui-form list-search">
-                <button type="button" class="layui-btn layui-btn-sm" data-type="organizeAdd">
-                    <i class="layui-icon"></i>
-                    新增
-                </button>
-                <button type="button" class="layui-btn layui-btn-sm" data-type="organizeDel">
-                    <i class="layui-icon"></i>
-                    删除
-                </button>
-                <button type="button" class="layui-btn layui-btn-sm" data-type="toolToRole">
-                    <i class="layui-icon layui-icon-template"></i> 用户分配角色
-                </button>
-            </div>
-            <table class="layui-hide" id="tablist" lay-filter="tool"></table>
-        </div>
+        <table class="layui-hide" id="tablist" lay-filter="tool"></table>
     </div>
     <script>
         var active, vm = new Vue({
-            el: '#app',
             data: {
                 list: {},
                 active: ''
@@ -107,15 +87,12 @@
         });
         layui.config({
             base: '/themes/js/modules/'
-        }).use(['element', 'table', 'layer', 'jquery', 'tree', 'common'],
+        }).use(['element', 'table', 'layer', 'jquery', 'common'],
             function () {
                 var element = layui.element, table = layui.table,
                     layer = layui.layer,
                     $ = layui.jquery,
-                    tree = layui.tree,
-                    os = layui.common,
-                    form = layui.form;
-                $("#tree,#role").css({ 'height': $(window).height() - 140 });
+                    os = layui.common;
                 table.render({
                     elem: '#tablist',
                     headers: os.getToken(),
@@ -124,6 +101,8 @@
                         [
                             { type: 'checkbox', fixed: 'left' },
                             { field: 'loginName', title: '登录账号', sort: true, fixed: 'left' },
+                            { field: 'trueName', title: '真是姓名' },
+                            { field: 'sex', width: 60, title: '性别' },
                             {
                                 field: 'isSystem', title: '是否系统管理员', templet: function (d) {
                                     if (d.isSystem) {
@@ -133,9 +112,15 @@
                                     }
                                 }
                             },
-                            { field: 'trueName', title: '真是姓名' },
-                            { field: 'departmentName', title: '所属部门' },
-                            { field: 'sex', width: 60, title: '性别' },
+                            {
+                                field: 'status', title: '状态', templet: function (d) {
+                                    if (d.status) {
+                                        return '<span class="layui-badge-dot layui-bg-blue"></span>';
+                                    } else {
+                                        return '<span class="layui-badge-dot layui-bg-gray"></span>';
+                                    }
+                                }
+                            },
                             { field: 'loginDate', width: 180, title: '最后登录时间' },
                             { width: 100, title: '操作', templet: '#tool' }
                         ]
@@ -144,44 +129,8 @@
                     id: 'tables'
                 });
 
-                //按钮切换状态
-                $('.layui-btn-group .layui-btn').click(function () {
-                    $('.layui-btn-group .layui-btn').removeClass('active');
-                    $(this).addClass('active');
-                    var tabIndex = $(this).index();
-                    if (tabIndex == 0) {
-                        $("#tree").show();
-                        $("#role").hide();
-                        vm.active = '';
-                    } else {
-                        $("#tree").hide();
-                        $("#role").show();
-                    }
-                });
-                $("#tree").hide();
-                $("#role").show();
                 var guid = '', typeName = '';
                 active = {
-                    initTree() {
-                        os.ajax('api/organize/gettree/', {}, function (res) {
-                            tree.render({
-                                elem: '#tree'
-                                , data: res
-                                , onlyIconControl: true
-                                , click: function (obj) {
-                                    guid = obj.data.id;
-                                    vm.active = '';
-                                    active.reload();
-                                }
-                            });
-                        });
-                        os.ajax('api/role/getpages/', { limit: 1000 }, function (res) {
-                            vm.list = res.data;
-                            vm.$nextTick(function () {
-                                element.render();
-                            });
-                        }, 'get');
-                    },
                     reload: function () {
                         table.reload('tables',
                             {
@@ -212,7 +161,7 @@
                             os.warning('每次只能选择一个用户~');
                             return;
                         }
-                        os.Open('为用户' + adminName + '分配角色', '/fytadmin/sys/admintorole?roid=' + str, '1000px', '600px');
+                        os.Open('为用户' + adminName + '分配角色', '/fytadmin/sys/admintorole?roid=' + str, '1000px', '600px', active.reload);
                     },
                     organizeAdd: function () {
                         os.Open('添加用户', '/fytadmin/sys/adminmodify', '1000px', '500px', function () {
@@ -256,8 +205,6 @@
 
                     }
                 };
-
-                active.initTree();
 
                 $('.list-search .layui-btn').on('click', function () {
                     var type = $(this).data('type');

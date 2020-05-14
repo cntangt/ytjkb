@@ -11,15 +11,26 @@
             border-right: 1px solid #e4eaec;
         }
 
-            .l220 .layui-nav-title {
-                background-color: #ffffff;
-                position: relative;
-                font-weight: normal;
-                border-bottom: 1px solid #e4eaec;
-            }
-        .role{
-            overflow:auto;
+        .l220 .layui-nav-title {
+            width: 100%;
+            height: 70px;
+            line-height: 70px;
+            background: #d9dee4;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+            font-weight: bold;
+            text-indent: 20px;
+            background-color: #ffffff;
+            position: relative;
+            font-weight: normal;
+            border-bottom: 1px solid #e4eaec;
         }
+
+        .role {
+            overflow: auto;
+        }
+
         .role li a {
             display: block;
             padding: 10px 20px;
@@ -30,28 +41,10 @@
             color: #409eff;
         }
 
-        .l440 {
-            left: 441px;
+        .menu-wall .layui-tree-cus {
+            overflow: auto;
         }
 
-            .l440 .layui-nav-title {
-                width: 100%;
-                height: 70px;
-                line-height: 70px;
-                background: #d9dee4;
-                overflow: hidden;
-                text-overflow: ellipsis;
-                white-space: nowrap;
-                font-weight: bold;
-                text-indent: 20px;
-                background-color: #ffffff;
-                position: relative;
-                font-weight: normal;
-                border-bottom: 1px solid #e4eaec;
-            }
-        .menu-wall .layui-tree-cus{
-            overflow:auto;
-        }
         .menu-wall .layui-tree-cus li {
             padding: 4px 0;
         }
@@ -60,34 +53,38 @@
             padding-left: 35px;
             line-height: 30px;
         }
-        .menu-wall .layui-tree-cus span{
-            cursor:pointer;
+
+        .menu-wall .layui-tree-cus span {
+            cursor: pointer;
         }
+
         .menu-wall {
             padding: 15px;
         }
-        .menu-wall .layui-tree-cus .btnfun{
-            display:inline-block;
-            margin-left:50px;
-            text-align:right;
+
+        .menu-wall .layui-tree-cus .btnfun {
+            display: inline-block;
+            margin-left: 50px;
+            text-align: right;
         }
-        .menu-wall .layui-tree-cus .btnfun label{
-            margin-left:25px;
+
+        .menu-wall .layui-tree-cus .btnfun label {
+            margin-left: 25px;
         }
-        .menu-save{padding:10px; text-align:center;}
+
+        .menu-save {
+            padding: 10px;
+            text-align: center;
+        }
     </style>
     <div id="app">
         <div class="layui-col-220">
-            <div class="layui-nav-title">组织机构</div>
-            <div id="tree" class="layui-tree-cus" style="overflow:auto;"></div>
-        </div>
-        <div class="layui-col-220 l220">
             <div class="layui-nav-title">角色列表</div>
             <ul class="role">
                 <li :class="index==roleActive?'active':''" v-for="(it,index) in roleList" v-cloak @@click="roleGoMenu(it,index)"><a href="javascript:void(0)">{{it.name}}</a></li>
             </ul>
         </div>
-        <div class="right-col-body l440">
+        <div class="right-col-body l220">
             <div class="layui-nav-title">菜单列表</div>
             <div class="menu-wall soa-cur" style="padding-bottom: 0px;">
                 <ul class="layui-tree-cus">
@@ -122,7 +119,8 @@
             </div>
         </div>
     </div>
-    <script>var os, $, fun, vm = new Vue({
+    <script>
+        var os, $, fun, vm = new Vue({
             el: '#app',
             data: {
                 roleList: [],
@@ -145,95 +143,95 @@
                     var that = this;
                     if (m.layer === 1) {
                         if (e.target.checked) {
-                            that.menuList.some((item, i)=>{
-                                 if(item.parentGuidList.indexOf(m.guid)>-1){
-                                     item.isChecked=true;
-                                 }
-                                 if(item.parentGuidList.indexOf(m.guid)>-1 && item.layer==3){
-                                    if(item.btnFun){
-                                        item.btnFun.some((row,j)=>{
-                                            row.status=true;
+                            that.menuList.some((item, i) => {
+                                if (item.parentGuidList.indexOf(m.guid) > -1) {
+                                    item.isChecked = true;
+                                }
+                                if (item.parentGuidList.indexOf(m.guid) > -1 && item.layer == 3) {
+                                    if (item.btnFun) {
+                                        item.btnFun.some((row, j) => {
+                                            row.status = true;
                                         })
                                     }
                                 }
-                        　　 })　
+                            })
                         }
                         else {
-                            that.menuList.some((item, i)=>{
-                                 if(item.parentGuidList.indexOf(m.guid)>-1){
-                                     item.isChecked=false;
-                                 }
-                                 if(item.parentGuidList.indexOf(m.guid)>-1 && item.layer==3){
-                                    if(item.btnFun){
-                                        item.btnFun.some((row,j)=>{
-                                            row.status=false;
+                            that.menuList.some((item, i) => {
+                                if (item.parentGuidList.indexOf(m.guid) > -1) {
+                                    item.isChecked = false;
+                                }
+                                if (item.parentGuidList.indexOf(m.guid) > -1 && item.layer == 3) {
+                                    if (item.btnFun) {
+                                        item.btnFun.some((row, j) => {
+                                            row.status = false;
                                         })
                                     }
                                 }
-                        　　 })　
+                            })
                         }
-                        
+
                     }
                     if (m.layer === 2) {
                         if (e.target.checked) {
-                            that.menuList.some((item, i)=>{
-                                if(item.parentGuidList.indexOf(m.guid)>-1 || (m.parentGuidList.indexOf(item.guid)>-1 && item.layer==1)){
-                                    item.isChecked=true;
+                            that.menuList.some((item, i) => {
+                                if (item.parentGuidList.indexOf(m.guid) > -1 || (m.parentGuidList.indexOf(item.guid) > -1 && item.layer == 1)) {
+                                    item.isChecked = true;
                                 }
-                                if(item.parentGuidList.indexOf(m.guid)>-1 && item.layer==3){
-                                    if(item.btnFun){
-                                        item.btnFun.some((row,j)=>{
-                                            row.status=true;
+                                if (item.parentGuidList.indexOf(m.guid) > -1 && item.layer == 3) {
+                                    if (item.btnFun) {
+                                        item.btnFun.some((row, j) => {
+                                            row.status = true;
                                         })
                                     }
                                 }
-                        　　 })　
+                            })
                         }
                         else {
-                            that.menuList.some((item, i)=>{
-                                 if(item.parentGuidList.indexOf(m.guid)>-1){
-                                     item.isChecked=false;
-                                 }
-                                 if(item.parentGuidList.indexOf(m.guid)>-1 && item.layer==3){
-                                    if(item.btnFun){
-                                        item.btnFun.some((row,j)=>{
-                                            row.status=false;
+                            that.menuList.some((item, i) => {
+                                if (item.parentGuidList.indexOf(m.guid) > -1) {
+                                    item.isChecked = false;
+                                }
+                                if (item.parentGuidList.indexOf(m.guid) > -1 && item.layer == 3) {
+                                    if (item.btnFun) {
+                                        item.btnFun.some((row, j) => {
+                                            row.status = false;
                                         })
                                     }
                                 }
-                        　　 })　
+                            })
                         }
                     }
                     if (m.layer == 3) {
                         if (e.target.checked) {
-                            that.menuList.some((item, i)=>{
-                                if(item.parentGuidList.indexOf(m.guid)>-1 || 
-                                (m.parentGuidList.indexOf(item.guid)>-1 && item.layer==1) ||
-                                (m.parentGuidList.indexOf(item.guid)>-1 && item.layer==2)){
-                                    item.isChecked=true;
+                            that.menuList.some((item, i) => {
+                                if (item.parentGuidList.indexOf(m.guid) > -1 ||
+                                    (m.parentGuidList.indexOf(item.guid) > -1 && item.layer == 1) ||
+                                    (m.parentGuidList.indexOf(item.guid) > -1 && item.layer == 2)) {
+                                    item.isChecked = true;
                                 }
-                                if(item.guid==m.guid){
-                                    if(item.btnFun){
-                                        item.btnFun.some((row,j)=>{
-                                            row.status=true;
+                                if (item.guid == m.guid) {
+                                    if (item.btnFun) {
+                                        item.btnFun.some((row, j) => {
+                                            row.status = true;
                                         })
                                     }
                                 }
-                        　　 })　
+                            })
                         }
                         else {
-                            that.menuList.some((item, i)=>{
-                                 if(item.guid==m.guid){
-                                    item.isChecked=false;
-                                    if(item.btnFun){
-                                        item.btnFun.some((row,j)=>{
-                                            row.status=false;
+                            that.menuList.some((item, i) => {
+                                if (item.guid == m.guid) {
+                                    item.isChecked = false;
+                                    if (item.btnFun) {
+                                        item.btnFun.some((row, j) => {
+                                            row.status = false;
                                         })
                                     }
-                                 }
-                        　　 })　
+                                }
+                            })
                         }
-                        
+
                     }
                     //console.log(e.target.checked);
                 },
@@ -268,18 +266,7 @@
                 $('.layui-tree-cus').css({ 'height': $(window).height() - 206 });
                 $('.role').css({ 'height': $(window).height() - 132 });
                 fun = {
-                    initTree() {
-                        os.ajax('api/organize/gettree/', {}, function (res) {
-                            tree.render({
-                                elem: '#tree'
-                                , data: res
-                                , onlyIconControl: true
-                                , click: function (obj) {
-                                    fun.initRole(obj.data.id);
-                                }
-                            });
-                        });
-                    },
+
                     //根据部门查询角色
                     initRole: function (guid) {
                         os.ajax('api/role/getpages', { key: guid }, function (res) {
@@ -324,7 +311,6 @@
                     }
                 };
                 fun.initRole('');
-                fun.initTree();
 
             });</script>
 </div>

@@ -4,43 +4,27 @@
     ViewData["Title"] = "角色管理";
 }
 <div id="container">
-    <div class="layui-col-220">
-        <div class="layui-nav-title">角色组</div>
-        <div id="tree" class="layui-tree-cus" style="overflow:auto;"></div>
-    </div>
-    <div class="right-col-body">
-        <div class="list-wall">
-            <div class="layui-form list-search">
-                <button type="button" class="layui-btn layui-btn-sm" data-type="roleGroup">
-                    <i class="layui-icon layui-icon-add-circle"></i> 添加角色组
-                </button>
-                <button type="button" class="layui-btn layui-btn-sm" data-type="organizeAdd">
-                    <i class="layui-icon layui-icon-add-circle"></i> 添加角色
-                </button>
-                <button type="button" class="layui-btn layui-btn-sm" data-type="organizeDel">
-                    <i class="layui-icon"></i>
-                    删除
-                </button>
-                <button type="button" class="layui-btn layui-btn-sm" data-type="toolMenu">
-                    <i class="layui-icon layui-icon-template"></i> 角色分配功能模块
-                </button>
-            </div>
-            <table class="layui-hide" id="tablist" lay-filter="tool"></table>
+    <div class="list-wall">
+        <div class="layui-form list-search">
+            <button type="button" class="layui-btn layui-btn-sm" data-type="organizeAdd">
+                <i class="layui-icon layui-icon-add-circle"></i> 添加角色
+            </button>
+            <button type="button" class="layui-btn layui-btn-sm" data-type="organizeDel">
+                <i class="layui-icon"></i>
+                删除
+            </button>
         </div>
+        <table class="layui-hide" id="tablist" lay-filter="tool"></table>
     </div>
     <script>
         layui.config({
             base: '/themes/js/modules/'
-        }).use(['table', 'layer', 'jquery', 'tree', 'common'],
+        }).use(['table', 'layer', 'jquery', 'common'],
             function () {
                 var table = layui.table,
                     layer = layui.layer,
                     $ = layui.jquery,
-                    ztree = layui.ztree,
-                    os = layui.common,
-                    form = layui.form,
-                    tree = layui.tree;
-                $("#tree").css({ 'height': $(window).height() - 140 });
+                    os = layui.common;
                 table.render({
                     elem: '#tablist',
                     headers: os.getToken(),
@@ -48,15 +32,7 @@
                     cols: [
                         [
                             { type: 'checkbox', fixed: 'left' },
-                            {
-                                field: 'name', title: '角色名称', sort: true, fixed: 'left', templet: function (d) {
-                                    if (d.level == 0) {
-                                        return d.name + '<span class="layui-badge layui-bg-cyan">组</span>';
-                                    } else {
-                                        return d.name;
-                                    }
-                                }
-                            },
+                            { field: 'name', title: '角色名称', sort: true, fixed: 'left' },
                             {
                                 field: 'isSystem', title: '是否系统管理员', templet: function (d) {
                                     if (d.isSystem) {
@@ -71,35 +47,16 @@
                             { width: 100, title: '操作', templet: '#tool' }
                         ]
                     ],
-                    page: false,
-                    id: 'tables',
-                    height: $(window).height() - 150,
-                    where: {
-                        limit: 1000
-                    }
+                    page: true,
+                    id: 'tables'
                 });
 
                 var guid = '', active = {
-                    initTree() {
-                        os.ajax('api/organize/gettree/', {}, function (res) {
-                            tree.render({
-                                elem: '#tree'
-                                , data: res
-                                , onlyIconControl: true
-                                , click: function (obj) {
-                                    guid = obj.data.id;
-                                    active.reload();
-                                }
-                            });
-                        });
-                    },
                     reload: function () {
                         table.reload('tables',
                             {
-                                page: false,
-                                where: {
-                                    key: guid,
-                                    limit: 1000
+                                page: {
+                                    curr: 1
                                 }
                             });
                     },
@@ -126,7 +83,7 @@
                             return;
                         }
                         os.Open('角色分配功能模块', '/fytadmin/sys/rolemenu?roid=' + str, '1000px', '650px', function () {
-                            //os.success("分配成功~");
+                            active.reload();
                         });
                     },
                     roleGroup: function () {
@@ -174,7 +131,7 @@
 
                     }
                 };
-                active.initTree();
+
                 $('.list-search .layui-btn').on('click', function () {
                     var type = $(this).data('type');
                     active[type] ? active[type].call(this) : '';

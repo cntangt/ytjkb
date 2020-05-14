@@ -46,6 +46,7 @@ namespace FytSoa.Service.DtoModel
     public class ParmString
     {
         public string parm { get; set; }
+        public string adminGuid { get; set; }
     }
 
     /// <summary>

@@ -55,7 +55,9 @@ namespace FytSoa.Api.Controllers
             {
                 parm.CreateBy = await HttpContext.LoginUserId();
             }
+
             var res = await _adminService.GetPagesAsync(parm);
+
             return Ok(new { code = 0, msg = "success", count = res.data.TotalItems, data = res.data.Items });
         }
 

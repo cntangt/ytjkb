@@ -1,8 +1,6 @@
 ﻿using FytSoa.Core.Model.Sys;
 using Newtonsoft.Json;
-using System;
 using System.Collections.Generic;
-using System.Text;
 
 namespace FytSoa.Service.DtoModel
 {
@@ -148,6 +146,11 @@ namespace FytSoa.Service.DtoModel
     public class MenuTreeParm
     {
         public string roleGuid { get; set; }
+
+        /// <summary>
+        /// 如果不为空，用于获取当前用户拥有的菜单权限
+        /// </summary>
+        public string AdminGuid { get; set; }
     }
 
     /// <summary>

@@ -17,7 +17,7 @@ namespace FytSoa.Service.Interfaces
         /// 获得菜单列表，提供给权限管理，根据角色查询所有菜单
         /// </summary>
         /// <returns></returns>
-        Task<ApiResult<List<SysMenuDto>>> GetMenuByRole(string role);
+        Task<ApiResult<List<SysMenuDto>>> GetMenuByRole(string role, string adminGuid);
 
         /// <summary>
         /// 获得列表
@@ -29,7 +29,7 @@ namespace FytSoa.Service.Interfaces
         /// 获得树列表
         /// </summary>
         /// <returns></returns>
-        Task<ApiResult<List<SysMenuTree>>> GetListTreeAsync(string roleGuid);
+        Task<ApiResult<List<SysMenuTree>>> GetListTreeAsync(string roleGuid, string adminGuid = null);
 
         /// <summary>
         /// 获得一条数据
@@ -41,7 +41,7 @@ namespace FytSoa.Service.Interfaces
         /// 添加一条数据
         /// </summary>
         /// <returns></returns>
-        Task<ApiResult<string>> AddAsync(SysMenu parm,List<string> btnfun);
+        Task<ApiResult<string>> AddAsync(SysMenu parm, List<string> btnfun);
 
         /// <summary>
         /// 修改一条数据

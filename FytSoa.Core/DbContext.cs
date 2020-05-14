@@ -56,7 +56,7 @@ namespace FytSoa.Core
         //系统权限设置
         public SimpleClient<SysCode> SysCodeDb => new SimpleClient<SysCode>(Db);
         public SimpleClient<SysCodeType> SysCodeTypeDb => new SimpleClient<SysCodeType>(Db);
-        public SimpleClient<SysOrganize> SysOrganizeDb => new SimpleClient<SysOrganize>(Db);
+        //public SimpleClient<SysOrganize> SysOrganizeDb => new SimpleClient<SysOrganize>(Db);
         public SimpleClient<SysLog> SysLogDb => new SimpleClient<SysLog>(Db);
         public SimpleClient<SysMenu> SysMenuDb => new SimpleClient<SysMenu>(Db);
         public SimpleClient<SysPermissions> SysPermissionsDb => new SimpleClient<SysPermissions>(Db);
