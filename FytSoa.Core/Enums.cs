@@ -18,11 +18,6 @@
         其他 = 100
     }
 
-    public enum FeeType
-    {
-        CNY
-    }
-
     public enum SourceType
     {
         一码付 = 1,
@@ -48,6 +43,7 @@
 
     public enum PayPlatform
     {
+        默认 = 1,
         普通微信支付 = 100,
         普通支付宝 = 200,
         代金券校园卡 = 300,
@@ -116,9 +112,16 @@
 
     public enum DeviceShiftType
     {
-        移动收款机具 = 1, 
-        云支付收银台 = 2, 
-        智能POS = 3, 
+        移动收款机具 = 1,
+        云支付收银台 = 2,
+        智能POS = 3,
         其它 = 4
+    }
+
+    public enum SettleType
+    {
+        微信转账 = 1,
+        支付宝转账 = 2,
+        银行转账 = 3
     }
 }

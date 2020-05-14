@@ -53,8 +53,29 @@ namespace FytSoa.Api.Controllers
             {
                 refund_content = new Refund_Content
                 {
-                    out_refund_no = ""
-                }
+                    out_trade_no = "sz0100lmnx12020051312422304jvek8",
+                    out_refund_no = $"sz0100lmnx{DateTime.Now:yyyyMMddHHmmssffffff}",
+                    refund_fee = 1,
+                    refund_fee_type = "CNY",//需要和来源订单保持一至
+                    refund_reason = "就是任性",
+                    total_fee = 1
+                },
+                order_client = new Order_Client
+                {
+                    terminal_type = TerminalType.Windows,
+                    sdk_version = "1.0",
+                    spbill_create_ip = "171.221.202.167"
+                },
+                pay_mch_key = new Pay_Mch_Key
+                {
+                    pay_platform = PayPlatform.默认,
+                    out_mch_id = "sz013NzuonO6CMJd0rCB",
+                    out_sub_mch_id = "sz01ELTR281OFpmdAp6J",
+                    out_shop_id = "sz01qyoPJmd3j1hWmul4",
+                    is_sub_mch_admin = true,
+                    //authorization_name=
+                },
+                AuthenKey = "lSCp1M5grGWFD7rJzaZaqixsvOhORp2P",
             };
 
             return wx.QueryAsync(req);

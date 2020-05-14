@@ -23,9 +23,9 @@ namespace FytSoa.Core.Model.Wx
         public string out_trade_no { get; set; }
         public string transaction_id { get; set; }
         public long total_fee { get; set; }
-        public FeeType fee_type { get; set; }
+        public string fee_type { get; set; }
         public long cash_fee { get; set; }
-        public FeeType cash_fee_type { get; set; }
+        public string cash_fee_type { get; set; }
         public long settlement_total_fee { get; set; }
         public long discount_fee { get; set; }
         public long recharge_bonus_fee { get; set; }

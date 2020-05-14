@@ -27,7 +27,7 @@ namespace FytSoa.Core.Model.Wx
         public string refund_id { get; set; }
         public long refund_fee { get; set; }
         public long settlement_total_fee { get; set; }
-        public FeeType refund_fee_type { get; set; }
+        public string refund_fee_type { get; set; }
         public double poundage { get; set; }
         public long income_fee { get; set; }
         public DateTime create_time { get; set; }
@@ -38,7 +38,7 @@ namespace FytSoa.Core.Model.Wx
         public string client_refund_flow_id { get; set; }
         public WxpayRefundOrderState wxpay_refund_state { get; set; }
         public long cash_refund_fee { get; set; }
-        public FeeType cash_refund_fee_type { get; set; }
+        public string cash_refund_fee_type { get; set; }
         public AlipayRefundOrderState alipay_refund_state { get; set; }
         public long credits { get; set; }
         public RecordRefundOrderState record_refund_state { get; set; }

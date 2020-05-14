@@ -24,6 +24,6 @@ namespace FytSoa.Core.Model.Wx
         public DateTime update_time { get; set; }
         public DeviceInfo[] device_infos { get; set; }
         public StaffInfo[] staff_infos { get; set; }
-        public FeeType fee_type { get; set; }
+        public string fee_type { get; set; }
     }
 }
