@@ -26,7 +26,7 @@
                 table.render({
                     elem: '#tablist',
                     headers: os.getToken(),
-                    url: '/api/level/getpages',
+                    url: '/api/agent/getpages',
                     cols: [
                         [
                             { type: 'checkbox', fixed: 'left' },
@@ -60,7 +60,7 @@
                             });
                     },
                     toolAdd: function () {
-                        os.Open('添加代理商信息', '/fytadmin/cms/levelmodify', '600px', '410px', function () {
+                        os.Open('添加代理商信息', '/fytadmin/cms/agentmodify', '680px', '470px', function () {
                             active.reload();
                         });
                     },
@@ -80,7 +80,7 @@
                             var loadindex = layer.load(1, {
                                 shade: [0.1, '#000']
                             });
-                            os.ajax('api/level/delete/', { parm: str }, function (res) {
+                            os.ajax('api/agent/delete/', { parm: str }, function (res) {
                                 layer.close(loadindex);
                                 if (res.statusCode === 200) {
                                     active.reload();
@@ -101,7 +101,7 @@
                 table.on('tool(tool)', function (obj) {
                     var data = obj.data;
                     if (obj.event === 'edit') {
-                        os.Open('修改模型信息', '/fytadmin/cms/levelmodify/?id=' + data.id, '600px', '410px', function () {
+                        os.Open('修改代理商信息', '/fytadmin/cms/agentmodify/?id=' + data.id, '660px', '460px', function () {
                             active.reload();
                         });
                     }
