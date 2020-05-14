@@ -1,4 +1,5 @@
 ﻿using FytSoa.Common;
+using FytSoa.Core.Model.Cms;
 using FytSoa.Core.Model.Sys;
 using FytSoa.Service.DtoModel;
 using FytSoa.Service.Extensions;
@@ -161,38 +162,21 @@ namespace FytSoa.Service.Implements
 
                 parm.LoginPwd = DES3Encrypt.EncryptString(parm.LoginPwd);
 
-                if (string.IsNullOrEmpty(parm.HeadPic))
-                {
-                    parm.HeadPic = "/themes/img/avatar.jpg";
-                }
-
                 parm.Guid = Guid.NewGuid().ToString();
                 parm.AddDate = DateTime.Now;
 
-                //if (!string.IsNullOrEmpty(parm.DepartmentGuid))
-                //{
-                //    // 说明有父级  根据父级，查询对应的模型
-                //    var model = SysOrganizeDb.GetById(parm.DepartmentGuid);
-                //    parm.DepartmentGuidList = model.ParentGuidList;
-                //}
-
                 SysAdminDb.Insert(parm);
 
-                //查询授权表，type=2 更新新的权限值
-                //添加新的
-                var authorityList = new List<SysPermissions>();
-
-                foreach (var item in parm.RoleList)
+                var rel = await Db.Queryable<CmsAdminMerchantRel>().Where(p => p.Admin_Guid == parm.CreateBy).FirstAsync();
+                if (rel != null)
                 {
-                    authorityList.Add(new SysPermissions()
+                    CmsAdminMerchantRelDb.Insert(new CmsAdminMerchantRel
                     {
-                        RoleGuid = item.guid,
-                        AdminGuid = parm.Guid,
-                        Types = 2
+                        Admin_Guid = parm.Guid,
+                        Out_Mch_Id = rel.Out_Mch_Id,
+                        Sub_Out_Mch_Id = rel.Sub_Out_Mch_Id
                     });
                 }
-
-                await Db.Insertable(authorityList).ExecuteCommandAsync();
 
                 res.statusCode = (int)ApiEnum.Status;
 
@@ -228,7 +212,6 @@ namespace FytSoa.Service.Implements
             };
             return res;
         }
-
 
         /// <summary>
         /// 获得列表
@@ -321,14 +304,14 @@ namespace FytSoa.Service.Implements
                     LoginName = parm.LoginName,
                     LoginPwd = parm.LoginPwd,
                     RoleGuid = parm.RoleGuid,
-                    DepartmentName = parm.DepartmentName,
-                    DepartmentGuid = parm.DepartmentGuid,
-                    DepartmentGuidList = parm.DepartmentGuidList,
+                    //DepartmentName = parm.DepartmentName,
+                    //DepartmentGuid = parm.DepartmentGuid,
+                    //DepartmentGuidList = parm.DepartmentGuidList,
                     TrueName = parm.TrueName,
-                    Number = parm.Number,
+                    //Number = parm.Number,
                     Sex = parm.Sex,
                     Mobile = parm.Mobile,
-                    Email = parm.Email,
+                    //Email = parm.Email,
                     Status = parm.Status
                 }).Where(m => m.Guid == parm.Guid).ExecuteCommandAsync();
                 if (dbres > 0)
