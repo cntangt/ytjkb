@@ -1,8 +1,8 @@
 ﻿@page
 @model FytSoa.Web.Pages.FytAdmin.Sys.AdminModifyToRoleModel
 @{
-ViewData["Title"] = "关联角色";
-Layout = "~/Pages/FytAdmin/_Layout.cshtml";
+    ViewData["Title"] = "关联角色";
+    Layout = "~/Pages/FytAdmin/_Layout.cshtml";
 }
 <style>
     .layui-icon-export,
@@ -12,7 +12,7 @@ Layout = "~/Pages/FytAdmin/_Layout.cshtml";
     }
 
     .role-item {
-        padding: 6px 0px 6px 50px;
+        padding: 10px 5px;
         cursor: pointer
     }
 
@@ -34,7 +34,6 @@ Layout = "~/Pages/FytAdmin/_Layout.cshtml";
     }
 
     .role {
-
         height: 350px;
         border: 1px solid #dedede;
         border-radius: 4px;
@@ -77,13 +76,11 @@ Layout = "~/Pages/FytAdmin/_Layout.cshtml";
     <div class="layui-row layui-col-space20">
         <div class="layui-col-sm6 layui-col-xs6">
             <h4>选择</h4>
-            <div class="role layui-collapse" style="overflow: auto;">
-                <div class="layui-colla-item" v-for="it in list" v-if="it.level==0">
-                    <h2 class="layui-colla-title"><i class="layui-icon layui-icon-export"></i>{{it.name}}</h2>
-                    <div class="layui-colla-content">
-                        <div class="role-item" :class="active==row.guid?'active':''" v-for="row in list"
-                            v-if="row.level==1 && row.parentGuid==it.guid" @@click="loaduser(row)"><i
-                                class="layui-icon layui-icon-friends"></i>{{glnode(row.name)}}</div>
+            <div class="role" style="overflow: auto;">
+                <div style="padding:10px">
+                    <div class="role-item" :class="active==row.guid?'active':''" v-for="row in list"
+                         v-if="row.level==1" @@click="loaduser(row)">
+                        <i class="layui-icon layui-icon-friends"></i>{{glnode(row.name)}}
                     </div>
                 </div>
             </div>
@@ -94,7 +91,8 @@ Layout = "~/Pages/FytAdmin/_Layout.cshtml";
                 <ul>
                     <li class="layui-row select-item" v-for="it in curList">
                         <div class="layui-col-xs10"><i class="layui-icon layui-icon-friends"></i>{{it.name}}</div>
-                        <div class="layui-col-xs2"><i @@click="delCur(it)" class="layui-icon layui-icon-close"></i>
+                        <div class="layui-col-xs2">
+                            <i @@click="delCur(it)" class="layui-icon layui-icon-close"></i>
                         </div>
                     </li>
                 </ul>
@@ -102,8 +100,9 @@ Layout = "~/Pages/FytAdmin/_Layout.cshtml";
         </div>
     </div>
     <div class="layui-input-block">
-        <button class="layui-btn" @@click="submits"><i
-                class="layui-icon layui-icon-loading layui-icon layui-anim layui-anim-rotate layui-anim-loop layui-hide"></i>确定</button>
+        <button class="layui-btn" @@click="submits">
+            <i class="layui-icon layui-icon-loading layui-icon layui-anim layui-anim-rotate layui-anim-loop layui-hide"></i>确定
+        </button>
         <button type="button" class="layui-btn layui-btn-primary btn-open-close">取消</button>
     </div>
 </div>
@@ -166,7 +165,7 @@ Layout = "~/Pages/FytAdmin/_Layout.cshtml";
                 });
             active = {
                 initTree() {
-                    os.ajax('api/role/getpages/', { limit: 1000 }, function (res) {
+                    os.ajax('api/role/getpages/', { limit: 1000, site: 'tree' }, function (res) {
                         vm.list = res.data;
                         vm.$nextTick(function () {
                             element.render();

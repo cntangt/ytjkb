@@ -63,9 +63,6 @@
                 <i class="layui-icon"></i>
                 删除
             </button>
-            <button type="button" class="layui-btn layui-btn-sm" data-type="toolToRole">
-                <i class="layui-icon layui-icon-template"></i> 用户分配角色
-            </button>
         </div>
         <table class="layui-hide" id="tablist" lay-filter="tool"></table>
     </div>
@@ -164,7 +161,7 @@
                         os.Open('为用户' + adminName + '分配角色', '/fytadmin/sys/admintorole?roid=' + str, '1000px', '600px', active.reload);
                     },
                     organizeAdd: function () {
-                        os.Open('添加用户', '/fytadmin/sys/adminmodify', '725px', '320px', function () {
+                        os.Open('添加用户', '/fytadmin/sys/adminmodify', '725px', '380px', function () {
                             active.reload();
                         });
                     },
@@ -215,7 +212,7 @@
                 table.on('tool(tool)', function (obj) {
                     var data = obj.data;
                     if (obj.event === 'edit') {
-                        os.Open('编辑用户', '/fytadmin/sys/adminmodify/?guid=' + data.guid, '725px', '320px', function () {
+                        os.Open('编辑用户', '/fytadmin/sys/adminmodify/?guid=' + data.guid, '725px', '380px', function () {
                             active.reload();
                         })
                     }

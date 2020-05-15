@@ -69,7 +69,7 @@ namespace FytSoa.Service.Implements
 
                 var list = await Db.Queryable<SysRole>()
                         .Where(p => p.Level > 0)
-                        .WhereIF(!string.IsNullOrEmpty(parm.CreateBy), p => p.CreateBy == parm.CreateBy)
+                        .WhereIF(!string.IsNullOrEmpty(parm.CreateBy), p => p.CreateBy == parm.CreateBy || p.IsPublic)
                         .OrderBy(m => m.Sort, OrderByType.Desc)
                         .OrderBy(m => m.AddTime, OrderByType.Desc)
                         .ToPageAsync(parm.page, parm.limit);
@@ -122,7 +122,8 @@ namespace FytSoa.Service.Implements
 
                 var ps = await Db.Queryable<SysPermissions>().Where(m => m.AdminGuid == parm.guid && m.Types == 2).ToListAsync();
 
-                reslist.Items.ForEach(p => {
+                reslist.Items.ForEach(p =>
+                {
                     p.status = ps.Any(q => p.guid == q.RoleGuid);
                 });
 

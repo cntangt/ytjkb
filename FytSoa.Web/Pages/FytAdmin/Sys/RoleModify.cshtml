@@ -57,6 +57,13 @@
                 </div>
                 <div class="layui-form-mid layui-word-aux">仅平台角色使用此选项</div>
             </div>
+            <div class="layui-form-item">
+                <label class="layui-form-label">是否公开</label>
+                <div class="layui-input-inline" style="width:80px;">
+                    <input type="checkbox" name="isPublic" lay-text="是|否" lay-skin="switch" lay-filter="switch">
+                </div>
+                <div class="layui-form-mid layui-word-aux">仅平台角色使用此选项，公开角色将提供给子商户使用</div>
+            </div>
         }
         <div class="layui-form-item">
             <label class="layui-form-label">排序</label>
@@ -107,7 +114,12 @@
             //    vm.m.parentGuid = data.value;
             //});
             form.on('switch(switch)', function (data) {
-                vm.m.isSystem = data.elem.checked;
+                if (data.elem.name == 'isSystem') {
+                    vm.m.isSystem = data.elem.checked;
+                }
+                if (data.elem.name == 'isPublic') {
+                    vm.m.isPublic = data.elem.checked;
+                }
             });
             var index = parent.layer.getFrameIndex(window.name);
             //监听提交
@@ -146,8 +158,9 @@
                             sliderIndex.setValue(vm.m.sort);
                             $('#parentGuid').val(vm.m.parentGuid);
                             form.val("forms", {
-                                "parentGuid": vm.m.parentGuid
-                                , "isSystem": vm.m.isSystem
+                                "parentGuid": vm.m.parentGuid,
+                                "isSystem": vm.m.isSystem,
+                                "isPublic": vm.m.isPublic
                             });
                         } else {
                             os.error(res.message);

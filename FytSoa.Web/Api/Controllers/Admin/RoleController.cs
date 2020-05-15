@@ -5,6 +5,7 @@ using FytSoa.Service.DtoModel;
 using FytSoa.Service.Interfaces;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using System;
 using System.Threading.Tasks;
 
 namespace FytSoa.Api.Controllers
@@ -93,6 +94,12 @@ namespace FytSoa.Api.Controllers
         [HttpPost("edit"), ApiAuthorize(Modules = "Role", Methods = "Update", LogType = LogEnum.UPDATE)]
         public async Task<IActionResult> EditRole([FromBody]SysRole parm)
         {
+            var data = await _roleService.GetModelAsync(p => p.Guid == parm.Guid);
+            if (data.data.IsPublic&&!await HttpContext.IsSystem())
+            {
+                return Ok(new ApiResult<string> { message = "公开角色不允许修改", statusCode = (int)ApiEnum.Error });
+            }
+
             return Ok(await _roleService.ModifyAsync(parm));
         }
 

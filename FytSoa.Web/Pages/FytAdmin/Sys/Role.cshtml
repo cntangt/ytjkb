@@ -42,6 +42,15 @@
                                     }
                                 }
                             },
+                            {
+                                field: 'isSystem', title: '是否公开角色', templet: function (d) {
+                                    if (d.isPublic) {
+                                        return '<span class="layui-badge-dot layui-bg-blue"></span>';
+                                    } else {
+                                        return '<span class="layui-badge-dot layui-bg-gray"></span>';
+                                    }
+                                }
+                            },
                             { field: 'sort', title: '排序' },
                             { field: 'summary', title: '描述' },
                             { width: 100, title: '操作', templet: '#tool' }
