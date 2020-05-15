@@ -41,61 +41,57 @@
     <div class="layui-form-item">
         <label class="layui-form-label">名称</label>
         <div class="layui-input-block">
-            <input type="text" name="Name" value="@Model.Agent.name" maxlength="20" lay-verify="required" lay-verType="tips" autocomplete="off" class="layui-input">
+            <input type="text" name="Name" value="@Model.Agent.Name" maxlength="20" lay-verify="required" lay-verType="tips" autocomplete="off" class="layui-input">
         </div>
         <label class="layui-form-label">登录账号</label>
         <div class="layui-input-block">
-            <input type="text" name="Name" value="@Model.Agent.name" maxlength="20" lay-verify="required" lay-verType="tips" autocomplete="off" class="layui-input">
+            <input type="text" name="Admin_Guid" value="@Model.Agent.Admin_Guid" maxlength="20" lay-verify="required" lay-verType="tips" autocomplete="off" class="layui-input">
         </div>
     </div>
     <div class="layui-form-item">
         <label class="layui-form-label">等级</label>
         <div class="layui-input-block">
-            <select name="interest" lay-filter="aihao">
-                <option value=""></option>
-                <option value="0">写作</option>
-                <option value="1">阅读</option>
-                <option value="2">游戏</option>
-                <option value="3">音乐</option>
-                <option value="4">旅行</option>
+            <select name="Level_Id" lay-filter="aihao">
+                @foreach (var item in Model.Levels)
+                {
+                    <option value="@item.Id">@item.Name</option>
+                }
             </select>
         </div>
         <label class="layui-form-label">电话</label>
         <div class="layui-input-block">
-            <input type="text" name="Name" value="@Model.Agent.name" maxlength="20" lay-verify="required" lay-verType="tips" autocomplete="off" class="layui-input">
+            <input type="text" name="Tel" value="@Model.Agent.Tel" maxlength="20" lay-verify="required" lay-verType="tips" autocomplete="off" class="layui-input">
         </div>
     </div>
     <div class="layui-form-item">
         <label class="layui-form-label">拓展区域</label>
         <div class="layui-input-block" style="width:510px;">
-            <input type="text" name="Name" value="@Model.Agent.name" maxlength="20" lay-verify="required" lay-verType="tips" autocomplete="off" class="layui-input">
+            <input type="text" name="Business_Area" value="@Model.Agent.Business_Area" maxlength="20" lay-verify="required" lay-verType="tips" autocomplete="off" class="layui-input">
         </div>
     </div>
     <div class="layui-form-item">
         <label class="layui-form-label">结算方式</label>
         <div class="layui-input-block">
-            <select name="interest" lay-filter="aihao">
-                <option value=""></option>
-                <option value="0">写作</option>
-                <option value="1">阅读</option>
-                <option value="2">游戏</option>
-                <option value="3">音乐</option>
-                <option value="4">旅行</option>
+            <select name="Settle_Type" lay-filter="aihao">
+                @foreach (var e in Enum.GetValues(typeof(FytSoa.Service.DtoModel.Wx.SettleType)))
+                {
+                    <option value="@Convert.ToInt32(e)">@e.ToString()</option>
+                }
             </select>
         </div>
         <label class="layui-form-label">结算账号</label>
         <div class="layui-input-block">
-            <input type="text" name="Name" value="@Model.Agent.name" maxlength="20" lay-verify="required" lay-verType="tips" autocomplete="off" class="layui-input">
+            <input type="text" name="Account_no" value="@Model.Agent.Account_No" maxlength="20" lay-verify="required" lay-verType="tips" autocomplete="off" class="layui-input">
         </div>
     </div>
     <div class="layui-form-item">
         <label class="layui-form-label">收款人</label>
         <div class="layui-input-block">
-            <input type="text" name="Name" value="@Model.Agent.name" maxlength="20" lay-verify="required" lay-verType="tips" autocomplete="off" class="layui-input">
+            <input type="text" name="Account_name" value="@Model.Agent.Account_Name" maxlength="20" lay-verify="required" lay-verType="tips" autocomplete="off" class="layui-input">
         </div>
         <label class="layui-form-label">账号信息</label>
         <div class="layui-input-block">
-            <input type="text" name="Name" value="@Model.Agent.name" maxlength="20" lay-verify="required" lay-verType="tips" autocomplete="off" class="layui-input">
+            <input type="text" name="Account_info" value="@Model.Agent.Account_Info" maxlength="20" lay-verify="required" lay-verType="tips" autocomplete="off" class="layui-input">
         </div>
     </div>
     <div class="layui-form-item" style="padding: 5px 0 0 110px;">
@@ -110,7 +106,7 @@
                     <td>微信</td>
                     <td>
                         <div class="layui-input-block feilv">
-                            <input type="text" name="Name" value="@Model.Agent.name" maxlength="20" lay-verify="required" lay-verType="tips" autocomplete="off" class="layui-input">
+                            <input type="text" name="Wxpay" value="@Model.Agent.Wxpay" maxlength="20" lay-verify="required" lay-verType="tips" autocomplete="off" class="layui-input">
                         </div>
                     </td>
                 </tr>
@@ -118,7 +114,7 @@
                     <td>支付宝</td>
                     <td>
                         <div class="layui-input-block feilv">
-                            <input type="text" name="Name" value="@Model.Agent.name" maxlength="20" lay-verify="required" lay-verType="tips" autocomplete="off" class="layui-input">
+                            <input type="text" name="Alipay" value="@Model.Agent.Alipay" maxlength="20" lay-verify="required" lay-verType="tips" autocomplete="off" class="layui-input">
                         </div>
                     </td>
                 </tr>
@@ -126,7 +122,7 @@
                     <td>其他</td>
                     <td>
                         <div class="layui-input-block feilv">
-                            <input type="text" name="Name" value="@Model.Agent.name" maxlength="20" lay-verify="required" lay-verType="tips" autocomplete="off" class="layui-input">
+                            <input type="text" name="Otherpay" value="@Model.Agent.Otherpay" maxlength="20" lay-verify="required" lay-verType="tips" autocomplete="off" class="layui-input">
                         </div>
                     </td>
                 </tr>
@@ -137,7 +133,7 @@
             <button type="button" class="layui-btn layui-btn-primary btn-open-close">取消</button>
         </div>
     </div>
-    <input type="hidden" name="Id" id="Id" value="@Model.Agent.id" />
+    <input type="hidden" name="Id" id="Id" value="@Model.Agent.Id" />
 </form>
 <link rel="stylesheet" href="~/themes/ztree/css/metroStyle/metroStyle.css" type="text/css">
 @section Scripts{
@@ -150,9 +146,9 @@
             //监听提交
             form.on('submit(submit)', function (data) {
                 $('#submit').attr('disabled', true).find('i').removeClass('layui-hide');
-                var urls = "api/level/add";
+                var urls = "api/agent/add";
                 if ($("#Id").val() !== '0') {
-                    urls = "api/level/edit";
+                    urls = "api/agent/edit";
                 }
                 data.field.status = data.field.status === 'on' ? 1 : 0;
                 os.ajax(urls, data.field, function (res) {
@@ -168,6 +164,11 @@
             });
             $(".btn-open-close").on('click', function () {
                 parent.layer.close(index);
+            });
+            //表单赋值
+            form.val('example', {
+                "Level_Id": '@Model.Agent.Level_Id',
+                "Settle_Type": '@Model.Agent.Settle_Type'
             });
         });
     </script>

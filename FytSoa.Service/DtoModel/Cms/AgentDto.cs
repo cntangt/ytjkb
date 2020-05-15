@@ -1,10 +1,10 @@
 ﻿using System;
 using FytSoa.Service.DtoModel.Wx;
 
-namespace FytSoa.Core.Model.Cms
+namespace FytSoa.Service.DtoModel
 {
-    [MySugarTable("Cms_Agent")]
-    public class CmsAgent
+    [Serializable]
+    public class AgentDto
     {
         public int Id { get; set; }
         public string Admin_Guid { get; set; }
@@ -22,6 +22,7 @@ namespace FytSoa.Core.Model.Cms
         public DateTime? Create_Time { get; set; }
         public DateTime? Update_Time { get; set; }
         public bool Status { get; set; }
-        public bool Delete { get; set; }    
+        public bool Delete { get; set; }
+        public string Level_Name { get; set; }
     }
 }

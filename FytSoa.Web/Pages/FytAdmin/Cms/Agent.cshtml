@@ -1,5 +1,5 @@
 ﻿@page
-@model LevelModel
+@model AgentModel
 @{
     ViewData["Title"] = "代理商等级";
 }
@@ -30,19 +30,24 @@
                     cols: [
                         [
                             { type: 'checkbox', fixed: 'left' },
-                            { field: 'admin_guid', title: '账号', fixed: 'left' },
+                            { field: 'admin_Guid', title: '账号', fixed: 'left' },
                             { field: 'name', title: '姓名', fixed: 'left' },
-                            { field: 'level_id', title: '等级', fixed: 'left' },
-                            { field: 'tel', title: '电话', fixed: 'left' },
+                            { field: 'level_Name', title: '等级', fixed: 'left' },
+                            { field: 'tel', title: '电话', fixed: 'left',width:115 },
                             {
-                                field: 'feilv', title: '支付渠道成本（万分之）', templet: function (d) {
-                                    return "微信:" + d.wxpay + "支付宝:" + d.alipay + "其他:" + d.otherpay + "";
+                                field: 'wxpay', title: '支付渠道成本（万分之）', fixed: 'left', width: 210,templet: function (d) {
+                                    return "微信:" + d.wxpay + ",支付宝:" + d.alipay + ",其他:" + d.otherpay + "";
                                 }
                             },
-                            { field: 'settle_type', title: '结算方式', fixed: 'left' },
-                            { field: 'account_no', title: '结算账号', fixed: 'left' },
-                            { field: 'business_area', title: '区域', fixed: 'left' },
-                            { field: 'create_time', title: '加入时间', fixed: 'left' },
+                            {
+                                field: 'settle_Type', title: '结算方式', fixed: 'left', templet: function (d) {
+                                    console.log(d.Settle_Type);
+                                    return d.Settle_Type;
+                                }
+                            },
+                            { field: 'account_No', title: '结算账号', fixed: 'left',width:120 },
+                            { field: 'business_Area', title: '区域', fixed: 'left' },
+                            { field: 'create_Time', title: '加入时间', fixed: 'left' },
                             { width: 100, title: '操作', templet: '#tool' }
                         ]
                     ],
@@ -101,7 +106,7 @@
                 table.on('tool(tool)', function (obj) {
                     var data = obj.data;
                     if (obj.event === 'edit') {
-                        os.Open('修改代理商信息', '/fytadmin/cms/agentmodify/?id=' + data.id, '660px', '460px', function () {
+                        os.Open('修改代理商信息', '/fytadmin/cms/agentmodify/?id=' + data.id, '680px', '470px', function () {
                             active.reload();
                         });
                     }
