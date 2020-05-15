@@ -4,6 +4,7 @@ using System.Threading.Tasks;
 using FytSoa.Common;
 using FytSoa.Core.Model.Cms;
 using FytSoa.Service.DtoModel;
+using FytSoa.Service.DtoModel.Wx;
 using FytSoa.Service.Interfaces;
 using Microsoft.Extensions.Configuration;
 using SqlSugar;

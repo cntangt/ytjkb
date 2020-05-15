@@ -51,7 +51,7 @@
     <div class="layui-form-item">
         <label class="layui-form-label">等级</label>
         <div class="layui-input-block">
-            <select name="Level_Id" lay-filter="aihao">
+            <select name="Level_Id" lay-filter="level">
                 @foreach (var item in Model.Levels)
                 {
                     <option value="@item.Id">@item.Name</option>
@@ -72,7 +72,7 @@
     <div class="layui-form-item">
         <label class="layui-form-label">结算方式</label>
         <div class="layui-input-block">
-            <select name="Settle_Type" lay-filter="aihao">
+            <select name="Settle_Type">
                 @foreach (var e in Enum.GetValues(typeof(FytSoa.Service.DtoModel.Wx.SettleType)))
                 {
                     <option value="@Convert.ToInt32(e)">@e.ToString()</option>
@@ -134,6 +134,7 @@
         </div>
     </div>
     <input type="hidden" name="Id" id="Id" value="@Model.Agent.Id" />
+    <input type="hidden" name="Create_Time" value="@Model.Agent.Create_Time" />
 </form>
 <link rel="stylesheet" href="~/themes/ztree/css/metroStyle/metroStyle.css" type="text/css">
 @section Scripts{
@@ -143,6 +144,7 @@
         }).use(['layer', 'jquery', 'common', 'form'], function () {
             var form = layui.form, $ = layui.jquery, os = layui.common;
             var index = parent.layer.getFrameIndex(window.name);
+            var _level = '';
             //监听提交
             form.on('submit(submit)', function (data) {
                 $('#submit').attr('disabled', true).find('i').removeClass('layui-hide');
@@ -165,11 +167,30 @@
             $(".btn-open-close").on('click', function () {
                 parent.layer.close(index);
             });
-            //表单赋值
-            form.val('example', {
-                "Level_Id": '@Model.Agent.Level_Id',
-                "Settle_Type": '@Model.Agent.Settle_Type'
+            //选中事件
+            form.on('select(level)', function (data) {
+                if (data.value === _level) return;
+                _level = data.value;
+                load_level(_level);
             });
+            //新增时根据默认选中的等级加载对应的费率
+            if ($("#Id").val() === '0') {
+                _level = $("select[name = Level_Id]").val();
+                load_level(_level);
+            } else {
+                _level = '@Model.Agent.Level_Id';
+                $("select[name=Level_Id]").val('@Model.Agent.Level_Id');
+                $("select[name=Settle_Type]").val('@Convert.ToInt32(Model.Agent.Settle_Type)');
+                form.render('select');
+            }
+            //根据等级加载费率
+            function load_level(id) {
+                os.ajax('api/agent/level', { parm: id }, function (res) {
+                    $("input[name=Wxpay]").val(res.wxpay);
+                    $("input[name=Alipay]").val(res.alipay);
+                    $("input[name=Otherpay]").val(res.otherpay);
+                });
+            }
         });
     </script>
 }

@@ -15,9 +15,11 @@ namespace FytSoa.Api.Controllers.Cms
     public class AgentController : ControllerBase
     {
         private readonly ICmsAgentService agentService;
-        public AgentController(ICmsAgentService agentService)
+        private readonly ICmsLevelService levelService;
+        public AgentController(ICmsAgentService agentService, ICmsLevelService levelService)
         {
             this.agentService = agentService;
+            this.levelService = levelService;
         }
 
         [HttpGet("getpages")]
@@ -48,6 +50,13 @@ namespace FytSoa.Api.Controllers.Cms
         {
             parm.Update_Time = DateTime.Now;
             return Ok(await agentService.UpdateAsync(parm));
+        }
+
+        [HttpPost("level")]
+        public async Task<IActionResult> Level([FromBody]ParmString obj)
+        {
+            var id = Convert.ToInt32(obj.parm);
+            return Ok((await levelService.GetModelAsync(t => t.Id == id)).data);
         }
     }
 }

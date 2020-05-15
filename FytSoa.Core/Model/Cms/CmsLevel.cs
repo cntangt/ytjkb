@@ -6,8 +6,8 @@
         public int Id {get;set;}
         public string Name { get; set; }
         public decimal Alipay { get; set; }
-        public decimal WxPay { get; set; }
-        public decimal OtherPay { get; set; }
+        public decimal Wxpay { get; set; }
+        public decimal Otherpay { get; set; }
         public bool Status { get; set; }
     }
 }
