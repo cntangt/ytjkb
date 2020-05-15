@@ -83,8 +83,6 @@
                     organizeAdd: function () {
                         os.Open('添加菜单', '/fytadmin/sys/menumodify', '720px', '520px', function () {
                             active.reload();
-                            var tree = $.fn.zTree.getZTreeObj("tree");
-                            tree.reAsyncChildNodes(null, "refresh");
                         });
                     },
                     organizeDel: function () {
@@ -107,8 +105,6 @@
                                 layer.close(loadindex);
                                 if (res.statusCode === 200) {
                                     active.reload();
-                                    var tree = $.fn.zTree.getZTreeObj("tree");
-                                    tree.reAsyncChildNodes(null, "refresh");
                                     os.success('删除成功！');
                                 } else {
                                     os.error(res.message);
@@ -129,8 +125,6 @@
                     var data = obj.data;
                     if (obj.event === 'edit') {
                         os.Open('编辑菜单', '/fytadmin/sys/menumodify/?guid=' + data.guid, '720px', '520px', function () {
-                            var tree = $.fn.zTree.getZTreeObj("tree");
-                            tree.reAsyncChildNodes(null, "refresh");
                             active.reload();
                         })
                     }

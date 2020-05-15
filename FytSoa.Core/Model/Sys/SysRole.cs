@@ -108,5 +108,7 @@ namespace FytSoa.Core.Model.Sys
         /// </summary>
         public string CreateBy { get; set; }
 
+        public bool IsPublic { get; set; }
+
     }
 }

@@ -1,0 +1,122 @@
+﻿@page
+@model MerchantModel
+@{
+    ViewData["Title"] = "子商户管理";
+}
+<div id="container">
+    <div class="list-wall">
+        <div class="layui-form list-search" style="margin-top:10px;">
+            <button type="button" class="layui-btn layui-btn-sm" data-type="toolAdd"><i class="layui-icon"></i> 新增</button>
+            <button type="button" class="layui-btn layui-btn-sm" data-type="toolDel"><i class="layui-icon"></i> 删除</button>
+        </div>
+        <table class="layui-hide" id="tablist" lay-filter="tool"></table>
+    </div>
+    <script type="text/html" id="switchTpl">
+        <input type="checkbox" name="status" value="{{d.guid}}" lay-skin="switch" lay-text="开|关" lay-filter="statusedit" {{ d.iosAudit==1?'checked':''}}>
+    </script>
+    <script>
+        layui.config({
+            base: '/themes/js/modules/'
+        }).use(['table', 'layer', 'jquery', 'common'],
+            function () {
+                var table = layui.table,
+                    layer = layui.layer,
+                    $ = layui.jquery,
+                    os = layui.common;
+                table.render({
+                    elem: '#tablist',
+                    headers: os.getToken(),
+                    url: '/api/merchant/getpages',
+                    cols: [
+                        [
+                            { type: 'checkbox' },
+                            { field: 'admin_name', title: '登录账号' },
+                            { field: 'name', title: '商户名称' },
+                            { field: 'contact', title: '联系人' },
+                            { field: 'tel', title: '联系电话' },
+                            { field: 'email', title: '电子邮箱' },
+                            { field: 'appid', title: '公众号AppId' },
+                            { field: 'agent_admin_name', title: '代理商' },
+                            { field: 'sub_out_mch_id', title: '商户子账号' },
+                            { field: 'order_perfix', title: '订单前缀' },
+                            //{ field: 'authen_key', title: '认证密钥' },
+                            { title: '微信', templet: '<div>{{ toper(d.wxpay) }}</div>', align: 'center', width: 70 },
+                            { title: '支付宝', templet: '<div>{{ toper(d.alipay) }}</div>', align: 'center', width: 70 },
+                            { title: '微(代)', templet: '<div>{{ toper(d.agent_wxpay) }}</div>', align: 'center', width: 70 },
+                            { title: '支(代)', templet: '<div>{{ toper(d.agent_alipay) }}</div>', align: 'center', width: 70 },
+                            {
+                                field: 'create_time', title: '创建时间', templet: function (d) {
+                                    return layui.util.toDateString(d.create_time, 'yyyy-MM-dd HH:mm:ss');
+                                }
+                            },
+                            { width: 240, title: '操作', templet: '#tool', align: 'center' }
+                        ]
+                    ],
+                    page: true,
+                    id: 'tables'
+                });
+
+                var guid = '', active = {
+                    reload: function () {
+                        table.reload('tables',
+                            {
+                                page: {
+                                    curr: 1
+                                }
+                            });
+                    },
+                    toolAdd: function () {
+                        os.Open('添加等级信息', '/fytadmin/cms/merchantmodify', '600px', '410px', function () {
+                            active.reload();
+                        });
+                    },
+                    toolDel: function () {
+                        var checkStatus = table.checkStatus('tables')
+                            , data = checkStatus.data;
+                        if (data.length === 0) {
+                            os.error("请选择要删除的项目~");
+                            return;
+                        }
+                        var str = '';
+                        $.each(data, function (i, item) {
+                            str += item.id + ",";
+                        });
+                        layer.confirm('确定要执行批量删除吗？', function (index) {
+                            layer.close(index);
+                            var loadindex = layer.load(1, {
+                                shade: [0.1, '#000']
+                            });
+                            os.ajax('api/merchant/delete/', { parm: str }, function (res) {
+                                layer.close(loadindex);
+                                if (res.statusCode === 200) {
+                                    active.reload();
+                                    os.success('删除成功！');
+                                } else {
+                                    os.error(res.message);
+                                }
+                            });
+                        });
+
+                    }
+                };
+                $('.list-search .layui-btn').on('click', function () {
+                    var type = $(this).data('type');
+                    active[type] ? active[type].call(this) : '';
+                });
+                //监听工具条
+                table.on('tool(tool)', function (obj) {
+                    var data = obj.data;
+                    if (obj.event === 'edit') {
+                        os.Open('修改模型信息', '/fytadmin/cms/merchantmodify/?id=' + data.id, '600px', '410px', function () {
+                            active.reload();
+                        });
+                    }
+                });
+            });
+    </script>
+    <script type="text/html" id="tool">
+        <a class="layui-btn layui-btn-primary layui-btn-xs" lay-event="edit"><i class="layui-icon">&#xe702;</i> 详情</a>
+        <a class="layui-btn layui-btn-primary layui-btn-xs" lay-event="edit"><i class="layui-icon"></i> 修改</a>
+        <a class="layui-btn layui-btn-primary layui-btn-xs" lay-event="edit"><i class="layui-icon">&#xe669;</i> 同步</a>
+    </script>
+</div>

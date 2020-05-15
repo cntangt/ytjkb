@@ -100,7 +100,7 @@ namespace FytSoa.Service.Implements
 		/// </summary>
 		/// <param name="parm">PageParm</param>
 		/// <returns></returns>
-        public async Task<ApiResult<Page<T>>> GetPagesAsync(PageParm parm, bool Async = true)
+        public virtual async Task<ApiResult<Page<T>>> GetPagesAsync(PageParm parm, bool Async = true)
         {
             var res = new ApiResult<Page<T>>();
             try
