@@ -13,14 +13,14 @@ namespace FytSoa.Service.DtoModel
         public string Tel { get; set; }
         public string Business_Area { get; set; }
         public SettleType Settle_Type { get; set; }
-        public string Account_name { get; set; }
-        public string Account_no { get; set; }
-        public string Account_info { get; set; }
+        public string Account_Name { get; set; }
+        public string Account_No { get; set; }
+        public string Account_Info { get; set; }
         public decimal Wxpay { get; set; }
         public decimal Alipay { get; set; }
         public decimal Otherpay { get; set; }
-        public DateTime? Create_time { get; set; }
-        public DateTime? Update_time { get; set; }
+        public DateTime? Create_Time { get; set; }
+        public DateTime? Update_Time { get; set; }
         public bool Status { get; set; }
         public bool Delete { get; set; }
         public string Level_Name { get; set; }

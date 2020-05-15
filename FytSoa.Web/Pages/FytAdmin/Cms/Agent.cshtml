@@ -30,14 +30,9 @@
                     cols: [
                         [
                             { type: 'checkbox', fixed: 'left' },
-                            { field: 'admin_guid', title: '账号', fixed: 'left' },
+                            { field: 'admin_Guid', title: '账号', fixed: 'left' },
                             { field: 'name', title: '姓名', fixed: 'left' },
-                            {
-                                field: 'level_name', title: '等级', fixed: 'left', templet: function (d) {
-                                    console.log(d.Level_Name);
-                                    return d.Level_Name;
-                                }
-                            },
+                            { field: 'level_Name', title: '等级', fixed: 'left' },
                             { field: 'tel', title: '电话', fixed: 'left',width:115 },
                             {
                                 field: 'wxpay', title: '支付渠道成本（万分之）', fixed: 'left', width: 210,templet: function (d) {
@@ -45,14 +40,14 @@
                                 }
                             },
                             {
-                                field: 'settle_type', title: '结算方式', fixed: 'left', templet: function (d) {
+                                field: 'settle_Type', title: '结算方式', fixed: 'left', templet: function (d) {
                                     console.log(d.Settle_Type);
                                     return d.Settle_Type;
                                 }
                             },
-                            { field: 'account_no', title: '结算账号', fixed: 'left',width:120 },
-                            { field: 'business_area', title: '区域', fixed: 'left' },
-                            { field: 'create_time', title: '加入时间', fixed: 'left' },
+                            { field: 'account_No', title: '结算账号', fixed: 'left',width:120 },
+                            { field: 'business_Area', title: '区域', fixed: 'left' },
+                            { field: 'create_Time', title: '加入时间', fixed: 'left' },
                             { width: 100, title: '操作', templet: '#tool' }
                         ]
                     ],

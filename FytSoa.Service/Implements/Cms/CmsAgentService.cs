@@ -63,16 +63,16 @@ namespace FytSoa.Service.Implements
                             Admin_Guid = a.Admin_Guid,
                             Business_Area = a.Business_Area,
                             Settle_Type = a.Settle_Type,
-                            Account_no = a.Account_no,
-                            Account_name = a.Account_name,
-                            Account_info = a.Account_info,
+                            Account_No = a.Account_No,
+                            Account_Name = a.Account_Name,
+                            Account_Info = a.Account_Info,
                             Wxpay = a.Wxpay,
                             Alipay = a.Alipay,
                             Otherpay = a.Otherpay,
                             Delete = a.Delete,
                             Status = a.Status,
-                            Create_time = a.Create_time,
-                            Update_time = a.Update_time
+                            Create_Time = a.Create_Time,
+                            Update_Time = a.Update_Time
                         });
                 res.data = Async ? await query.ToListAsync() : query.ToList();
             }
