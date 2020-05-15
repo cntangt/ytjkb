@@ -24,6 +24,7 @@ namespace FytSoa.Core.Model.Cms
         public decimal agent_wxpay { get; set; }
         public decimal agent_otherpay { get; set; }
         public DateTime create_time { get; set; }
+        public bool status { get; set; }
 
         [SqlSugar.SugarColumn(IsIgnore = true)]
         public string admin_name { get; set; }

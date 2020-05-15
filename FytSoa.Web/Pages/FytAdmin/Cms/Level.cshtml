@@ -31,11 +31,11 @@
                         [
                             { type: 'checkbox', fixed: 'left' },
                             { field: 'name', title: '等级名称', fixed: 'left' },
-                            { field: 'wxpay', title: '微信渠道成本' },
-                            { field: 'alipay', title: '支付宝渠道成本' },
-                            { field: 'otherpay', title: '其它渠道成本' },
+                            { title: '微信渠道成本', templet: '<s>{{ toper(d.wxpay) }}</s>' },
+                            { title: '支付宝渠道成本', templet: '<s>{{ toper(d.alipay) }}</s>' },
+                            { title: '其它渠道成本', templet: '<s>{{ toper(d.otherpay) }}</s>' },
                             {
-                                field: 'status', title: '状态', templet: function (d) {
+                                title: '状态', templet: function (d) {
                                     if (d.status) {
                                         return '<span class="layui-badge-dot layui-bg-blue"></span>';
                                     } else {
