@@ -1,22 +1,27 @@
-﻿namespace FytSoa.Core.Model.Cms
+﻿using System;
+using FytSoa.Service.DtoModel.Wx;
+
+namespace FytSoa.Core.Model.Cms
 {
     [MySugarTable("Cms_Agent")]
     public class CmsAgent
     {
-        public int id { get; set; }
-        public string admin_guid { get; set; }
-        public string name { get; set; }
-        public int level_id { get; set; }
-        public string tel { get; set; }
-        public string business_area { get; set; }
-        public int settle_type { get; set; }
-        public string account_name { get; set; }
-        public string account_no { get; set; }
-        public string account_info { get; set; }
-        public decimal wxpay { get; set; }
-        public decimal alipay { get; set; }
-        public decimal otherpay { get; set; }
-        public string create_time { get; set; }
-        public string update_time { get; set; }
+        public int Id { get; set; }
+        public string Admin_Guid { get; set; }
+        public string Name { get; set; }
+        public int Level_Id { get; set; }
+        public string Tel { get; set; }
+        public string Business_Area { get; set; }
+        public SettleType Settle_Type { get; set; }
+        public string Account_name { get; set; }
+        public string Account_no { get; set; }
+        public string Account_info { get; set; }
+        public decimal Wxpay { get; set; }
+        public decimal Alipay { get; set; }
+        public decimal Otherpay { get; set; }
+        public DateTime? Create_time { get; set; }
+        public DateTime? Update_time { get; set; }
+        public bool Status { get; set; }
+        public bool Delete { get; set; }    
     }
 }
