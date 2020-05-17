@@ -54,7 +54,7 @@ namespace FytSoa.Service.Implements
                             Update_Time = a.Update_Time,
                             LoginName = c.LoginName
                         })
-                        .WhereIF(!string.IsNullOrEmpty(parm.key), a => a.Name.Contains(parm.key))
+                        .WhereIF(!string.IsNullOrEmpty(parm.key), a => a.Name.Contains(parm.key) || a.Tel.StartsWith(parm.key))
                         .OrderBy(a => a.Id, OrderByType.Desc);
 
             res.data = await query.ToPageAsync(parm.page, parm.limit);
