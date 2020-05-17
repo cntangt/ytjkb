@@ -1,6 +1,7 @@
 ﻿using FytSoa.Common;
 using FytSoa.Core.Model.Sys;
 using FytSoa.Service.DtoModel;
+using FytSoa.Service.DtoModel.Sys;
 using FytSoa.Service.Extensions;
 using FytSoa.Service.Interfaces;
 using Microsoft.Extensions.Configuration;
@@ -336,5 +337,57 @@ namespace FytSoa.Service.Implements
             return res;
         }
 
+        /// <summary>
+        /// 修改密码
+        /// </summary>
+        public async Task<ApiResult<string>> UpdatePwdAsync(UpdatePwdDto parm)
+        {
+            var res = new ApiResult<string>
+            {
+                statusCode = (int)ApiEnum.Error
+            };
+            try
+            {
+                if (string.IsNullOrEmpty(parm.userId))
+                {
+                    res.message = "当前登录用户已过期";
+                    res.statusCode = (int)ApiEnum.LoginExpireError;
+                    return await Task.Run(() => res);
+                }
+                if (parm.new_pwd != parm.con_pwd)
+                {
+                    res.message = "两次密码输入不一致";
+                    res.statusCode = (int)ApiEnum.ParameterError;
+                    return await Task.Run(() => res);
+                }
+
+                var model = await Db.Queryable<SysAdmin>().Where(t => t.Guid == parm.userId).FirstAsync();
+                if (model.LoginPwd != DES3Encrypt.EncryptString(parm.old_pwd))
+                {
+                    res.message = "原密码错误";
+                    res.statusCode = (int)ApiEnum.ParameterError;
+                    return await Task.Run(() => res);
+                }
+
+                model.LoginPwd = DES3Encrypt.EncryptString(parm.new_pwd);
+                var dbres = await Db.Updateable(model).UpdateColumns(t => new { t.LoginPwd }).ExecuteCommandAsync();
+
+                if (dbres > 0)
+                {
+                    res.statusCode = (int)ApiEnum.Status;
+                    res.message = "更新成功！";
+                }
+                else
+                {
+                    res.message = "更新失败！";
+                }
+            }
+            catch (Exception ex)
+            {
+                res.message = ApiEnum.Error.GetEnumText() + ex.Message;
+                Logger.Default.ProcessError((int)ApiEnum.Error, ex.Message);
+            }
+            return res;
+        }
     }
 }

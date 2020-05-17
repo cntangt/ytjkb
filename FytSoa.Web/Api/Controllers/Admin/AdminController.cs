@@ -8,6 +8,7 @@ using FytSoa.Core.Model.Cms;
 using FytSoa.Core.Model.Sys;
 using FytSoa.Extensions;
 using FytSoa.Service.DtoModel;
+using FytSoa.Service.DtoModel.Sys;
 using FytSoa.Service.Interfaces;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
@@ -297,6 +298,13 @@ namespace FytSoa.Api.Controllers
         {
             await HttpContext.SignOutAsync(CookieAuthenticationDefaults.AuthenticationScheme);
             return Ok(new ApiResult<string>() { data = "/fytadmin/login/" });
+        }
+
+        [HttpPost("updatepwd"), Log("Admin:Update", LogType = LogEnum.UPDATE)]
+        public async Task<IActionResult> UpdatePwd([FromBody]UpdatePwdDto parm)
+        {
+            parm.userId = await HttpContext.LoginUserId();
+            return Ok(await _adminService.UpdatePwdAsync(parm));
         }
     }
 }

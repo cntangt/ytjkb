@@ -23,14 +23,14 @@
             </ul>
             <ul class="layui-nav layui-layout-right">
                 <li class="layui-nav-item">
-                    <a data-pjax href="/fytadmin"><i class="layui-icon"></i>主页</a>
+                    <a data-pjax href="/fytadmin" style="padding-right:0px;"><i class="layui-icon"></i>主页</a>
                 </li>
                 <li class="layui-nav-item">
-                    <a href="javascript:;">
+                    <a href="javascript:void(0);">
                         <span class="username">@User.Identities.First(u => u.IsAuthenticated).FindFirst(ClaimTypes.WindowsAccountName).Value <i class="layui-icon"></i></span>
                     </a>
                     <dl class="layui-nav-child">
-                        <dd><a data-pjax href="/fytadmin/sys/admin/">个人中心</a></dd>
+                        <dd><a data-pjax href="javascript:void(0);" @@click="updatepwd()">修改密码</a></dd>
                         <hr />
                         <dd><a href="javascript:void(0)" @@click="logout()">退出登录</a></dd>
                     </dl>

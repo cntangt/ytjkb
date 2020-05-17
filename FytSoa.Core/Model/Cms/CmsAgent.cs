@@ -28,7 +28,7 @@ namespace FytSoa.Core.Model.Cms
         public string LoginName { get; set; }
 
         [SqlSugar.SugarColumn(IsIgnore = true)]
-        public string Curr_LoginName { get; set; }
+        public string Curr_Admin_Guid { get; set; }
 
         [SqlSugar.SugarColumn(IsIgnore = true)]
         public string Level_Name { get; set; }

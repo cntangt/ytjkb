@@ -152,7 +152,7 @@
                 if ($("#Id").val() !== '0') {
                     urls = "api/agent/edit";
                 }
-                data.field.status = data.field.status === 'on' ? 1 : 0;
+                //data.field.status = data.field.status === 'on' ? 1 : 0;
                 os.ajax(urls, data.field, function (res) {
                     $('#submit').attr('disabled', false).find('i').addClass('layui-hide');
                     if (res.statusCode == 200) {

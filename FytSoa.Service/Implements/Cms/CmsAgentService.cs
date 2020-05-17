@@ -88,7 +88,7 @@ namespace FytSoa.Service.Implements
                 count = (await sysAdmin.CountAsync(t => t.LoginName == parm.LoginName)).data.Count;
                 if (count > 0)
                 {
-                    throw new Exception($"该录账号【{parm.Name}】已经存在");
+                    throw new Exception($"该登录账号【{parm.Name}】已经存在");
                 }
 
                 var admin_guid = Guid.NewGuid().ToString();
@@ -98,7 +98,7 @@ namespace FytSoa.Service.Implements
                 var adminRes = await sysAdmin.AddAsync(new SysAdmin
                 {
                     AddDate = DateTime.Now,
-                    CreateBy = parm.Curr_LoginName,
+                    CreateBy = parm.Curr_Admin_Guid,
                     DepartmentGuid = null,
                     DepartmentGuidList = null,
                     DepartmentName = null,
@@ -108,7 +108,7 @@ namespace FytSoa.Service.Implements
                     IsSystem = false,
                     LoginDate = null,
                     LoginName = parm.LoginName,
-                    LoginPwd = "123456",
+                    LoginPwd = DES3Encrypt.EncryptString("123456"),
                     LoginSum = 0,
                     Mobile = parm.Tel,
                     Number = null,
@@ -153,6 +153,43 @@ namespace FytSoa.Service.Implements
                 res.message = ApiEnum.Error.GetEnumText() + ex.Message;
                 Logger.Default.ProcessError((int)ApiEnum.Error, ex.Message);
             }
+
+            return res;
+        }
+
+        public override async Task<ApiResult<string>> UpdateAsync(CmsAgent parm, bool Async = true)
+        {
+            var res = new ApiResult<string>() { statusCode = (int)ApiEnum.Error };
+
+            try
+            {
+                var query = Db.Queryable<CmsAgent>();
+
+                if (await query.AnyAsync(p => p.Name == parm.Name && p.Id != parm.Id))
+                {
+                    throw new Exception($"代理商名称【{parm.Name}】已经存在");
+                }
+
+                parm.Update_Time = DateTime.Now;
+                var count = await Db.Updateable(parm).IgnoreColumns(p => new
+                {
+                    p.Admin_Guid,
+                    p.Create_Time
+                }).ExecuteCommandAsync();
+
+                if (count <= 0)
+                {
+                    throw new Exception("更新代理商信息失败");
+                }
+            }
+            catch (Exception ex)
+            {
+                res.message = ApiEnum.Error.GetEnumText() + ex.Message;
+                Logger.Default.ProcessError((int)ApiEnum.Error, ex.Message);
+            }
+
+            res.statusCode = (int)ApiEnum.Status;
+            res.message = "更新代理商信息成功";
 
             return res;
         }

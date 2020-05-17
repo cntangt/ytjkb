@@ -5,7 +5,7 @@
         messList: [],
         messCount: 0,
         isDown: false,
-        siteList:[]
+        siteList: []
     },
     created: function () {
         var that = this;
@@ -32,6 +32,18 @@
                 } else {
                     os.error(res.message);
                 }
+            });
+        },
+        updatepwd: function () {
+            os.Open('修改密码', '/fytadmin/updatepwd', '400px', '300px', function () {
+                os.load();
+                os.ajax('api/admin/logout', null, function (res) {
+                    if (res.statusCode === 200) {
+                        window.location.href = res.data;
+                    } else {
+                        os.error(res.message);
+                    }
+                });
             });
         },
         qhSite: function (m) {
@@ -99,7 +111,7 @@ layui.config({
             $(".load8").fadeOut(200);
             os.error(res.message);
         }
-    },'get');
+    }, 'get');
     $('.layui-layout-admin').pjax('a[data-pjax]', '#main-container',
         {
             fragment: "#container",

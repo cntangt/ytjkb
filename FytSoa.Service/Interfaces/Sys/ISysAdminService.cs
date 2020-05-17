@@ -1,6 +1,7 @@
 ﻿using FytSoa.Common;
 using FytSoa.Core.Model.Sys;
 using FytSoa.Service.DtoModel;
+using FytSoa.Service.DtoModel.Sys;
 using System.Threading.Tasks;
 
 namespace FytSoa.Service.Interfaces
@@ -40,5 +41,11 @@ namespace FytSoa.Service.Interfaces
         /// </summary>
         /// <returns></returns>
         Task<ApiResult<string>> ModifyAsync(SysAdmin parm);
+
+        /// <summary>
+        /// 修改密码
+        /// </summary>
+        /// <returns></returns>
+        Task<ApiResult<string>> UpdatePwdAsync(UpdatePwdDto parm);
     }
 }

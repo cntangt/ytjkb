@@ -34,7 +34,7 @@ namespace FytSoa.Api.Controllers.Cms
         [HttpPost("add"), ApiAuthorize(Modules = "Agent", Methods = "Add", LogType = LogEnum.ADD)]
         public async Task<IActionResult> Add([FromBody]CmsAgent parm)
         {
-            parm.Curr_LoginName = await HttpContext.LoginUserId();
+            parm.Curr_Admin_Guid = await HttpContext.LoginUserId();
             return Ok(await agentService.AddAsync(parm));
         }
 
@@ -48,7 +48,6 @@ namespace FytSoa.Api.Controllers.Cms
         [HttpPost("edit"), ApiAuthorize(Modules = "Agent", Methods = "Update", LogType = LogEnum.ADD)]
         public async Task<IActionResult> Edit([FromBody]CmsAgent parm)
         {
-            parm.Update_Time = DateTime.Now;
             return Ok(await agentService.UpdateAsync(parm));
         }
 
