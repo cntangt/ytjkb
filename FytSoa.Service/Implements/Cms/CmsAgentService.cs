@@ -1,11 +1,14 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel.Design;
 using System.Threading.Tasks;
+using System.Transactions;
 using FytSoa.Common;
 using FytSoa.Core.Model.Cms;
 using FytSoa.Core.Model.Sys;
 using FytSoa.Service.DtoModel;
 using FytSoa.Service.DtoModel.Wx;
+using FytSoa.Service.Extensions;
 using FytSoa.Service.Interfaces;
 using Microsoft.Extensions.Configuration;
 using SqlSugar;
@@ -14,62 +17,22 @@ namespace FytSoa.Service.Implements
 {
     public class CmsAgentService : BaseService<CmsAgent>, ICmsAgentService
     {
-        public CmsAgentService(IConfiguration config) : base(config)
+        readonly ISysAdminService sysAdmin;
+        readonly ISysPermissionsService sysPermissions;
+
+        public CmsAgentService(ISysAdminService sysAdmin, ISysPermissionsService sysPermissions, IConfiguration config) : base(config)
         {
+            this.sysAdmin = sysAdmin;
+            this.sysPermissions = sysPermissions;
         }
 
-        public async Task<ApiResult<string>> AddAgentAsync(CmsAgent parm, bool Async = true)
+        public override async Task<ApiResult<Page<CmsAgent>>> GetPagesAsync(PageParm parm, bool Async = true)
         {
-            var res = new ApiResult<string>() { statusCode = (int)ApiEnum.Error };
-            try
-            {
-                var _db = Db;
-                var dbres = 0;
-                _db.BeginTran();
-                try
-                {
-                    //添加代理商
-                    dbres = Async ? await _db.Insertable<CmsAgent>(parm).ExecuteCommandAsync() : _db.Insertable<CmsAgent>(parm).ExecuteCommand();
-                    //生成登陆账号
-                    var sysAdmin = new SysAdmin
-                    {
-                        AddDate = DateTime.Now,
-                        RoleGuid = "72171cf0-934d-4934-8e27-ee4f47e9985e",
-                        LoginName = "",
-                        Mobile = parm.Tel,
-                        LoginPwd = "123456",
-                        Status = true,
-                        IsSystem = false,
-                        Guid = ""
-                    };
-                    dbres = Async ? await _db.Insertable<SysAdmin>(sysAdmin).ExecuteCommandAsync() : _db.Insertable<SysAdmin>(sysAdmin).ExecuteCommand();
-                    //提交事务
-                    _db.CommitTran();
+            var res = new ApiResult<Page<CmsAgent>>();
 
-                    res.data = dbres.ToString();
-                    res.statusCode = (int)ApiEnum.Status;
-                }
-                catch (Exception ex)
-                {
-                    _db.RollbackTran();
-                    throw ex;
-                }
-            }
-            catch (Exception ex)
-            {
-                res.message = ApiEnum.Error.GetEnumText() + ex.Message;
-                Logger.Default.ProcessError((int)ApiEnum.Error, ex.Message);
-            }
-            return res;
-        }
-
-        public async Task<ApiResult<List<AgentDto>>> GetAgentListAsync(bool Async = true)
-        {
-            var res = new ApiResult<List<AgentDto>>();
-            try
-            {
-                var query = Db.Queryable<CmsAgent, CmsLevel>((a, b) => new object[] {
-                        JoinType.Left, a.Level_Id == b.Id }).Select((a, b) => new AgentDto
+            var query = Db.Queryable<CmsAgent, CmsLevel, SysAdmin>((a, b, c) => new object[] {
+                        JoinType.Left, a.Level_Id == b.Id,
+                        JoinType.Left,a.Admin_Guid == c.Guid }).Select((a, b, c) => new CmsAgent
                         {
                             Id = a.Id,
                             Tel = a.Tel,
@@ -88,16 +51,109 @@ namespace FytSoa.Service.Implements
                             Delete = a.Delete,
                             Status = a.Status,
                             Create_Time = a.Create_Time,
-                            Update_Time = a.Update_Time
-                        }).OrderBy(t => t.Id, OrderByType.Desc);
-                res.data = Async ? await query.ToListAsync() : query.ToList();
+                            Update_Time = a.Update_Time,
+                            LoginName = c.LoginName
+                        })
+                        .WhereIF(!string.IsNullOrEmpty(parm.key), p => p.Name.Contains(parm.key))
+                        .OrderBy(a => a.Id, OrderByType.Desc);
+
+            res.data = await query.ToPageAsync(parm.page, parm.limit);
+
+            if (res.data.Items.Count > 0)
+            {
+                res.data.Items.ForEach(p =>
+                {
+                    p.Settle_Name = Enum.GetName(typeof(SettleType), p.Settle_Type);
+                });
+            }
+
+            return res;
+        }
+
+        public override async Task<ApiResult<string>> AddAsync(CmsAgent parm, bool Async = true)
+        {
+            var res = new ApiResult<string>() { statusCode = (int)ApiEnum.Error };
+
+            try
+            {
+                var count = 0;
+                var query = Db.Queryable<CmsAgent>();
+
+                count = await query.CountAsync(p => p.Name == parm.Name);
+                if (count > 0)
+                {
+                    throw new Exception($"代理商名称【{parm.Name}】已经存在");
+                }
+
+                count = (await sysAdmin.CountAsync(t => t.LoginName == parm.LoginName)).data.Count;
+                if (count > 0)
+                {
+                    throw new Exception($"该录账号【{parm.Name}】已经存在");
+                }
+
+                var admin_guid = Guid.NewGuid().ToString();
+
+                using var tran = new TransactionScope();
+
+                var adminRes = await sysAdmin.AddAsync(new SysAdmin
+                {
+                    AddDate = DateTime.Now,
+                    CreateBy = parm.Curr_LoginName,
+                    DepartmentGuid = null,
+                    DepartmentGuidList = null,
+                    DepartmentName = null,
+                    Email = null,
+                    Guid = admin_guid,
+                    HeadPic = null,
+                    IsSystem = false,
+                    LoginDate = null,
+                    LoginName = parm.LoginName,
+                    LoginPwd = "123456",
+                    LoginSum = 0,
+                    Mobile = parm.Tel,
+                    Number = null,
+                    RoleGuid = null,
+                    Sex = "-",
+                    Status = true,
+                    Summary = null,
+                    TrueName = parm.Name,
+                    UpLoginDate = null,
+                });
+
+                if (adminRes.statusCode != (int)ApiEnum.Status)
+                {
+                    throw new Exception(adminRes.message);
+                }
+
+                var authenRes = await sysPermissions.ToRoleAsync(new SysPermissions
+                {
+                    AdminGuid = admin_guid,
+                    RoleGuid = "72171cf0-934d-4934-8e27-ee4f47e9985e",
+                    status = true,
+                    Types = 2
+                }, true);
+
+                if (authenRes.statusCode != (int)ApiEnum.Status)
+                {
+                    throw new Exception(authenRes.message);
+                }
+
+                parm.Create_Time = DateTime.Now;
+                parm.Admin_Guid = admin_guid;
+
+                var dbres = await Db.Insertable(parm).ExecuteCommandAsync();
+
+                res.data = dbres.ToString();
+                res.statusCode = (int)ApiEnum.Status;
+
+                tran.Complete();
             }
             catch (Exception ex)
             {
                 res.message = ApiEnum.Error.GetEnumText() + ex.Message;
-                res.statusCode = (int)ApiEnum.Error;
                 Logger.Default.ProcessError((int)ApiEnum.Error, ex.Message);
             }
+
             return res;
         }
     }

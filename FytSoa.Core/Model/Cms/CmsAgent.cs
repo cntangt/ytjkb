@@ -22,6 +22,18 @@ namespace FytSoa.Core.Model.Cms
         public DateTime? Create_Time { get; set; }
         public DateTime? Update_Time { get; set; }
         public bool Status { get; set; }
-        public bool Delete { get; set; }    
+        public bool Delete { get; set; }
+
+        [SqlSugar.SugarColumn(IsIgnore = true)]
+        public string LoginName { get; set; }
+
+        [SqlSugar.SugarColumn(IsIgnore = true)]
+        public string Curr_LoginName { get; set; }
+
+        [SqlSugar.SugarColumn(IsIgnore = true)]
+        public string Level_Name { get; set; }
+
+        [SqlSugar.SugarColumn(IsIgnore = true)]
+        public string Settle_Name { get; set; }
     }
 }

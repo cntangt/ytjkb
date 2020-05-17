@@ -5,6 +5,7 @@ using FytSoa.Service.DtoModel;
 using FytSoa.Service.Interfaces;
 using Microsoft.AspNetCore.Mvc;
 using System;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 
 namespace FytSoa.Api.Controllers.Cms
@@ -25,16 +26,15 @@ namespace FytSoa.Api.Controllers.Cms
         [HttpGet("getpages")]
         public async Task<IActionResult> GetPages([FromQuery]PageParm parm)
         {
-            var list = await agentService.GetAgentListAsync();
+            var list = await agentService.GetPagesAsync(parm);
 
-            return Ok(new { code = 0, msg = "success", count = 1, data = list.data });
+            return Ok(new { code = 0, msg = "success", count = 1, data = list.data.Items });
         }
 
         [HttpPost("add"), ApiAuthorize(Modules = "Agent", Methods = "Add", LogType = LogEnum.ADD)]
         public async Task<IActionResult> Add([FromBody]CmsAgent parm)
         {
-            parm.Create_Time = DateTime.Now;
-            parm.Update_Time = DateTime.Now;
+            parm.Curr_LoginName = await HttpContext.LoginUserId();
             return Ok(await agentService.AddAsync(parm));
         }
 
