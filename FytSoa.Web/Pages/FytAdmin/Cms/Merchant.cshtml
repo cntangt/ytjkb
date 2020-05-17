@@ -109,16 +109,16 @@
                 $('#searchform').on('submit', active.reload);
                 //监听工具条
                 table.on('tool(tool)', function (obj) {
-                    var data = obj.data;
+                    var id = obj.data.id;
                     switch (obj.event) {
                         case 'edit':
-                            os.Open('修改子商户信息', '/fytadmin/cms/merchantmodify/?id=' + data.id, '720px', '640px', active.reload);
+                            os.Open('修改子商户信息', '/fytadmin/cms/merchantmodify/?id=' + id, '720px', '640px', active.reload);
                             break;
                         case 'detail':
-                            os.Open('查看子商户详情', '/fytadmin/cms/merchantdetail/?id=' + data.id, '720px', '640px');
+                            os.Open('查看子商户详情', '/fytadmin/cms/merchantdetail/?id=' + id, '720px', '640px');
                             break;
                         case 'sync':
-                            os.Open('同步商户门店信息', '/api/sync/shopinfo/?id=' + data.id, '720px', '640px');
+                            os.Open('同步商户门店信息', '/api/sync/shopinfo/?id=' + id, '720px', '640px');
                             break;
                     }
                 });

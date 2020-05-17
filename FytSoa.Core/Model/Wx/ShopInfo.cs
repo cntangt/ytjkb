@@ -15,7 +15,7 @@ namespace FytSoa.Core.Model.Wx
         public string city { get; set; }
         public string district { get; set; }
         public string address { get; set; }
-        public int coordinate_type { get; set; }
+        public string coordinate_type { get; set; }
         public string longitude { get; set; }
         public string latitude { get; set; }
         public string height { get; set; }
@@ -32,5 +32,8 @@ namespace FytSoa.Core.Model.Wx
 
         [SugarColumn(IsIgnore = true)]
         public StaffInfo[] staff_infos { get; set; }
+
+        [SugarColumn(IsIgnore = true)]
+        public string out_mch_name { get; set; }
     }
 }
