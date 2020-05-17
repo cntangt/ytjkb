@@ -133,73 +133,74 @@ namespace FytSoa.Service.Implements.Wx
                 return ex.ToString();
             }
 
-            var page = 1;
             int countShop = 0, countDevice = 0, countStaff = 0;
 
-        redo:
-
-            var req = new QueryShopInfoRequest
+            for (var page = 1; ; page++)
             {
-                page_num = page,
-                page_size = 10,
-                out_mch_id = out_mch_id,
-                out_sub_mch_id = mch.sub_out_mch_id,
-                AuthenKey = mch.authen_key
-            };
-
-            var res = await QueryAsync(req);
-
-            if (res.Status != 0)
-            {
-                return res.Description;
-            }
-
-            if (res.Status == 0 && res.Data != null && res.Data.shop_infos != null && res.Data.shop_infos.Length > 0)
-            {
-                try
+                var req = new QueryShopInfoRequest
                 {
-                    var shops = res.Data.shop_infos.Select(shop =>
-                    {
-                        shop.out_mch_id = out_mch_id;
-                        shop.sub_out_mch_id = mch.sub_out_mch_id;
+                    page_num = page,
+                    page_size = 10,
+                    out_mch_id = out_mch_id,
+                    out_sub_mch_id = mch.sub_out_mch_id,
+                    AuthenKey = mch.authen_key
+                };
 
-                        return shop;
-                    }).ToArray();
-                    countShop += await Db.Insertable(shops).ExecuteCommandAsync();
+                var res = await QueryAsync(req);
 
-                    var devices = shops.Where(p => p.device_infos != null).SelectMany(shop =>
-                    {
-                        return shop.device_infos.Select(device =>
-                        {
-                            device.out_shop_id = shop.out_shop_id;
-                            device.out_mch_id = shop.out_shop_id;
-                            device.sub_out_mch_id = shop.sub_out_mch_id;
-
-                            return device;
-                        });
-                    }).ToArray();
-                    countDevice += await Db.Insertable(devices).ExecuteCommandAsync();
-
-                    var staffs = shops.Where(p => p.staff_infos != null).SelectMany(shop =>
-                    {
-                        return shop.staff_infos.Select(staff =>
-                        {
-                            staff.out_shop_id = shop.out_shop_id;
-                            staff.out_mch_id = shop.out_mch_id;
-                            staff.sub_out_mch_id = shop.sub_out_mch_id;
-
-                            return staff;
-                        });
-                    }).ToArray();
-                    countStaff += await Db.Insertable(staffs).ExecuteCommandAsync();
-                }
-                catch (Exception ex)
+                if (res.Status != 0)
                 {
-                    return ex.ToString();
+                    return res.Description;
                 }
 
-                page++;
-                goto redo;
+                if (res.Status == 0 && res.Data != null && res.Data.shop_infos != null && res.Data.shop_infos.Length > 0)
+                {
+                    try
+                    {
+                        var shops = res.Data.shop_infos.Select(shop =>
+                        {
+                            shop.out_mch_id = out_mch_id;
+                            shop.sub_out_mch_id = mch.sub_out_mch_id;
+
+                            return shop;
+                        }).ToArray();
+                        countShop += await Db.Insertable(shops).ExecuteCommandAsync();
+
+                        var devices = shops.Where(p => p.device_infos != null).SelectMany(shop =>
+                        {
+                            return shop.device_infos.Select(device =>
+                            {
+                                device.out_shop_id = shop.out_shop_id;
+                                device.out_mch_id = shop.out_shop_id;
+                                device.sub_out_mch_id = shop.sub_out_mch_id;
+
+                                return device;
+                            });
+                        }).ToArray();
+                        countDevice += await Db.Insertable(devices).ExecuteCommandAsync();
+
+                        var staffs = shops.Where(p => p.staff_infos != null).SelectMany(shop =>
+                        {
+                            return shop.staff_infos.Select(staff =>
+                            {
+                                staff.out_shop_id = shop.out_shop_id;
+                                staff.out_mch_id = shop.out_mch_id;
+                                staff.sub_out_mch_id = shop.sub_out_mch_id;
+
+                                return staff;
+                            });
+                        }).ToArray();
+                        countStaff += await Db.Insertable(staffs).ExecuteCommandAsync();
+                    }
+                    catch (Exception ex)
+                    {
+                        return ex.ToString();
+                    }
+                }
+                else
+                {
+                    break;
+                }
             }
 
             return $"同步门店信息完成，门店：{countShop}，设备：{countDevice}，店员：{countStaff}";
