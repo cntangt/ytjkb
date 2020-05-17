@@ -155,7 +155,7 @@ namespace FytSoa.Service.Implements
                 var isExisteName = await Db.Queryable<SysAdmin>().AnyAsync(m => m.LoginName == parm.LoginName);
                 if (isExisteName)
                 {
-                    res.message = "用户名已存在，请更换~";
+                    res.message = $"用户名【{parm.LoginName}】已经存在";
                     return res;
                 }
 

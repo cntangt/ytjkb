@@ -34,15 +34,7 @@
                             { title: '微信渠道成本', templet: '<s>{{ toper(d.wxpay) }}</s>' },
                             { title: '支付宝渠道成本', templet: '<s>{{ toper(d.alipay) }}</s>' },
                             { title: '其它渠道成本', templet: '<s>{{ toper(d.otherpay) }}</s>' },
-                            {
-                                title: '状态', templet: function (d) {
-                                    if (d.status) {
-                                        return '<span class="layui-badge-dot layui-bg-blue"></span>';
-                                    } else {
-                                        return '<span class="layui-badge-dot layui-bg-gray"></span>';
-                                    }
-                                }
-                            },
+                            { title: '状态', templet: tostatus, width: 60, align: 'center' },
                             { width: 100, title: '操作', templet: '#tool' }
                         ]
                     ],

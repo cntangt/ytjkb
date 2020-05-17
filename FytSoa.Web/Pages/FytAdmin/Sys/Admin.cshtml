@@ -100,24 +100,8 @@
                             { field: 'loginName', title: '登录账号', sort: true, fixed: 'left' },
                             { field: 'trueName', title: '真是姓名' },
                             { field: 'sex', width: 60, title: '性别' },
-                            {
-                                field: 'isSystem', title: '是否系统管理员', templet: function (d) {
-                                    if (d.isSystem) {
-                                        return '<span class="layui-badge-dot layui-bg-blue"></span>';
-                                    } else {
-                                        return '<span class="layui-badge-dot layui-bg-gray"></span>';
-                                    }
-                                }
-                            },
-                            {
-                                field: 'status', title: '状态', templet: function (d) {
-                                    if (d.status) {
-                                        return '<span class="layui-badge-dot layui-bg-blue"></span>';
-                                    } else {
-                                        return '<span class="layui-badge-dot layui-bg-gray"></span>';
-                                    }
-                                }
-                            },
+                            { title: '管理员', templet: (d) => tostatus(d.isSystem), align: 'center' },
+                            { title: '状态', templet: tostatus, align: 'center' },
                             { field: 'loginDate', width: 180, title: '最后登录时间' },
                             { width: 100, title: '操作', templet: '#tool' }
                         ]

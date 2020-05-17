@@ -40,12 +40,13 @@
                             { field: 'sub_out_mch_id', title: '商户子账号' },
                             { field: 'order_perfix', title: '订单前缀' },
                             //{ field: 'authen_key', title: '认证密钥' },
-                            { title: '微信', templet: '<div>{{ toper(d.wxpay) }}</div>', align: 'center', width: 70 },
-                            { title: '支付宝', templet: '<div>{{ toper(d.alipay) }}</div>', align: 'center', width: 70 },
-                            { title: '微(代)', templet: '<div>{{ toper(d.agent_wxpay) }}</div>', align: 'center', width: 70 },
-                            { title: '支(代)', templet: '<div>{{ toper(d.agent_alipay) }}</div>', align: 'center', width: 70 },
+                            { title: '微信', templet: '<s>{{ toper(d.wxpay) }}</s>', align: 'center', width: 70 },
+                            { title: '支付宝', templet: '<s>{{ toper(d.alipay) }}</s>', align: 'center', width: 70 },
+                            { title: '微(代)', templet: '<s>{{ toper(d.agent_wxpay) }}</s>', align: 'center', width: 70 },
+                            { title: '支(代)', templet: '<s>{{ toper(d.agent_alipay) }}</s>', align: 'center', width: 70 },
+                            { title: '状态', templet: tostatus, align: 'center', width: 60 },
                             {
-                                field: 'create_time', title: '创建时间', templet: function (d) {
+                                align: 'center', title: '创建时间', templet: function (d) {
                                     return layui.util.toDateString(d.create_time, 'yyyy-MM-dd HH:mm:ss');
                                 }
                             },
@@ -107,7 +108,7 @@
                 table.on('tool(tool)', function (obj) {
                     var data = obj.data;
                     if (obj.event === 'edit') {
-                        os.Open('修改模型信息', '/fytadmin/cms/merchantmodify/?id=' + data.id, '600px', '410px', function () {
+                        os.Open('修改模型信息', '/fytadmin/cms/merchantmodify/?id=' + data.id, '720px', '640px', function () {
                             active.reload();
                         });
                     }

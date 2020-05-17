@@ -70,6 +70,21 @@ namespace FytSoa.Service.Implements
 
             try
             {
+                var count = 0;
+                var query = Db.Queryable<CmsMerchant>();
+
+                count = await query.CountAsync(p => p.sub_out_mch_id == parm.sub_out_mch_id);
+                if (count > 0)
+                {
+                    throw new Exception($"商户子账号【{parm.sub_out_mch_id}】已经存在");
+                }
+
+                count = await query.CountAsync(p => p.name == parm.name);
+                if (count > 0)
+                {
+                    throw new Exception($"商户名称【{parm.name}】已经存在");
+                }
+
                 var admin_guid = Guid.NewGuid().ToString();
 
                 using var tran = new TransactionScope();
@@ -112,7 +127,7 @@ namespace FytSoa.Service.Implements
                     Types = 2
                 }, true);
 
-                if (authenRes.statusCode!= (int)ApiEnum.Status)
+                if (authenRes.statusCode != (int)ApiEnum.Status)
                 {
                     throw new Exception(authenRes.message);
                 }
