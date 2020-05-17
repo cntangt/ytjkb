@@ -8,6 +8,7 @@ using FytSoa.Service.Interfaces.Cms;
 using Microsoft.Extensions.Configuration;
 using System;
 using System.Linq;
+using System.Linq.Expressions;
 using System.Threading.Tasks;
 using System.Transactions;
 
@@ -17,6 +18,30 @@ namespace FytSoa.Service.Implements
     {
         readonly ISysAdminService sysAdmin;
         readonly ISysPermissionsService sysPermissions;
+
+        public override async Task<ApiResult<CmsMerchant>> GetModelAsync(Expression<Func<CmsMerchant, bool>> where, bool Async = true)
+        {
+            var data = await Db.Queryable<CmsMerchant>().FirstAsync(where);
+
+            if (data == null)
+            {
+                data = new CmsMerchant();
+            }
+            else
+            {
+                var admin = await Db.Queryable<SysAdmin>().FirstAsync(p => p.Guid == data.admin_guid);
+                data.admin_name = admin?.LoginName;
+
+                var agent = await Db.Queryable<SysAdmin>().FirstAsync(p => p.Guid == data.agent_admin_guid);
+                data.agent_admin_name = agent?.TrueName;
+            }
+
+            return new ApiResult<CmsMerchant>
+            {
+                statusCode = 200,
+                data = data
+            };
+        }
 
         public CmsMerchantService(ISysAdminService sysAdmin, ISysPermissionsService sysPermissions, IConfiguration config) : base(config)
         {
@@ -30,7 +55,7 @@ namespace FytSoa.Service.Implements
 
             var query = Db.Queryable<CmsMerchant>()
                 .WhereIF(!string.IsNullOrEmpty(parm.CreateBy), p => p.agent_admin_guid == parm.CreateBy)
-                .WhereIF(!string.IsNullOrEmpty(parm.key), p => p.name.Contains(parm.key) || p.contact.Contains(parm.key) || p.sub_out_mch_id.Contains(parm.key));
+                .WhereIF(!string.IsNullOrEmpty(parm.key), p => p.name.Contains(parm.key) || p.tel.Contains(parm.key) || p.contact.Contains(parm.key) || p.sub_out_mch_id.Contains(parm.key));
 
             res.data = await query.ToPageAsync(parm.page, parm.limit);
 
@@ -70,17 +95,14 @@ namespace FytSoa.Service.Implements
 
             try
             {
-                var count = 0;
                 var query = Db.Queryable<CmsMerchant>();
 
-                count = await query.CountAsync(p => p.sub_out_mch_id == parm.sub_out_mch_id);
-                if (count > 0)
+                if (await query.AnyAsync(p => p.sub_out_mch_id == parm.sub_out_mch_id))
                 {
                     throw new Exception($"商户子账号【{parm.sub_out_mch_id}】已经存在");
                 }
 
-                count = await query.CountAsync(p => p.name == parm.name);
-                if (count > 0)
+                if (await query.AnyAsync(p => p.name == parm.name))
                 {
                     throw new Exception($"商户名称【{parm.name}】已经存在");
                 }
@@ -158,6 +180,48 @@ namespace FytSoa.Service.Implements
                 res.message = ApiEnum.Error.GetEnumText() + ex.Message;
                 Logger.Default.ProcessError((int)ApiEnum.Error, ex.Message);
             }
+
+            return res;
+        }
+
+        public override async Task<ApiResult<string>> UpdateAsync(CmsMerchant parm, bool Async = true)
+        {
+
+            var res = new ApiResult<string>() { statusCode = (int)ApiEnum.Error };
+
+            try
+            {
+                var query = Db.Queryable<CmsMerchant>();
+
+                if (await query.AnyAsync(p => p.sub_out_mch_id == parm.sub_out_mch_id && p.id != parm.id))
+                {
+                    throw new Exception($"商户子账号【{parm.sub_out_mch_id}】已经存在");
+                }
+                if (await query.AnyAsync(p => p.name == parm.name && p.id != parm.id))
+                {
+                    throw new Exception($"商户名称【{parm.name}】已经存在");
+                }
+
+                var count = await Db.Updateable(parm).IgnoreColumns(p => new
+                {
+                    p.create_time,
+                    p.admin_guid,
+                    p.agent_admin_guid
+                }).ExecuteCommandAsync();
+
+                if (count <= 0)
+                {
+                    throw new Exception("更新商户信息失败");
+                }
+            }
+            catch (Exception ex)
+            {
+                res.message = ApiEnum.Error.GetEnumText() + ex.Message;
+                Logger.Default.ProcessError((int)ApiEnum.Error, ex.Message);
+            }
+
+            res.statusCode = (int)ApiEnum.Status;
+            res.message = "更新商户信息成功";
 
             return res;
         }

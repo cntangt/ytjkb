@@ -5,6 +5,14 @@
 }
 <div id="container">
     <div class="list-wall">
+        <div class="layui-form list-search">
+            <form autocomplete="off" id="searchform">
+                <div class="layui-inline">
+                    <input class="layui-input" name="key" placeholder="输入商户名/电话/子商户号">
+                </div>
+                <button type="submit" class="layui-btn layui-btn-sm" data-type="toolSearch"><i class="layui-icon layui-icon-search"></i> 搜索</button>
+            </form>
+        </div>
         <div class="layui-form list-search" style="margin-top:10px;">
             <button type="button" class="layui-btn layui-btn-sm" data-type="toolAdd"><i class="layui-icon"></i> 新增</button>
             <button type="button" class="layui-btn layui-btn-sm" data-type="toolDel"><i class="layui-icon"></i> 删除</button>
@@ -60,16 +68,16 @@
                 var guid = '', active = {
                     reload: function () {
                         table.reload('tables',
-                            {
-                                page: {
-                                    curr: 1
-                                }
-                            });
+                        {
+                            page: {
+                                curr: 1
+                            },
+                            where: $('#searchform').serializeArray().js()
+                        });
+                        return false;
                     },
                     toolAdd: function () {
-                        os.Open('添加子商户信息', '/fytadmin/cms/merchantmodify', '720px', '640px', function () {
-                            active.reload();
-                        });
+                        os.Open('添加子商户信息', '/fytadmin/cms/merchantmodify', '720px', '640px', active.reload);
                     },
                     toolDel: function () {
                         var checkStatus = table.checkStatus('tables')
@@ -100,17 +108,12 @@
 
                     }
                 };
-                $('.list-search .layui-btn').on('click', function () {
-                    var type = $(this).data('type');
-                    active[type] ? active[type].call(this) : '';
-                });
+                $('.list-search #searchform').on('submit', active.reload);
                 //监听工具条
                 table.on('tool(tool)', function (obj) {
                     var data = obj.data;
                     if (obj.event === 'edit') {
-                        os.Open('修改模型信息', '/fytadmin/cms/merchantmodify/?id=' + data.id, '720px', '640px', function () {
-                            active.reload();
-                        });
+                        os.Open('修改模型信息', '/fytadmin/cms/merchantmodify/?id=' + data.id, '720px', '640px', active.reload);
                     }
                 });
             });

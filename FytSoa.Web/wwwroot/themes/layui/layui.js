@@ -19,3 +19,11 @@ function tostatus(d) {
         return '<span class="layui-badge-dot layui-bg-gray"></span>';
     }
 }
+
+Array.prototype.js = function () {
+    var data = {};
+    this.forEach((i) => {
+        data[i.name] = i.value;
+    });
+    return data;
+}

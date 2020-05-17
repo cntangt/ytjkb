@@ -29,7 +29,7 @@
         </div>
         <label class="layui-form-label">登录账号</label>
         <div class="layui-input-block">
-            <input type="text" name="admin_name" value="@Model.Merchant.admin_name" maxlength="20" lay-verify="required" lay-verType="tips" class="layui-input">
+            <input type="text" name="admin_name" value="@Model.Merchant.admin_name" @(Model.Merchant.id > 0 ? "disabled" : null) maxlength="20" lay-verify="required" lay-verType="tips" class="layui-input">
         </div>
     </div>
     <div class="layui-form-item">
