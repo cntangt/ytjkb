@@ -1,4 +1,4 @@
-﻿using FytSoa.Service.DtoModel.Wx;
+﻿using SqlSugar;
 using System;
 
 namespace FytSoa.Core.Model.Wx
@@ -8,6 +8,8 @@ namespace FytSoa.Core.Model.Wx
     {
         public int id { get; set; }
         public string shop_id { get; set; }
+        public string out_mch_id { get; set; }
+        public string sub_out_mch_id { get; set; }
         public string shop_name { get; set; }
         public string province { get; set; }
         public string city { get; set; }
@@ -22,8 +24,13 @@ namespace FytSoa.Core.Model.Wx
         public string out_shop_id_url { get; set; }
         public DateTime create_time { get; set; }
         public DateTime update_time { get; set; }
-        public DeviceInfo[] device_infos { get; set; }
-        public StaffInfo[] staff_infos { get; set; }
         public string fee_type { get; set; }
+        public string erp_org { get; set; }
+
+        [SugarColumn(IsIgnore = true)]
+        public DeviceInfo[] device_infos { get; set; }
+
+        [SugarColumn(IsIgnore = true)]
+        public StaffInfo[] staff_infos { get; set; }
     }
 }

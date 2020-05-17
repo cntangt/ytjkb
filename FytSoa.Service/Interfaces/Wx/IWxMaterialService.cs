@@ -1,5 +1,4 @@
 ﻿using FytSoa.Common;
-using FytSoa.Core.Model.Sys;
 using FytSoa.Core.Model.Wx;
 using FytSoa.Service.DtoModel;
 using System.Collections.Generic;
@@ -10,7 +9,7 @@ namespace FytSoa.Service.Interfaces
     /*!
     * 文件名称：Wx_material服务接口
     */
-	public interface IWxMaterialService : IBaseService<WxMaterial>
+    public interface IWxMaterialService : IBaseService<WxMaterial>
 	{
         /// <summary>
         /// 添加一条公众号素材信息

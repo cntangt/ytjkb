@@ -1,10 +1,11 @@
-﻿using System;
+﻿using FytSoa.Core.Model.Wx;
+using System;
 
 namespace FytSoa.Service.DtoModel.Wx
 {
     public class QueryShopInfoResponse
     {
-        public Shop_Infos[] shop_infos { get; set; }
+        public ShopInfo[] shop_infos { get; set; }
         public int total_count { get; set; }
         public string nonce_str { get; set; }
     }

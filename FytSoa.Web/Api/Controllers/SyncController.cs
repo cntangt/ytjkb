@@ -1,4 +1,5 @@
-﻿using FytSoa.Service.DtoModel.Wx;
+﻿using FytSoa.Extensions;
+using FytSoa.Service.DtoModel.Wx;
 using FytSoa.Service.Interfaces.Wx;
 using Microsoft.AspNetCore.Mvc;
 using System;
@@ -33,19 +34,7 @@ namespace FytSoa.Api.Controllers
             return wx.QueryAsync(req);
         }
 
-        public Task<WxResponse<QueryShopInfoResponse>> ShopInfo()
-        {
-            var req = new QueryShopInfoRequest
-            {
-                page_num = 1,
-                page_size = 10,
-                out_sub_mch_id = "sz01ELTR281OFpmdAp6J",
-                out_mch_id = "sz013NzuonO6CMJd0rCB",
-                AuthenKey = "lSCp1M5grGWFD7rJzaZaqixsvOhORp2P"
-            };
-
-            return wx.QueryAsync(req);
-        }
+        public async Task<IActionResult> ShopInfo(int id) => Ok(await wx.SyncShopInfo(id));
 
         public Task<WxResponse<RefundResponse>> Refund()
         {
