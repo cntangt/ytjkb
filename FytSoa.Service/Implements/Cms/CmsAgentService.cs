@@ -54,7 +54,7 @@ namespace FytSoa.Service.Implements
                             Update_Time = a.Update_Time,
                             LoginName = c.LoginName
                         })
-                        .WhereIF(!string.IsNullOrEmpty(parm.key), p => p.Name.Contains(parm.key))
+                        .WhereIF(!string.IsNullOrEmpty(parm.key), a => a.Name.Contains(parm.key))
                         .OrderBy(a => a.Id, OrderByType.Desc);
 
             res.data = await query.ToPageAsync(parm.page, parm.limit);
@@ -85,12 +85,6 @@ namespace FytSoa.Service.Implements
                     throw new Exception($"代理商名称【{parm.Name}】已经存在");
                 }
 
-                count = (await sysAdmin.CountAsync(t => t.LoginName == parm.LoginName)).data.Count;
-                if (count > 0)
-                {
-                    throw new Exception($"该登录账号【{parm.Name}】已经存在");
-                }
-
                 var admin_guid = Guid.NewGuid().ToString();
 
                 using var tran = new TransactionScope();
@@ -108,7 +102,7 @@ namespace FytSoa.Service.Implements
                     IsSystem = false,
                     LoginDate = null,
                     LoginName = parm.LoginName,
-                    LoginPwd = DES3Encrypt.EncryptString("123456"),
+                    LoginPwd = "123456",
                     LoginSum = 0,
                     Mobile = parm.Tel,
                     Number = null,

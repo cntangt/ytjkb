@@ -1,0 +1,145 @@
+﻿@page
+@model AgentDetailModel
+@{
+    Layout = "_Layout";
+    ViewData["Title"] = "代理商维护";
+}
+@section styles{
+    <style>
+        .layui-form-item {
+            margin-bottom: 8px;
+        }
+        .layui-input-block {
+            margin-left: 0px;
+            width: 200px;
+            float: left;
+        }
+        table {
+            border-right: 1px solid #e6e6e6;
+            border-bottom: 1px solid #e6e6e6
+        }
+        table td {
+            border-left: 1px solid #e6e6e6;
+            border-top: 1px solid #e6e6e6;
+            padding-left: 5px;
+            height: 25px;
+        }
+        .feilv {
+            width: 140px;
+            min-height: inherit;
+        }
+        .feilv input {
+            height: 25px;
+            border: none;
+            box-shadow: none;
+            outline: none;
+            padding-left:0;
+        }
+    </style>
+}
+<form class="layui-form form-cus" action="">
+    <div class="layui-form-item">
+        <label class="layui-form-label">名称</label>
+        <div class="layui-input-block">
+            <input type="text" name="Name" value="@Model.Agent.Name" disabled maxlength="20" lay-verify="required" lay-verType="tips" autocomplete="off" class="layui-input">
+        </div>
+        <label class="layui-form-label">登录账号</label>
+        <div class="layui-input-block">
+            <input type="text" name="LoginName" value="@Model.Agent.LoginName" disabled maxlength="20" lay-verify="required" lay-verType="tips" autocomplete="off" class="layui-input">
+        </div>
+    </div>
+    <div class="layui-form-item">
+        <label class="layui-form-label">等级</label>
+        <div class="layui-input-block">
+            <select name="Level_Id" lay-filter="level" disabled>
+                @foreach (var item in Model.Levels)
+                {
+                    <option value="@item.Id">@item.Name</option>
+                }
+            </select>
+        </div>
+        <label class="layui-form-label">电话</label>
+        <div class="layui-input-block">
+            <input type="text" name="Tel" value="@Model.Agent.Tel" disabled maxlength="20" lay-verify="required" lay-verType="tips" autocomplete="off" class="layui-input">
+        </div>
+    </div>
+    <div class="layui-form-item">
+        <label class="layui-form-label">拓展区域</label>
+        <div class="layui-input-block" style="width:510px;">
+            <input type="text" name="Business_Area" value="@Model.Agent.Business_Area" disabled maxlength="20" lay-verify="required" lay-verType="tips" autocomplete="off" class="layui-input">
+        </div>
+    </div>
+    <div class="layui-form-item">
+        <label class="layui-form-label">结算方式</label>
+        <div class="layui-input-block">
+            <select name="Settle_Type" disabled>
+                @foreach (var e in Enum.GetValues(typeof(FytSoa.Service.DtoModel.Wx.SettleType)))
+                {
+                    <option value="@Convert.ToInt32(e)">@e.ToString()</option>
+                }
+            </select>
+        </div>
+        <label class="layui-form-label">结算账号</label>
+        <div class="layui-input-block">
+            <input type="text" name="Account_no" value="@Model.Agent.Account_No" disabled maxlength="20" lay-verify="required" lay-verType="tips" autocomplete="off" class="layui-input">
+        </div>
+    </div>
+    <div class="layui-form-item">
+        <label class="layui-form-label">收款人</label>
+        <div class="layui-input-block">
+            <input type="text" name="Account_name" value="@Model.Agent.Account_Name" disabled maxlength="20" lay-verify="required" lay-verType="tips" autocomplete="off" class="layui-input">
+        </div>
+        <label class="layui-form-label">账号信息</label>
+        <div class="layui-input-block">
+            <input type="text" name="Account_info" value="@Model.Agent.Account_Info" disabled maxlength="20" lay-verify="required" lay-verType="tips" autocomplete="off" class="layui-input">
+        </div>
+    </div>
+    <div class="layui-form-item" style="padding: 5px 0 0 110px;">
+        <label>支付渠道成本费率设置（之商户实际结算费率-代理商成本费率=代理商返佣费率）</label>
+        <div class="layui-input-block" style="width:340px;margin-top:10px;">
+            <table border="0" cellspacing="0" cellpadding="0">
+                <tr>
+                    <td style="width:150px;">支付渠道</td>
+                    <td style="width:150px;">成本费率（万分之）</td>
+                </tr>
+                <tr>
+                    <td>微信</td>
+                    <td>
+                        <div class="layui-input-block feilv">
+                            <input type="text" name="Wxpay" value="@Model.Agent.Wxpay" disabled maxlength="20" lay-verify="required" lay-verType="tips" autocomplete="off" class="layui-input">
+                        </div>
+                    </td>
+                </tr>
+                <tr>
+                    <td>支付宝</td>
+                    <td>
+                        <div class="layui-input-block feilv">
+                            <input type="text" name="Alipay" value="@Model.Agent.Alipay" disabled maxlength="20" lay-verify="required" lay-verType="tips" autocomplete="off" class="layui-input">
+                        </div>
+                    </td>
+                </tr>
+                <tr>
+                    <td>其他</td>
+                    <td>
+                        <div class="layui-input-block feilv">
+                            <input type="text" name="Otherpay" value="@Model.Agent.Otherpay" disabled maxlength="20" lay-verify="required" lay-verType="tips" autocomplete="off" class="layui-input">
+                        </div>
+                    </td>
+                </tr>
+            </table>
+        </div>
+    </div>
+</form>
+<link rel="stylesheet" href="~/themes/ztree/css/metroStyle/metroStyle.css" type="text/css">
+@section Scripts{
+    <script>
+        layui.config({
+            base: '/themes/js/modules/'
+        }).use(['layer', 'jquery', 'common', 'form'], function () {
+            var form = layui.form, $ = layui.jquery;
+            $("select[name=Level_Id]").val('@Model.Agent.Level_Id');
+            $("select[name=Settle_Type]").val('@Convert.ToInt32(Model.Agent.Settle_Type)');
+            form.render('select');
+        });
+    </script>
+}

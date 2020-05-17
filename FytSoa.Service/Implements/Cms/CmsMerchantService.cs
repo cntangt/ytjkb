@@ -124,7 +124,7 @@ namespace FytSoa.Service.Implements
                     IsSystem = false,
                     LoginDate = null,
                     LoginName = parm.admin_name,
-                    LoginPwd = DES3Encrypt.EncryptString("123456"),
+                    LoginPwd = "123456",
                     LoginSum = 0,
                     Mobile = parm.tel,
                     Number = null,

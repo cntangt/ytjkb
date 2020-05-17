@@ -35,16 +35,7 @@
             });
         },
         updatepwd: function () {
-            os.Open('修改密码', '/fytadmin/updatepwd', '400px', '300px', function () {
-                os.load();
-                os.ajax('api/admin/logout', null, function (res) {
-                    if (res.statusCode === 200) {
-                        window.location.href = res.data;
-                    } else {
-                        os.error(res.message);
-                    }
-                });
-            });
+            os.Open('修改密码', '/fytadmin/updatepwd', '400px', '300px', main_vm.logout);
         },
         qhSite: function (m) {
             os.load();

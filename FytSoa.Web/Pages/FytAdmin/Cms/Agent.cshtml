@@ -8,6 +8,12 @@
         <div class="layui-form list-search">
             <button type="button" class="layui-btn layui-btn-sm" data-type="toolAdd"><i class="layui-icon"></i> 新增</button>
             <button type="button" class="layui-btn layui-btn-sm" data-type="toolDel"><i class="layui-icon"></i> 删除</button>
+            <form autocomplete="off" id="searchform" style="float:right">
+                <div class="layui-inline">
+                    <input class="layui-input" name="key" placeholder="输入商户名/电话/子商户号">
+                </div>
+                <button type="button" class="layui-btn layui-btn-sm" data-type="toolSearch"><i class="layui-icon layui-icon-search"></i> 搜索</button>
+            </form>
         </div>
         <table class="layui-hide" id="tablist" lay-filter="tool"></table>
     </div>
@@ -43,7 +49,7 @@
                             { field: 'account_No', title: '结算账号', fixed: 'left', width: 120 },
                             { field: 'business_Area', title: '区域', fixed: 'left' },
                             { field: 'create_Time', title: '加入时间', fixed: 'left', width: 100, templet: function (d) { return d.create_Time.split('T')[0]; } },
-                            { width: 100, title: '操作', templet: '#tool' }
+                            { title: '操作', templet: '#tool', align: 'center', width: 165 }
                         ]
                     ],
                     page: true,
@@ -56,9 +62,11 @@
                             {
                                 page: {
                                     curr: 1
-                                }
+                                },
+                                where: $('#searchform').serializeArray().js()
                             });
                     },
+                    toolSearch: function () { active.reload(); },
                     toolAdd: function () {
                         os.Open('添加代理商信息', '/fytadmin/cms/agentmodify', '680px', '470px', function () {
                             active.reload();
@@ -99,16 +107,20 @@
                 });
                 //监听工具条
                 table.on('tool(tool)', function (obj) {
-                    var data = obj.data;
-                    if (obj.event === 'edit') {
-                        os.Open('修改代理商信息', '/fytadmin/cms/agentmodify/?id=' + data.id, '680px', '470px', function () {
-                            active.reload();
-                        });
+                    var id = obj.data.id;
+                    switch (obj.event) {
+                        case 'edit':
+                            os.Open('修改代理商信息', '/fytadmin/cms/agentmodify/?id=' + id, '680px', '470px', active.reload);
+                            break;
+                        case 'detail':
+                            os.Open('查看代理商信息', '/fytadmin/cms/agentdetail/?id=' + id, '680px', '470px');
+                            break;
                     }
                 });
             });
     </script>
     <script type="text/html" id="tool">
+        <a class="layui-btn layui-btn-primary layui-btn-xs" lay-event="detail"><i class="layui-icon">&#xe702;</i> 详情</a>
         <a class="layui-btn layui-btn-primary layui-btn-xs" lay-event="edit"><i class="layui-icon"></i> 修改</a>
     </script>
 </div>
