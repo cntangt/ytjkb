@@ -70,7 +70,7 @@
         </div>
         <label class="layui-form-label">启用状态</label>
         <div class="layui-input-block">
-            <input type="checkbox" name="status" @(Model.Merchant == null ? "checked" : null) lay-text="是|否" lay-skin="switch" lay-filter="switch">
+            <input type="checkbox" name="status" @(Model.Merchant.status ? "checked" : null) lay-text="是|否" lay-skin="switch" lay-filter="switch">
         </div>
     </div>
     <fieldset class="layui-elem-field layui-field-title" style="margin-top: 20px;"><legend><i class="layui-icon layui-icon-component"></i></legend></fieldset>

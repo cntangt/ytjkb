@@ -38,15 +38,15 @@
                     cols: [
                         [
                             { type: 'checkbox' },
-                            { field: 'admin_name', title: '登录账号' },
+                            { field: 'admin_name', title: '登录账号', width: 120 },
                             { field: 'name', title: '商户名称' },
                             { field: 'contact', title: '联系人' },
-                            { field: 'tel', title: '联系电话' },
-                            { field: 'email', title: '电子邮箱' },
-                            { field: 'appid', title: '公众号AppId' },
-                            { field: 'agent_admin_name', title: '代理商' },
+                            { field: 'tel', title: '联系电话', width: 120 },
+                            //{ field: 'email', title: '电子邮箱' },
+                            //{ field: 'appid', title: '公众号AppId' },
+                            { field: 'agent_admin_name', title: '代理商', width: 120 },
                             { field: 'sub_out_mch_id', title: '商户子账号' },
-                            { field: 'order_perfix', title: '订单前缀' },
+                            //{ field: 'order_perfix', title: '订单前缀', width: 100 },
                             //{ field: 'authen_key', title: '认证密钥' },
                             { title: '微信', templet: '<s>{{ toper(d.wxpay) }}</s>', align: 'center', width: 70 },
                             { title: '支付宝', templet: '<s>{{ toper(d.alipay) }}</s>', align: 'center', width: 70 },
@@ -54,7 +54,7 @@
                             { title: '支(代)', templet: '<s>{{ toper(d.agent_alipay) }}</s>', align: 'center', width: 70 },
                             { title: '状态', templet: tostatus, align: 'center', width: 60 },
                             {
-                                align: 'center', title: '创建时间', templet: function (d) {
+                                align: 'center', title: '创建时间', width: 160, templet: function (d) {
                                     return layui.util.toDateString(d.create_time, 'yyyy-MM-dd HH:mm:ss');
                                 }
                             },
@@ -112,15 +112,22 @@
                 //监听工具条
                 table.on('tool(tool)', function (obj) {
                     var data = obj.data;
-                    if (obj.event === 'edit') {
-                        os.Open('修改模型信息', '/fytadmin/cms/merchantmodify/?id=' + data.id, '720px', '640px', active.reload);
+                    switch (obj.event) {
+                        case 'edit':
+                            os.Open('修改子商户信息', '/fytadmin/cms/merchantmodify/?id=' + data.id, '720px', '640px', active.reload);
+                            break;
+                        case 'detail':
+                            os.Open('查看子商户详情', '/fytadmin/cms/merchantdetail/?id=' + data.id, '720px', '640px');
+                            break;
+                        default:
+                            break;
                     }
                 });
             });
     </script>
     <script type="text/html" id="tool">
-        <a class="layui-btn layui-btn-primary layui-btn-xs" lay-event="edit"><i class="layui-icon">&#xe702;</i> 详情</a>
+        <a class="layui-btn layui-btn-primary layui-btn-xs" lay-event="detail"><i class="layui-icon">&#xe702;</i> 详情</a>
         <a class="layui-btn layui-btn-primary layui-btn-xs" lay-event="edit"><i class="layui-icon"></i> 修改</a>
-        <a class="layui-btn layui-btn-primary layui-btn-xs" lay-event="edit"><i class="layui-icon">&#xe669;</i> 同步</a>
+        <a class="layui-btn layui-btn-primary layui-btn-xs" lay-event="sync"><i class="layui-icon">&#xe669;</i> 同步</a>
     </script>
 </div>
