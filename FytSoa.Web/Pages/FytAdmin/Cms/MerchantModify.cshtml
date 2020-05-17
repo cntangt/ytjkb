@@ -50,7 +50,7 @@
         </div>
         <label class="layui-form-label">公众号AppId</label>
         <div class="layui-input-block">
-            <input type="text" name="appid" value="@Model.Merchant.appid" maxlength="40" lay-verify="required" lay-verType="tips" class="layui-input">
+            <input type="text" name="appid" value="@Model.Merchant.appid" maxlength="40" lay-verType="tips" class="layui-input">
         </div>
     </div>
     <div class="layui-form-item">
@@ -123,9 +123,9 @@
             //监听提交
             form.on('submit(submit)', function (data) {
                 $('#submit').attr('disabled', true).find('i').removeClass('layui-hide');
-                var urls = "api/level/add";
+                var urls = "api/merchant/add";
                 if ($("#Id").val() !== '0') {
-                    urls = "api/level/edit";
+                    urls = "api/merchant/edit";
                 }
                 data.field.status = data.field.status === 'on' ? 1 : 0;
                 os.ajax(urls, data.field, function (res) {

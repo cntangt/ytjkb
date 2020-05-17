@@ -1,17 +1,13 @@
-﻿using FytSoa.Service.Extensions;
-using FytSoa.Common;
-using FytSoa.Core;
+﻿using FytSoa.Common;
 using FytSoa.Core.Model.Sys;
 using FytSoa.Service.DtoModel;
 using FytSoa.Service.Interfaces;
-using SqlSugar;
+using Microsoft.Extensions.Configuration;
+using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
-using System.Text;
-using System.Threading.Tasks;
-using Newtonsoft.Json;
 using System.Linq;
-using Microsoft.Extensions.Configuration;
+using System.Threading.Tasks;
 
 namespace FytSoa.Service.Implements
 {
@@ -29,7 +25,7 @@ namespace FytSoa.Service.Implements
         /// </summary>
         /// <param name="parm"></param>
         /// <returns></returns>
-        public async Task<ApiResult<string>> ToRoleAsync(SysPermissions parm,bool status)
+        public async Task<ApiResult<string>> ToRoleAsync(SysPermissions parm, bool status)
         {
             var res = new ApiResult<string>
             {
@@ -40,30 +36,31 @@ namespace FytSoa.Service.Implements
             {
                 //处理用户授权
                 var adminModel = new SysAdmin();
-                if (parm.Types==2)
+                if (parm.Types == 2)
                 {
                     //处理用户授权
-                    adminModel = await Db.Queryable<SysAdmin>().FirstAsync(m=>m.Guid==parm.AdminGuid);
+                    adminModel = await Db.Queryable<SysAdmin>().FirstAsync(m => m.Guid == parm.AdminGuid);
                 }
                 if (status)
                 {
-                    if (parm.Types==2)
+                    if (parm.Types == 2)
                     {
-                        var roleModel = await Db.Queryable<SysRole>().FirstAsync(m=>m.Guid==parm.RoleGuid);
+                        var roleModel = await Db.Queryable<SysRole>().FirstAsync(m => m.Guid == parm.RoleGuid);
                         var adminRoleList = adminModel.RoleList;
-                        adminRoleList.Add(new AdminToRoleList() {
-                            guid= parm.RoleGuid,
-                            name= roleModel.Name
+                        adminRoleList.Add(new AdminToRoleList()
+                        {
+                            guid = parm.RoleGuid,
+                            name = roleModel.Name
                         });
                         var adminRole = JsonConvert.SerializeObject(adminRoleList);
                         //更新用户信息
                         await Db.Updateable<SysAdmin>().SetColumns(m => new SysAdmin()
                         {
-                            RoleGuid =adminRole
+                            RoleGuid = adminRole
                         }).Where(m => m.Guid == parm.AdminGuid).ExecuteCommandAsync();
                     }
                     //授权
-                    var dbres =await Db.Insertable(new SysPermissions()
+                    var dbres = await Db.Insertable(new SysPermissions()
                     {
                         RoleGuid = parm.RoleGuid,
                         AdminGuid = parm.AdminGuid,
@@ -71,8 +68,8 @@ namespace FytSoa.Service.Implements
                         BtnFunJson = parm.BtnFunJson,
                         Types = parm.Types
                     }).ExecuteCommandAsync();
-                    
-                    if (dbres==0)
+
+                    if (dbres == 0)
                     {
                         res.statusCode = (int)ApiEnum.Error;
                         res.message = "插入数据失败~";
@@ -81,13 +78,13 @@ namespace FytSoa.Service.Implements
                 else
                 {
                     //取消授权
-                    if (parm.Types==2)
+                    if (parm.Types == 2)
                     {
                         var adminRoleList = adminModel.RoleList;
                         //删除用户授权的角色
                         for (int i = 0; i < adminRoleList.Count; i++)
                         {
-                            if (adminRoleList[i].guid==parm.RoleGuid)
+                            if (adminRoleList[i].guid == parm.RoleGuid)
                             {
                                 adminRoleList.Remove(adminRoleList[i]);
                             }
@@ -101,12 +98,12 @@ namespace FytSoa.Service.Implements
                         //删除
                         await Db.Deleteable<SysPermissions>().Where(m => m.AdminGuid == parm.AdminGuid && m.RoleGuid == parm.RoleGuid && m.Types == 2).ExecuteCommandAsync();
                     }
-                    if (parm.Types==3)
+                    if (parm.Types == 3)
                     {
                         //角色-菜单-按钮功能
                         await Db.Deleteable<SysPermissions>().Where(m => m.BtnFunJson == parm.BtnFunJson && m.RoleGuid == parm.RoleGuid && m.MenuGuid == parm.MenuGuid && m.Types == 3).ExecuteCommandAsync();
                     }
-                }                
+                }
             }
             catch (Exception ex)
             {
@@ -130,8 +127,8 @@ namespace FytSoa.Service.Implements
             };
             try
             {
-                res.data =await Db.Queryable<SysPermissions>()
-                        .WhereIF(!string.IsNullOrEmpty(roleGuid), m => m.RoleGuid==roleGuid).ToListAsync();          
+                res.data = await Db.Queryable<SysPermissions>()
+                        .WhereIF(!string.IsNullOrEmpty(roleGuid), m => m.RoleGuid == roleGuid).ToListAsync();
             }
             catch (Exception ex)
             {
@@ -156,7 +153,7 @@ namespace FytSoa.Service.Implements
             try
             {
                 //根据角色查询菜单列表
-                var menuList =await Db.Queryable<SysPermissions>().Where(m=>m.RoleGuid==parm.RoleGuid && m.Types==1).ToListAsync();
+                var menuList = await Db.Queryable<SysPermissions>().Where(m => m.RoleGuid == parm.RoleGuid && m.Types == 1).ToListAsync();
                 //现有的
                 var list = new List<SysPermissions>();
                 foreach (var item in Utils.SplitString(parm.MenuGuid, ','))
@@ -164,10 +161,10 @@ namespace FytSoa.Service.Implements
                     list.Add(new SysPermissions() { RoleGuid = parm.RoleGuid, MenuGuid = item, Types = parm.Types });
                 }
                 //查询都有的
-                var publicMenu = menuList.Where(m=> list.Exists(t=> t.MenuGuid == m.MenuGuid)).ToList();
+                var publicMenu = menuList.Where(m => list.Exists(t => t.MenuGuid == m.MenuGuid)).ToList();
 
                 //查询数据库有，但是前端提供没有的，说明要删除这个菜单权限
-                var delMenuList = menuList.Where(m=>!publicMenu.Exists(t=> t.MenuGuid == m.MenuGuid)).Select(m=>m.MenuGuid).ToList();
+                var delMenuList = menuList.Where(m => !publicMenu.Exists(t => t.MenuGuid == m.MenuGuid)).Select(m => m.MenuGuid).ToList();
 
                 //查询前端提供的，数据库没有的，说明概要增加菜单权限
                 var AddMenuList = list.Where(m => !publicMenu.Exists(t => t.MenuGuid == m.MenuGuid)).ToList();
@@ -175,12 +172,12 @@ namespace FytSoa.Service.Implements
                 var result = Db.Ado.UseTran(async () =>
                 {
                     //删除差异的
-                    if (delMenuList.Count>0)
+                    if (delMenuList.Count > 0)
                     {
                         await Db.Deleteable<SysPermissions>().Where(m => m.RoleGuid == parm.RoleGuid && delMenuList.Contains(m.MenuGuid) && m.Types == 1).ExecuteCommandAsync();
                     }
                     //添加新的授权菜单
-                    if (AddMenuList.Count>0)
+                    if (AddMenuList.Count > 0)
                     {
                         await Db.Insertable(AddMenuList).ExecuteCommandAsync();
                     }
@@ -189,7 +186,7 @@ namespace FytSoa.Service.Implements
                 {
                     res.statusCode = (int)ApiEnum.Error;
                     res.message = "插入数据失败~";
-                }                
+                }
             }
             catch (Exception ex)
             {
@@ -209,13 +206,13 @@ namespace FytSoa.Service.Implements
         /// <returns></returns>
         public ApiResult<string> RoleMenuToFunAsync(SysPermissionsParm parm)
         {
-            var res = new ApiResult<string>() { statusCode=(int)ApiEnum.Error};
+            var res = new ApiResult<string>() { statusCode = (int)ApiEnum.Error };
             try
             {
                 //根据角色和菜单查询内容
-                var model = Db.Queryable<SysPermissions>().Single(m=>m.RoleGuid==parm.role
-                && m.MenuGuid==parm.menu && m.Types==1);
-                if (model==null)
+                var model = Db.Queryable<SysPermissions>().Single(m => m.RoleGuid == parm.role
+                && m.MenuGuid == parm.menu && m.Types == 1);
+                if (model == null)
                 {
                     res.message = "您还没有授权当前菜单功能模块";
                     return res;
@@ -224,7 +221,7 @@ namespace FytSoa.Service.Implements
                 {
                     //判断授权还是取消
                     var list = JsonConvert.DeserializeObject<List<string>>(model.BtnFunJson);
-                    if (parm.status==0)
+                    if (parm.status == 0)
                     {
                         if (list.Contains(parm.btnfun))
                         {
@@ -247,7 +244,7 @@ namespace FytSoa.Service.Implements
                     model.BtnFunJson = JsonConvert.SerializeObject(new List<string>() { parm.btnfun });
                 }
                 Db.Updateable<SysPermissions>()
-                    .SetColumns(m=>new SysPermissions() { BtnFunJson=model.BtnFunJson })
+                    .SetColumns(m => new SysPermissions() { BtnFunJson = model.BtnFunJson })
                     .Where(m => m.RoleGuid == parm.role
                 && m.MenuGuid == parm.menu && m.Types == 1).ExecuteCommand();
                 res.statusCode = (int)ApiEnum.Status;
@@ -296,8 +293,8 @@ namespace FytSoa.Service.Implements
                     if (item.btnFun != null && item.btnFun.Count > 0)
                     {
                         //查询授权status=true
-                        var btnList = item.btnFun.Where(m=>m.status).Select(m=>m.guid).ToList();
-                        if (btnList.Count>0)
+                        var btnList = item.btnFun.Where(m => m.status).Select(m => m.guid).ToList();
+                        if (btnList.Count > 0)
                         {
                             btnFun = JsonConvert.SerializeObject(btnList);
                         }
@@ -310,11 +307,11 @@ namespace FytSoa.Service.Implements
                         Types = 1
                     });
                 }
-                
+
                 var result = Db.Ado.UseTran(async () =>
                 {
                     //根据角色删除已有的，添加新的
-                    await Db.Deleteable<SysPermissions>().Where(m=>m.RoleGuid==roleGuid && m.Types==1).ExecuteCommandAsync();
+                    await Db.Deleteable<SysPermissions>().Where(m => m.RoleGuid == roleGuid && m.Types == 1).ExecuteCommandAsync();
                     //增加新的
                     await Db.Insertable(dbList).ExecuteCommandAsync();
                 });

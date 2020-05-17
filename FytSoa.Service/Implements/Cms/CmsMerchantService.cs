@@ -3,17 +3,25 @@ using FytSoa.Core.Model.Cms;
 using FytSoa.Core.Model.Sys;
 using FytSoa.Service.DtoModel;
 using FytSoa.Service.Extensions;
+using FytSoa.Service.Interfaces;
 using FytSoa.Service.Interfaces.Cms;
 using Microsoft.Extensions.Configuration;
+using System;
 using System.Linq;
 using System.Threading.Tasks;
+using System.Transactions;
 
 namespace FytSoa.Service.Implements
 {
     public class CmsMerchantService : BaseService<CmsMerchant>, ICmsMerchantService
     {
-        public CmsMerchantService(IConfiguration config) : base(config)
+        readonly ISysAdminService sysAdmin;
+        readonly ISysPermissionsService sysPermissions;
+
+        public CmsMerchantService(ISysAdminService sysAdmin, ISysPermissionsService sysPermissions, IConfiguration config) : base(config)
         {
+            this.sysAdmin = sysAdmin;
+            this.sysPermissions = sysPermissions;
         }
 
         public override async Task<ApiResult<Page<CmsMerchant>>> GetPagesAsync(PageParm parm, bool Async = true)
@@ -51,6 +59,89 @@ namespace FytSoa.Service.Implements
                         }
                     });
                 }
+            }
+
+            return res;
+        }
+
+        public override async Task<ApiResult<string>> AddAsync(CmsMerchant parm, bool Async = true)
+        {
+            var res = new ApiResult<string>() { statusCode = (int)ApiEnum.Error };
+
+            try
+            {
+                var admin_guid = Guid.NewGuid().ToString();
+
+                using var tran = new TransactionScope();
+
+                var adminRes = await sysAdmin.AddAsync(new SysAdmin
+                {
+                    AddDate = DateTime.Now,
+                    CreateBy = parm.agent_admin_guid,
+                    DepartmentGuid = null,
+                    DepartmentGuidList = null,
+                    DepartmentName = null,
+                    Email = parm.email,
+                    Guid = admin_guid,
+                    HeadPic = null,
+                    IsSystem = false,
+                    LoginDate = null,
+                    LoginName = parm.admin_name,
+                    LoginPwd = "123456",
+                    LoginSum = 0,
+                    Mobile = parm.tel,
+                    Number = null,
+                    RoleGuid = null,
+                    Sex = "-",
+                    Status = true,
+                    Summary = null,
+                    TrueName = parm.name,
+                    UpLoginDate = null
+                });
+
+                if (adminRes.statusCode != (int)ApiEnum.Status)
+                {
+                    throw new Exception(adminRes.message);
+                }
+
+                var authenRes = await sysPermissions.ToRoleAsync(new SysPermissions
+                {
+                    AdminGuid = admin_guid,
+                    RoleGuid = "8dc9b479-216d-415a-9fba-85caedd6c4df",
+                    status = true,
+                    Types = 2
+                }, true);
+
+                if (authenRes.statusCode!= (int)ApiEnum.Status)
+                {
+                    throw new Exception(authenRes.message);
+                }
+                //var relRes = await Db.Insertable(new CmsAdminMerchantRel
+                //{
+                //    Admin_Guid = admin_guid,
+                //    Sub_Out_Mch_Id = parm.sub_out_mch_id,
+                //    Out_Mch_Id = parm.out_mch_id
+                //}).ExecuteCommandAsync();
+
+                //if (relRes <= 0)
+                //{
+                //    throw new Exception("添加商户代理商关系失败");
+                //}
+
+                parm.create_time = DateTime.Now;
+                parm.admin_guid = admin_guid;
+
+                var dbres = await Db.Insertable(parm).ExecuteCommandAsync();
+
+                res.data = dbres.ToString();
+                res.statusCode = (int)ApiEnum.Status;
+
+                tran.Complete();
+            }
+            catch (Exception ex)
+            {
+                res.message = ApiEnum.Error.GetEnumText() + ex.Message;
+                Logger.Default.ProcessError((int)ApiEnum.Error, ex.Message);
             }
 
             return res;

@@ -22,7 +22,7 @@ namespace FytSoa.Service.Implements
         /// </summary>
         /// <param name="parm">T</param>
         /// <returns></returns>
-        public async Task<ApiResult<string>> AddAsync(T parm, bool Async = true)
+        public virtual async Task<ApiResult<string>> AddAsync(T parm, bool Async = true)
         {
             var res = new ApiResult<string>() { statusCode = (int)ApiEnum.Error };
             try

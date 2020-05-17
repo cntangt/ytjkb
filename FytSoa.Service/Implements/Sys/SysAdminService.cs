@@ -1,5 +1,4 @@
 ﻿using FytSoa.Common;
-using FytSoa.Core.Model.Cms;
 using FytSoa.Core.Model.Sys;
 using FytSoa.Service.DtoModel;
 using FytSoa.Service.Extensions;
@@ -162,23 +161,27 @@ namespace FytSoa.Service.Implements
 
                 parm.LoginPwd = DES3Encrypt.EncryptString(parm.LoginPwd);
 
-                parm.Guid = Guid.NewGuid().ToString();
+                if (string.IsNullOrEmpty(parm.Guid))
+                {
+                    parm.Guid = Guid.NewGuid().ToString();
+                }
                 parm.AddDate = DateTime.Now;
 
-                SysAdminDb.Insert(parm);
+                var succ = SysAdminDb.Insert(parm);
 
-                var rel = await Db.Queryable<CmsAdminMerchantRel>().Where(p => p.Admin_Guid == parm.CreateBy).FirstAsync();
-                if (rel != null)
-                {
-                    CmsAdminMerchantRelDb.Insert(new CmsAdminMerchantRel
-                    {
-                        Admin_Guid = parm.Guid,
-                        Out_Mch_Id = rel.Out_Mch_Id,
-                        Sub_Out_Mch_Id = rel.Sub_Out_Mch_Id
-                    });
-                }
+                //var rel = await Db.Queryable<CmsAdminMerchantRel>().Where(p => p.Admin_Guid == parm.CreateBy).FirstAsync();
+                //if (rel != null)
+                //{
+                //    CmsAdminMerchantRelDb.Insert(new CmsAdminMerchantRel
+                //    {
+                //        Admin_Guid = parm.Guid,
+                //        Out_Mch_Id = rel.Out_Mch_Id,
+                //        Sub_Out_Mch_Id = rel.Sub_Out_Mch_Id
+                //    });
+                //}
 
                 res.statusCode = (int)ApiEnum.Status;
+                res.data = parm.Guid;
 
             }
             catch (Exception ex)

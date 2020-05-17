@@ -32,26 +32,25 @@ namespace FytSoa.Api.Controllers.Cms
             return Ok(new { code = 0, msg = "success", count = res.data.TotalItems, data = res.data.Items });
         }
 
-        [HttpPost("add"), ApiAuthorize(Modules = "Level", Methods = "Add", LogType = LogEnum.ADD)]
-        public async Task<IActionResult> Add([FromBody]CmsLevel parm)
+        [HttpPost("add"), ApiAuthorize(Modules = "Merchant", Methods = "Add", LogType = LogEnum.ADD)]
+        public async Task<IActionResult> Add([FromBody]CmsMerchant parm)
         {
-            return null;
-            //return Ok(await levelService.AddAsync(parm));
+            parm.agent_admin_guid = await HttpContext.LoginUserId();
+
+            return Ok(await merchantService.AddAsync(parm));
         }
 
-        [HttpPost("delete"), ApiAuthorize(Modules = "Level", Methods = "Delete", LogType = LogEnum.DELETE)]
+        [HttpPost("delete"), ApiAuthorize(Modules = "Merchant", Methods = "Delete", LogType = LogEnum.DELETE)]
         public async Task<IActionResult> Delete([FromBody]ParmString obj)
         {
             var list = Utils.StrToListInt(obj.parm);
-            return null;
-            //return Ok(await levelService.DeleteAsync(p => list.Contains(p.Id)));
+            return Ok(await merchantService.DeleteAsync(p => list.Contains(p.id)));
         }
 
-        [HttpPost("edit"), ApiAuthorize(Modules = "Level", Methods = "Update", LogType = LogEnum.ADD)]
-        public async Task<IActionResult> Edit([FromBody]CmsLevel parm)
+        [HttpPost("edit"), ApiAuthorize(Modules = "Merchant", Methods = "Update", LogType = LogEnum.ADD)]
+        public async Task<IActionResult> Edit([FromBody]CmsMerchant parm)
         {
-            return null;
-            //return Ok(await levelService.UpdateAsync(parm));
+            return Ok(await merchantService.UpdateAsync(parm));
         }
     }
 }
