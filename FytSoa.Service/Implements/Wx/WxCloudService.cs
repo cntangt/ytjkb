@@ -162,6 +162,18 @@ namespace FytSoa.Service.Implements.Wx
                             shop.out_mch_id = out_mch_id;
                             shop.sub_out_mch_id = mch.sub_out_mch_id;
 
+                            if (!string.IsNullOrEmpty(shop.shop_name))
+                            {
+                                if (shop.shop_name.Length > 4)
+                                {
+                                    shop.erp_org = shop.shop_name.Substring(0, 4);
+                                }
+                                else
+                                {
+                                    shop.erp_org = shop.shop_name;
+                                }
+                            }
+
                             return shop;
                         }).ToArray();
                         countShop += await Db.Insertable(shops).ExecuteCommandAsync();

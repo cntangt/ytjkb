@@ -1,0 +1,86 @@
+﻿@page
+@model ShopModel
+@{
+    ViewData["Title"] = "店铺管理";
+}
+<div id="container">
+    <div class="list-wall">
+        <div class="layui-form list-search">
+            <form autocomplete="off" id="searchform" style="float:right">
+                <div class="layui-inline">
+                    @Html.DropDownList("key", ViewData["merchants"] as IEnumerable<SelectListItem>, "全部商户", new { lay_search = "" })
+                </div>
+                <button type="submit" class="layui-btn layui-btn-sm" data-type="toolSearch"><i class="layui-icon layui-icon-search"></i> 搜索</button>
+            </form>
+            <div style="clear:both"></div>
+        </div>
+        <table class="layui-hide" id="tablist" lay-filter="tool"></table>
+    </div>
+    <script type="text/html" id="switchTpl">
+        <input type="checkbox" name="status" value="{{d.guid}}" lay-skin="switch" lay-text="开|关" lay-filter="statusedit" {{ d.iosAudit==1?'checked':''}}>
+    </script>
+    <script>
+        layui.config({
+            base: '/themes/js/modules/'
+        }).use(['table', 'layer', 'jquery', 'common'],
+            function () {
+                var table = layui.table,
+                    layer = layui.layer,
+                    $ = layui.jquery,
+                    os = layui.common;
+                table.render({
+                    elem: '#tablist',
+                    headers: os.getToken(),
+                    url: '/api/shop/getpages',
+                    cols: [
+                        [
+                            { type: 'checkbox', fixed: 'left' },
+                            { field: 'out_mch_name', title: '商家名称' },
+                            { field: 'out_shop_id', title: '门店编号' },
+                            { field: 'erp_org', title: 'ERP机构' },
+                            { field: 'shop_name', title: '门店名称' },
+                            { field: 'address', title: '门店详细地址' },
+                            { field: 'phone', title: '联系电话', align: 'center', width: 160 },
+                            { align: 'center', title: '创建时间', templet: '<s>{{ layui.util.toDateString(d.create_time, "yyyy-MM-dd HH:mm:ss") }}</s>', width: 160 },
+                            { width: 260, title: '操作', templet: '#tool', align: 'center' }
+                        ]
+                    ],
+                    page: true,
+                    id: 'tables'
+                });
+
+                var guid = '', active = {
+                    reload: function () {
+                        table.reload('tables',
+                        {
+                            page: {
+                                curr: 1
+                            },
+                            where: $('#searchform').serializeArray().js()
+                        });
+                        return false;
+                    }
+                };
+                $('#searchform').on('submit', active.reload);
+                table.on('tool(tool)', function (obj) {
+                    var id = obj.data.id;
+                    switch (obj.event) {
+                        case 'edit':
+                            os.Open('店铺一码付二维码', '/fytadmin/cms/merchantmodify/?id=' + id, '720px', '640px', active.reload);
+                            break;
+                        case 'detail':
+                            os.Open('店铺设备列表', '/fytadmin/cms/merchantdetail/?id=' + id, '720px', '640px');
+                            break;
+                        case 'sync':
+                            os.Open('店铺店员列表', '/api/sync/shopinfo/?id=' + id, '720px', '640px');
+                            break;
+                    }
+                });
+            });
+    </script>
+    <script type="text/html" id="tool">
+        <a class="layui-btn layui-btn-primary layui-btn-xs" lay-event="edit"><i class="layui-icon">&#xe610;</i> 一码付</a>
+        <a class="layui-btn layui-btn-primary layui-btn-xs" lay-event="edit"><i class="layui-icon">&#xe631;</i> 设备</a>
+        <a class="layui-btn layui-btn-primary layui-btn-xs" lay-event="edit"><i class="layui-icon">&#xe613;</i> 店员</a>
+    </script>
+</div>
