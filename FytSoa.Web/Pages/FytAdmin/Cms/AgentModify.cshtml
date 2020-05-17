@@ -45,7 +45,7 @@
         </div>
         <label class="layui-form-label">登录账号</label>
         <div class="layui-input-block">
-            <input type="text" name="Admin_Guid" value="@Model.Agent.Admin_Guid" maxlength="20" lay-verify="required" lay-verType="tips" autocomplete="off" class="layui-input">
+            <input type="text" name="LoginName" value="@Model.Agent.LoginName" maxlength="20" lay-verify="required" lay-verType="tips" autocomplete="off" class="layui-input">
         </div>
     </div>
     <div class="layui-form-item">
@@ -179,6 +179,7 @@
                 load_level(_level);
             } else {
                 _level = '@Model.Agent.Level_Id';
+                $("input[name=LoginName]").attr("readonly", "readonly");
                 $("select[name=Level_Id]").val('@Model.Agent.Level_Id');
                 $("select[name=Settle_Type]").val('@Convert.ToInt32(Model.Agent.Settle_Type)');
                 form.render('select');

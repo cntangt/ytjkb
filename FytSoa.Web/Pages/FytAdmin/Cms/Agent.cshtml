@@ -30,7 +30,7 @@
                     cols: [
                         [
                             { type: 'checkbox', fixed: 'left' },
-                            { field: 'admin_Guid', title: '账号', fixed: 'left' },
+                            { field: 'loginName', title: '登录账号', fixed: 'left' },
                             { field: 'name', title: '姓名', fixed: 'left' },
                             { field: 'level_Name', title: '等级', fixed: 'left' },
                             { field: 'tel', title: '电话', fixed: 'left', width: 115 },
@@ -39,7 +39,7 @@
                                     return "微信:" + d.wxpay + ",支付宝:" + d.alipay + ",其他:" + d.otherpay + "";
                                 }
                             },
-                            { field: 'settle_Type', title: '结算方式', fixed: 'left' },
+                            { field: 'settle_Name', title: '结算方式', fixed: 'left' },
                             { field: 'account_No', title: '结算账号', fixed: 'left', width: 120 },
                             { field: 'business_Area', title: '区域', fixed: 'left' },
                             { field: 'create_Time', title: '加入时间', fixed: 'left', width: 100, templet: function (d) { return d.create_Time.split('T')[0]; } },
