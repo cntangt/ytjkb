@@ -19,7 +19,7 @@ namespace FytSoa.Core.Model.Cms
         public decimal Wxpay { get; set; }
         public decimal Alipay { get; set; }
         public decimal Otherpay { get; set; }
-        public DateTime? Create_Time { get; set; }
+        public DateTime Create_Time { get; set; }
         public DateTime? Update_Time { get; set; }
         public bool Status { get; set; }
         public bool Delete { get; set; }
