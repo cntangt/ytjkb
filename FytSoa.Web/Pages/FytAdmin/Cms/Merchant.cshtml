@@ -12,7 +12,7 @@
                 <div class="layui-inline">
                     <input class="layui-input" name="key" placeholder="输入商户名/电话/子商户号">
                 </div>
-                <button type="button" class="layui-btn layui-btn-sm" data-type="toolSearch"><i class="layui-icon layui-icon-search"></i> 搜索</button>
+                <button type="submit" class="layui-btn layui-btn-sm" data-type="toolSearch"><i class="layui-icon layui-icon-search"></i> 搜索</button>
             </form>
         </div>
         <table class="layui-hide" id="tablist" lay-filter="tool"></table>
@@ -63,7 +63,7 @@
                     id: 'tables'
                 });
 
-                var guid = '', active = {
+                var active = {
                     reload: function () {
                         table.reload('tables',
                         {
@@ -74,7 +74,6 @@
                         });
                         return false;
                     },
-                    toolSearch: function () { active.reload(); },
                     toolAdd: function () {
                         os.Open('添加子商户信息', '/fytadmin/cms/merchantmodify', '720px', '640px', active.reload);
                     },
@@ -104,14 +103,10 @@
                                 }
                             });
                         });
-
                     }
                 };
-                $('.list-search .layui-btn').on('click', function () {
-                    var type = $(this).data('type');
-                    active[type] ? active[type].call(this) : '';
-                });
-                //监听工具条
+                $('#searchform').on('submit', active.reload);
+                $('button[data-type]').on('click', (e) => active[$(e.target).data('type')].call(this));
                 table.on('tool(tool)', function (obj) {
                     var id = obj.data.id;
                     switch (obj.event) {
