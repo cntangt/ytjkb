@@ -11,11 +11,15 @@ namespace FytSoa.Api.Controllers.Cms
     [JwtAuthorize(Roles = "Admin")]
     public class ShopController : ControllerBase
     {
-        private readonly ICmsShopService shopService;
+        readonly ICmsShopService shopService;
+        readonly ICmsDeviceService deviceService;
+        readonly ICmsStaffService staffService;
 
-        public ShopController(ICmsShopService shopService)
+        public ShopController(ICmsShopService shopService, ICmsDeviceService deviceService, ICmsStaffService staffService)
         {
             this.shopService = shopService;
+            this.deviceService = deviceService;
+            this.staffService = staffService;
         }
 
         [HttpGet("getpages")]
@@ -27,6 +31,14 @@ namespace FytSoa.Api.Controllers.Cms
             }
 
             var res = await shopService.GetPagesAsync(parm);
+
+            return Ok(new { code = 0, msg = "success", count = res.data.TotalItems, data = res.data.Items });
+        }
+
+        [HttpGet("device")]
+        public async Task<IActionResult> GetDevice([FromQuery]PageParm parm)
+        {
+            var res = await deviceService.GetPagesAsync(parm);
 
             return Ok(new { code = 0, msg = "success", count = res.data.TotalItems, data = res.data.Items });
         }

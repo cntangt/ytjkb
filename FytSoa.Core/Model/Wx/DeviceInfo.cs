@@ -1,4 +1,6 @@
 ﻿using FytSoa.Service.DtoModel.Wx;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Converters;
 
 namespace FytSoa.Core.Model.Wx
 {
@@ -12,6 +14,8 @@ namespace FytSoa.Core.Model.Wx
         public string device_id { get; set; }
         public string remark { get; set; }
         public string device_name { get; set; }
+
+        [JsonConverter(typeof(StringEnumConverter))]
         public DeviceShiftType device_shift_type { get; set; }
     }
 }

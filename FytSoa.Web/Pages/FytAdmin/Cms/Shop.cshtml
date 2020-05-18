@@ -62,13 +62,12 @@
                 };
                 $('#searchform').on('submit', active.reload);
                 table.on('tool(tool)', function (obj) {
-                    var id = obj.data.id;
                     switch (obj.event) {
-                        case 'edit':
-                            os.Open('店铺一码付二维码', '/fytadmin/cms/shopqrcode/?id=' + id, '720px', '640px');
+                        case 'qrcode':
+                            os.Open('店铺一码付二维码', '/fytadmin/cms/shopqrcode/?id=' + obj.data.id, '720px', '640px');
                             break;
-                        case 'detail':
-                            os.Open('店铺设备列表', '/fytadmin/cms/merchantdetail/?id=' + id, '720px', '640px');
+                        case 'device':
+                            os.Open('店铺设备列表', '/fytadmin/cms/shopdevice/?id=' + obj.data.out_shop_id, '1200px', '540px');
                             break;
                         case 'sync':
                             os.Open('店铺店员列表', '/api/sync/shopinfo/?id=' + id, '720px', '640px');
@@ -78,8 +77,8 @@
             });
     </script>
     <script type="text/html" id="tool">
-        <a class="layui-btn layui-btn-primary layui-btn-xs" lay-event="edit"><i class="layui-icon">&#xe610;</i> 一码付</a>
-        <a class="layui-btn layui-btn-primary layui-btn-xs" lay-event="edit"><i class="layui-icon">&#xe631;</i> 设备</a>
+        <a class="layui-btn layui-btn-primary layui-btn-xs" lay-event="qrcode"><i class="layui-icon">&#xe610;</i> 一码付</a>
+        <a class="layui-btn layui-btn-primary layui-btn-xs" lay-event="device"><i class="layui-icon">&#xe631;</i> 设备</a>
         <a class="layui-btn layui-btn-primary layui-btn-xs" lay-event="edit"><i class="layui-icon">&#xe613;</i> 店员</a>
     </script>
 </div>
