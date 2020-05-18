@@ -42,5 +42,13 @@ namespace FytSoa.Api.Controllers.Cms
 
             return Ok(new { code = 0, msg = "success", count = res.data.TotalItems, data = res.data.Items });
         }
+
+        [HttpGet("staff")]
+        public async Task<IActionResult> GetStaff([FromQuery]PageParm parm)
+        {
+            var res = await staffService.GetPagesAsync(parm);
+
+            return Ok(new { code = 0, msg = "success", count = res.data.TotalItems, data = res.data.Items });
+        }
     }
 }

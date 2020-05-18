@@ -25,7 +25,7 @@
             <form action="/fytadmin/login" id="forms" method="post" class="layui-form">
                 @Html.AntiForgeryToken()
                 <h1>用户登录</h1>
-                <div class="cell"><span class="icon-user"></span><input type="text" name="loginname" id="loginname" lay-verify="required" lay-verType="tips" placeholder="登录账号" autocomplete="off"></div>
+                <div class="cell"><span class="icon-user"></span><input type="text" name="loginname" id="loginname" lay-verify="required" lay-verType="tips" placeholder="登录账号" autocomplete="off" tabindex="0"></div>
                 <div class="cell"><span class="icon-pwd"></span><input type="password" name="password" id="password" lay-verify="required" lay-verType="tips" placeholder="登录密码" autocomplete="off"></div>
                 <div class="login-tip"><span></span></div>
                 <div class="login-btn">

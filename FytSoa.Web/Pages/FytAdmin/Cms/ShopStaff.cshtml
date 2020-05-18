@@ -1,0 +1,37 @@
+﻿@page
+@{
+    Layout = "_Layout";
+}
+<div id="container" data-outshopid="@Request.Query["id"]" style="padding: 0 10px">
+    <table class="layui-hide" id="tablist" lay-filter="tool" style="margin:0"></table>
+</div>
+@section scripts{
+    <script>
+        layui.config({
+            base: '/themes/js/modules/'
+        }).use(['table', 'jquery', 'common'],
+            function () {
+                var table = layui.table,
+                    $ = layui.jquery,
+                    os = layui.common;
+                table.render({
+                    elem: '#tablist',
+                    headers: os.getToken(),
+                    url: '/api/shop/staff?key=' + $('#container').data('outshopid'),
+                    cols: [
+                        [
+                            { field: 'sub_out_mch_id', title: '子商户编号', width: 200 },
+                            { field: 'out_shop_id', title: '店铺编号', width: 200 },
+                            { field: 'staff_id', title: '店员编号', width: 200 },
+                            { field: 'staff_name', title: '店员名称', width: 150 },
+                            { title: '店长', templet: (d)=>tostatus(d.shop_manager), align: 'center', width: 60 },
+                            { title: '消息', templet: (d)=>tostatus(d.receive_one_code_pay_notify), align: 'center', width: 60 },
+                            { field: 'remark', title: '备注信息' }
+                        ]
+                    ],
+                    page: true,
+                    id: 'tables'
+                });
+            });
+    </script>
+}
