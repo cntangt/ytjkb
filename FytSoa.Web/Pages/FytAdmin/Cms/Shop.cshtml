@@ -65,7 +65,7 @@
                     var id = obj.data.id;
                     switch (obj.event) {
                         case 'edit':
-                            os.Open('店铺一码付二维码', '/fytadmin/cms/merchantmodify/?id=' + id, '720px', '640px', active.reload);
+                            os.Open('店铺一码付二维码', '/fytadmin/cms/shopqrcode/?id=' + id, '720px', '640px');
                             break;
                         case 'detail':
                             os.Open('店铺设备列表', '/fytadmin/cms/merchantdetail/?id=' + id, '720px', '640px');

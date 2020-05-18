@@ -1,0 +1,17 @@
+﻿@page
+@using QRCoder
+@inject FytSoa.Service.Interfaces.ICmsShopService shopService
+@{
+    Layout = null;
+
+    var shop = await shopService.GetModelAsync(p => p.id == Request.Query["id"]);
+
+    var qrGenerator = new QRCodeGenerator();
+    var qrCodeData = qrGenerator.CreateQrCode(shop.data.out_shop_id_url, QRCodeGenerator.ECCLevel.Q);
+    var qrcode = new Base64QRCode(qrCodeData);
+    var base64 = qrcode.GetGraphic(10);
+}
+<div style="text-align:center;">
+    <h3>@shop.data.out_mch_name @shop.data.shop_name</h3>
+    <img src="data:image/png;base64,@base64" />
+</div>  
