@@ -5,88 +5,23 @@
     Layout = "~/Pages/FytAdmin/_Layout.cshtml";
 }
 <style>
-    .organize-tree {
-        position: absolute;
-        background-color: #fff;
-        padding: 5px 25px;
-        z-index: 1000;
-        box-shadow: 0 0 24px rgba(0, 0, 0, .18);
-        opacity: 0;
-        height: 0;
-        display: none;
-    }
-
-    .organize-tree.active {
-        display: block;
-        opacity: 1;
-        height: auto;
-        max-height: 500px;
-        overflow: auto;
-        transition: all .5s;
-    }
-
-    .form-cus {
-        /*width: 70%;
-        float: right;*/
-    }
-
-    .cur-image {
-        width: 24%;
-        position: absolute;
-        left: 25px;
-        top: 0px;
-        margin-bottom: 0px;
-    }
-
-
-    .cur-image .add-photo.default {
-        height: 170px;
-    }
-
-    .cur-image .select-newimg {
-        padding-top: 55px;
-    }
-
-    .cur-image .add-photo img {
-        height: 170px;
-    }
-
-    .widget-footer {
-        border: 1px solid #f6f9fd !important;
-        background-color: #f6f9fd;
-        text-align: center;
-        color: rgb(163, 175, 183);
-    }
-
-    .widget-footer span {
-        display: block;
-        line-height: 25px;
-        color: #333;
-    }
-
-    .input-tags {
-        border-radius: 3px !important;
-        height: 24px;
-        border: 1px solid #e6e6e6;
-        cursor: pointer;
-        padding: 7px 10px;
-    }
-
-    .tags {
-        padding: 3px 10px;
-        background-color: #f0f2f5;
-        color: #909399;
-        margin-right: 10px;
-    }
-
-    .fr {
-        float: right;
-    }
+    .organize-tree { position: absolute; background-color: #fff; padding: 5px 25px; z-index: 1000; box-shadow: 0 0 24px rgba(0, 0, 0, .18); opacity: 0; height: 0; display: none; }
+    .organize-tree.active { display: block; opacity: 1; height: auto; max-height: 500px; overflow: auto; transition: all .5s; }
+    .cur-image { width: 24%; position: absolute; left: 25px; top: 0px; margin-bottom: 0px; }
+    .cur-image .add-photo.default { height: 170px; }
+    .cur-image .select-newimg { padding-top: 55px; }
+    .cur-image .add-photo img { height: 170px; }
+    .widget-footer { border: 1px solid #f6f9fd !important; background-color: #f6f9fd; text-align: center; color: rgb(163, 175, 183); }
+    .widget-footer span { display: block; line-height: 25px; color: #333; }
+    .input-tags { border-radius: 3px !important; height: 24px; border: 1px solid #e6e6e6; cursor: pointer; padding: 7px 10px; }
+    .tags { padding: 3px 10px; background-color: #f0f2f5; color: #909399; margin-right: 10px; }
+    .fr { float: right; }
+    .layui-form-item { margin-bottom: 8px; }
 </style>
 <div id="app">
     <form class="layui-form form-cus" action="" lay-filter="forms">
         <div class="layui-form-item">
-            <label class="layui-form-label">关联角色</label>
+            <label class="layui-form-label">接收代理商</label>
             <div class="layui-input-block">
                 <div class="input-tags">
                     <span class="layui-badge layui-bg-gray tags"
@@ -95,49 +30,46 @@
             </div>
         </div>
         <div class="layui-form-item">
-            <div class="layui-inline">
-                <label class="layui-form-label">登录账号</label>
-                <div class="layui-input-inline">
-                    <input type="text" v-model="m.loginName" name="LoginName" maxlength="20" lay-verify="required"
-                           lay-verType="tips" autocomplete="off" class="layui-input">
-                </div>
-            </div>
-            <div class="layui-inline fr">
-                <label class="layui-form-label">登录密码</label>
-                <div class="layui-input-inline">
-                    <input type="password" v-model="m.loginPwd" name="LoginPwd" maxlength="20" lay-verify="required"
-                           lay-verType="tips" autocomplete="off" class="layui-input">
+            <label class="layui-form-label">接收子商户</label>
+            <div class="layui-input-block">
+                <div class="input-tags">
+                    <span class="layui-badge layui-bg-gray tags"
+                          v-for="it in m.roleList">{{it.name}}</span>
                 </div>
             </div>
         </div>
         <div class="layui-form-item">
+            <label class="layui-form-label">公告标题</label>
+            <div class="layui-input-block">
+                <input type="text" name="LoginName" maxlength="20" lay-verify="required"
+                       lay-verType="tips" autocomplete="off" class="layui-input">
+            </div>
+        </div>
+        <div class="layui-form-item" style="margin:0px;">
             <div class="layui-inline">
-                <label class="layui-form-label">姓名</label>
+                <label class="layui-form-label">生效时间</label>
                 <div class="layui-input-inline">
                     <input type="text" v-model="m.trueName" name="TrueName" maxlength="10" lay-verify="required"
                            lay-verType="tips" autocomplete="off" class="layui-input">
                 </div>
             </div>
             <div class="layui-inline fr">
-                <label class="layui-form-label">手机号码</label>
+                <label class="layui-form-label">过期时间</label>
                 <div class="layui-input-inline">
                     <input type="text" v-model="m.mobile" name="Mobile" autocomplete="off" class="layui-input">
                 </div>
             </div>
         </div>
         <div class="layui-form-item">
-            <div class="layui-inline">
-                <label class="layui-form-label">性别</label>
-                <div class="layui-input-inline">
-                    <input type="radio" name="sex" value="男" title="男" lay-filter="sex">
-                    <input type="radio" name="sex" value="女" title="女" lay-filter="sex">
-                </div>
+            <label class="layui-form-label">排序</label>
+            <div class="layui-input-block">
+                <div id="slideSort" style="top:17px;"></div>
             </div>
-            <div class="layui-inline fr">
-                <label class="layui-form-label">状态</label>
-                <div class="layui-input-inline">
-                    <input type="checkbox" name="status" lay-skin="switch" lay-filter="status" lay-text="ON|OFF">
-                </div>
+        </div>
+        <div class="layui-form-item layui-form-text">
+            <label class="layui-form-label">文本域</label>
+            <div class="layui-input-block">
+                <textarea id="Content" name="Content" placeholder="请输入内容" class="layui-textarea"></textarea>
             </div>
         </div>
         <div class="layui-form-item layui-cur-submit">
@@ -151,20 +83,36 @@
     </form>
 </div>
 @section Scripts{
+    <script src="/themes/tinymce/tinymce.min.js"></script>
+    <script src="/themes/tinymce/langs/zh_CN.js"></script>
     <script>
-        var oc,
-            vm = new Vue({
-                el: '#app',
-                data: {
-                    m: {}
-                }
-            });
+        var oc, vm = new Vue({
+            el: '#app',
+            data: {
+                m: {}
+            }
+        });
+        tinymce.init({
+            convert_urls: false,
+            selector: '#Content',
+            height: 120,
+            plugins: 'print preview code searchreplace autolink directionality visualblocks visualchars fullscreen image link media codesample table charmap hr pagebreak nonbreaking anchor toc insertdatetime advlist lists textcolor wordcount imagetools contextmenu colorpicker textpattern help filemanager',
+            toolbar: 'formatselect styleselect | bold italic forecolor backcolor | link filemanager | alignleft aligncenter alignright alignjustify  | numlist bullist outdent indent  | removeformat'
+        });
         layui.config({
             base: '/themes/js/modules/'
-        }).use(['layer', 'jquery', 'common', 'form', 'tree'],
+        }).use(['layer', 'jquery', 'common', 'form', 'tree', 'slider'],
             function () {
                 var form = layui.form, $ = layui.$, os = layui.common, tree = layui.tree;
-                var index = parent.layer.getFrameIndex(window.name);
+                var index = parent.layer.getFrameIndex(window.name), slider = layui.slider;
+                var sliderIndex = slider.render({
+                    elem: '#slideSort'
+                    , input: true
+                    , change: function (value) {
+                        vm.m.sort = value;
+                    }
+                    , theme: '#409eff'
+                });
                 form.on('radio(sex)',
                     function (data) {
                         vm.m.sex = data.value;
@@ -194,9 +142,9 @@
                                 }
                             });
                         $('.input-tags').click(function () {
-                        var frameId = window.frameElement && window.frameElement.id || '';
-                        os.Open('关联角色', '/fytadmin/sys/adminmodifytorole?frameid=' + frameId + '&role=' + escape(JSON.stringify(vm.m.roleList)), '600px', '500px');
-                    });
+                            var frameId = window.frameElement && window.frameElement.id || '';
+                            os.Open('关联角色', '/fytadmin/sys/adminmodifytorole?frameid=' + frameId + '&role=' + escape(JSON.stringify(vm.m.roleList)), '600px', '500px');
+                        });
                     },
                     fileSave(v) {
                         $(".select-newimg").addClass('layui-hide');
