@@ -22,11 +22,11 @@
             <div class="login-left-bg"></div>
         </div>
         <div class="login-right">
-            <form action="/fytadmin/login" id="forms" method="post" class="layui-form">
+            <form action="/fytadmin/login" id="forms" method="post" class="layui-form" autocomplete="off">
                 @Html.AntiForgeryToken()
                 <h1>用户登录</h1>
-                <div class="cell"><span class="icon-user"></span><input type="text" name="loginname" id="loginname" lay-verify="required" lay-verType="tips" placeholder="登录账号" autocomplete="off" tabindex="0"></div>
-                <div class="cell"><span class="icon-pwd"></span><input type="password" name="password" id="password" lay-verify="required" lay-verType="tips" placeholder="登录密码" autocomplete="off"></div>
+                <div class="cell"><span class="icon-user"></span><input type="text" name="loginname" id="loginname" lay-verify="required" lay-verType="tips" placeholder="登录账号"></div>
+                <div class="cell"><span class="icon-pwd"></span><input type="password" name="password" id="password" lay-verify="required" lay-verType="tips" placeholder="登录密码"></div>
                 <div class="login-tip"><span></span></div>
                 <div class="login-btn">
                     <button class="layui-btn layui-btn-normal" lay-submit="" lay-filter="loginsub">登录</button>
@@ -39,5 +39,6 @@
     </div>
     <script src="~/themes/layui/layui.js"></script>
     <script src="~/build/admin/js/login.min.js"></script>
+    <script>document.getElementById('loginname').focus()</script>
 </body>
 </html>
