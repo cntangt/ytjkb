@@ -113,10 +113,6 @@
                     }
                     , theme: '#409eff'
                 });
-                form.on('radio(sex)',
-                    function (data) {
-                        vm.m.sex = data.value;
-                    });
                 form.on('switch(status)',
                     function (data) {
                         vm.m.status = data.elem.checked;
@@ -125,18 +121,10 @@
                 oc = {
                     init() {
                         //查询角色信息
-                        os.ajax('api/admin/bymodel/',
-                            { parm: os.getUrlParam('guid') },
+                        os.ajax('api/admin/bymodel/', { parm: os.getUrlParam('guid') },
                             function (res) {
                                 if (res.statusCode == 200) {
                                     vm.m = res.data;
-                                    vm.$nextTick(function () {
-                                        form.val('forms',
-                                            {
-                                                'sex': vm.m.sex,
-                                                'status': vm.m.status
-                                            });
-                                    });
                                 } else {
                                     os.error(res.message);
                                 }
