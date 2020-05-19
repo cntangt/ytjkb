@@ -220,6 +220,7 @@ namespace FytSoa.Service.Implements
             }
             catch (Exception ex)
             {
+                res.statusCode = (int)ApiEnum.Error;
                 Logger.Default.ProcessError((int)ApiEnum.Error, ex.Message);
             }
 
