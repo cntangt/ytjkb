@@ -19,7 +19,7 @@ namespace FytSoa.Service.Implements
     {
         readonly ICmsAgentService agent;
         readonly ICmsMerchantService merchant;
-        public SysNoticeService(ICmsAgentService agent,ICmsMerchantService merchant,IConfiguration config) : base(config)
+        public SysNoticeService(ICmsAgentService agent, ICmsMerchantService merchant, IConfiguration config) : base(config)
         {
             this.agent = agent;
             this.merchant = merchant;
@@ -197,6 +197,26 @@ namespace FytSoa.Service.Implements
 
                 res.statusCode = (int)ApiEnum.Status;
                 res.message = "修改公告信息成功";
+            }
+            catch (Exception ex)
+            {
+                Logger.Default.ProcessError((int)ApiEnum.Error, ex.Message);
+            }
+
+            return res;
+        }
+
+        public async Task<ApiResult<string>> GetUnreadQuantity(string admin_guid)
+        {
+            var res = new ApiResult<string>() { statusCode = (int)ApiEnum.Status, data = "0" };
+
+            try
+            {
+                var count = await Db.Queryable<SysNotice, SysNoticeChi>((a, b) => new object[] {
+                        JoinType.Inner, a.id == b.notice_id }).
+                            Where((a, b) => b.admin_guid == admin_guid && b.read_status == false && SqlFunc.Between(DateTime.Now, a.begin_time, a.end_time)).CountAsync();
+
+                res.data = count.ToString();
             }
             catch (Exception ex)
             {
