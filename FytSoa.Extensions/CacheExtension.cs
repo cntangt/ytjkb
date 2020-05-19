@@ -52,22 +52,23 @@ namespace Microsoft.Extensions.Caching.Distributed
             AbsoluteExpirationRelativeToNow = TimeSpan.FromMinutes(expirationMinute)
         });
 
-        public static Task SetAsync<T>(this IDistributedCache cache, string key, T value)
+        public static async Task SetAsync<T>(this IDistributedCache cache, string key, T value)
         {
             if (string.IsNullOrEmpty(key))
             {
-                return Task.Delay(1);
+                return;
             }
 
             if (value == null)
             {
-                return Task.Delay(1);
+                return;
             }
 
             var json = JsonConvert.SerializeObject(value);
 
+            await cache.RemoveAsync(key);
 
-            return cache.SetStringAsync(key, json);
+            await cache.SetStringAsync(key, json);
         }
 
         public static Task SetAsync<T>(this IDistributedCache cache, string key, T value, DistributedCacheEntryOptions option)

@@ -48,7 +48,8 @@
                     if (type === 'timeout') {
                         tool.error('连接超时，请稍后重试！');
                     } else if (type === 'error') {
-                        tool.error('连接异常，请稍后重试！');
+                        //tool.error('连接异常，请稍后重试！');
+                        layer.confirm('连接异常，请重新登录', ['确定'], () => window.location.href = '/fytadmin/login?ReturnUrl=' + window.location.href)
                     }
                 }
             });
