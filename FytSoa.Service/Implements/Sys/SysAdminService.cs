@@ -84,16 +84,14 @@ namespace FytSoa.Service.Implements
         /// <returns></returns>
         List<SysMenuDto> GetMenuByAdmin(string admin)
         {
-            List<SysMenuDto> res = null;
             try
             {
-                //根据用户查询角色列表， 一个用户对应多个角色
-                var roleList = SysPermissionsDb.GetList(m => m.AdminGuid == admin && m.Types == 2).Select(m => m.RoleGuid).ToList();
-                //根据角色查询菜单，并查询到菜单涉及的功能
-                var query = Db.Queryable<SysMenu, SysPermissions>((sm, sp) => new object[]{
-                    JoinType.Left,sm.Guid==sp.MenuGuid
-                })
-                .Where((sm, sp) => roleList.Contains(sp.RoleGuid) && sp.Types == 1 && sm.Status)
+                //Db.Queryable<SysPermissions,SysPermissions>((role,sp)=>new JoinQueryInfos(JoinType.Left,role.RoleGuid==sp.RoleGuid))
+                //    .Where((role,sp)=>role.Types==2&&role.AdminGuid==admin)
+                //    .Select((role, sp) => new { })
+                //    .ToList
+                return Db.Queryable<SysMenu, SysPermissions, SysPermissions>((sm, sp, rolesp) => new JoinQueryInfos(JoinType.Left, sm.Guid == sp.MenuGuid, JoinType.Left, sp.RoleGuid == rolesp.RoleGuid))
+                .Where((sm, sp, rolesp) => sp.Types == 1 && sm.Status && rolesp.Types == 2 && rolesp.AdminGuid == admin)
                 .OrderBy((sm, sp) => sm.Sort)
                 .Select((sm, sp) => new SysMenuDto()
                 {
@@ -126,15 +124,20 @@ namespace FytSoa.Service.Implements
                     {
                         it.btnFun = codeList.Where(m => it.btnJson.Contains(m.guid)).ToList();
                     }
-                });
-                var result = query.ToList();
-                res = result.CurDistinct(m => m.guid).ToList();
+                })
+                .ToList()
+                .GroupBy(p => p.guid)
+                .Select(p =>
+                {
+                    var dto = p.First();
+                    dto.btnFun = p.Where(f => f.btnFun != null).SelectMany(f => f.btnFun).CurDistinct(f => f.guid).ToList();
+                    return dto;
+                }).ToList();
             }
-            catch
+            catch// (Exception ex)
             {
-                res = null;
+                return null;
             }
-            return res;
         }
         #endregion
 
