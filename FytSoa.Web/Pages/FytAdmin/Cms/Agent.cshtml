@@ -48,7 +48,7 @@
                             { field: 'settle_Name', title: '结算方式', fixed: 'left' },
                             { field: 'account_No', title: '结算账号', fixed: 'left', width: 120 },
                             { field: 'business_Area', title: '区域', fixed: 'left' },
-                            { field: 'create_Time', title: '加入时间', fixed: 'left', width: 100, templet: function (d) { return d.create_Time.split('T')[0]; } },
+                            { field: 'create_Time', title: '加入时间', fixed: 'left', width: 100, templet: (d) => layui.util.toDateString(d.create_Time, 'yyyy-MM-dd') },
                             { title: '操作', templet: '#tool', align: 'center',fixed: 'left', width: 165 }
                         ]
                     ],

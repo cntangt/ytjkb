@@ -12,5 +12,6 @@ namespace FytSoa.Core.Model.Sys
         public int notice_id { get; set; }
         public string admin_guid { get; set; }
         public bool read_status { get; set; }
+        public DateTime? read_time { get; set; }
     }
 }

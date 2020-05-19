@@ -5,81 +5,29 @@
     Layout = "~/Pages/FytAdmin/_Layout.cshtml";
 }
 <style>
-    .organize-tree {
-        position: absolute;
-        background-color: #fff;
-        padding: 5px 25px;
-        z-index: 1000;
-        box-shadow: 0 0 24px rgba(0, 0, 0, .18);
-        opacity: 0;
-        height: 0;
-        display: none;
-    }
+    .organize-tree { position: absolute; background-color: #fff; padding: 5px 25px; z-index: 1000; box-shadow: 0 0 24px rgba(0, 0, 0, .18); opacity: 0; height: 0; display: none; }
 
-    .organize-tree.active {
-        display: block;
-        opacity: 1;
-        height: auto;
-        max-height: 500px;
-        overflow: auto;
-        transition: all .5s;
-    }
+        .organize-tree.active { display: block; opacity: 1; height: auto; max-height: 500px; overflow: auto; transition: all .5s; }
 
-    .cur-image {
-        width: 24%;
-        position: absolute;
-        left: 25px;
-        top: 0px;
-        margin-bottom: 0px;
-    }
+    .cur-image { width: 24%; position: absolute; left: 25px; top: 0px; margin-bottom: 0px; }
 
-    .cur-image .add-photo.default {
-        height: 170px;
-    }
+        .cur-image .add-photo.default { height: 170px; }
 
-    .cur-image .select-newimg {
-        padding-top: 55px;
-    }
+        .cur-image .select-newimg { padding-top: 55px; }
 
-    .cur-image .add-photo img {
-        height: 170px;
-    }
+        .cur-image .add-photo img { height: 170px; }
 
-    .widget-footer {
-        border: 1px solid #f6f9fd !important;
-        background-color: #f6f9fd;
-        text-align: center;
-        color: rgb(163, 175, 183);
-    }
+    .widget-footer { border: 1px solid #f6f9fd !important; background-color: #f6f9fd; text-align: center; color: rgb(163, 175, 183); }
 
-    .widget-footer span {
-        display: block;
-        line-height: 25px;
-        color: #333;
-    }
+        .widget-footer span { display: block; line-height: 25px; color: #333; }
 
-    .input-tags {
-        border-radius: 3px !important;
-        height: 24px;
-        border: 1px solid #e6e6e6;
-        cursor: pointer;
-        padding: 7px 10px;
-    }
+    .input-tags { border-radius: 3px !important; height: 24px; border: 1px solid #e6e6e6; cursor: pointer; padding: 7px 10px; }
 
-    .tags {
-        padding: 3px 10px;
-        background-color: #f0f2f5;
-        color: #909399;
-        margin-right: 10px;
-    }
+    .tags { padding: 3px 10px; background-color: #f0f2f5; color: #909399; margin-right: 10px; }
 
-    .fr {
-        float: right;
-    }
+    .fr { float: right; }
 
-    .layui-form-item {
-        margin-bottom: 8px;
-    }
+    .layui-form-item { margin-bottom: 8px; }
 </style>
 <div id="app">
     <form class="layui-form form-cus" action="" lay-filter="forms">
@@ -112,14 +60,13 @@
             <div class="layui-inline">
                 <label class="layui-form-label">生效时间</label>
                 <div class="layui-input-inline">
-                    <input type="text" v-model="m.begin_time" id="begin_time" name="begin_time" maxlength="10" lay-verify="required"
-                           lay-verType="tips" autocomplete="off" class="layui-input">
+                    <input type="text" v-model="m.begin_time" id="begin_time" name="begin_time" lay-verify="required" lay-verType="tips" autocomplete="off" class="layui-input">
                 </div>
             </div>
             <div class="layui-inline fr">
                 <label class="layui-form-label">过期时间</label>
                 <div class="layui-input-inline">
-                    <input type="text" v-model="m.end_time" id="end_time" name="end_time" autocomplete="off" class="layui-input">
+                    <input type="text" v-model="m.end_time" id="end_time" name="end_time" lay-verify="required" lay-verType="tips" autocomplete="off" class="layui-input">
                 </div>
             </div>
         </div>
@@ -171,32 +118,23 @@
                 var sliderIndex = slider.render({
                     elem: '#slideSort'
                     , input: true
-                    , change: function (value) {
-                        vm.m.sort = value;
-                    }
+                    , change: (value) => vm.m.sort = value
                     , theme: '#409eff'
                 });
                 laydate.render({
                     elem: '#begin_time'
                     , theme: '#393D49'
                     , type: 'datetime'
-                    , change: function (value) {
-                        vm.m.begin_time = value;
-                    }
+                    , change: (value) => vm.m.begin_time = value
+                    , done: (value) => vm.m.begin_time = value
                 });
                 laydate.render({
                     elem: '#end_time'
                     , theme: '#393D49'
                     , type: 'datetime'
-                    , change: function (value) {
-                        vm.m.end_time = value;
-                    }
+                    , change: (value) => vm.m.end_time = value
+                    , done: (value) => vm.m.end_time = value
                 });
-                form.on('switch(status)',
-                    function (data) {
-                        vm.m.status = data.elem.checked;
-                    });
-                os.cloudFile();
                 oc = {
                     init() {
                         //查询角色信息
@@ -209,6 +147,7 @@
                                     var end_time_arr = vm.m.end_time.split('T');
                                     vm.m.end_time = end_time_arr[0] + " " + end_time_arr[1];
                                     sliderIndex.setValue(vm.m.sort);
+                                    tinyMCE.editors[0].setContent(vm.m.content);
                                 } else {
                                     os.error(res.message);
                                 }
@@ -221,11 +160,6 @@
                             var frameId = window.frameElement && window.frameElement.id || '';
                             os.Open('子商户', '/fytadmin/sys/noticemodifytomerchant?frameid=' + frameId + '&merchant=' + escape(JSON.stringify(vm.m.merchantList)), '600px', '500px');
                         });
-                    },
-                    deleteFile() {
-                        $(".select-newimg").removeClass('layui-hide');
-                        $(".add-photo-wall").addClass('layui-hide');
-                        $('#imgShow').attr('src', v);
                     },
                     saveAgent(list) {
                         vm.m.agent_ids = list;
@@ -245,6 +179,7 @@
                         if (vm.m.id) {
                             urls = "api/notice/edit";
                         }
+                        vm.m.content = tinyMCE.editors[0].getContent();
                         os.ajax(urls,
                             vm.m,
                             function (res) {

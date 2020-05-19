@@ -29,10 +29,10 @@
                             { type: 'checkbox', },
                             { field: 'title', title: '标题', },
                             { field: 'sort', title: '优先级', },
-                            { field: '1', title: '接收代理商' },
+                            { field: 'agentNames', title: '接收代理商' },
                             { field: '2', title: '接收子商户' },
-                            { field: 'release_time', title: '生效时间' },
-                            { field: 'expiry_time', title: '过期时间' },
+                            { field: 'begin_time', title: '生效时间', templet: (d) => layui.util.toDateString(d.begin_time, 'yyyy-MM-dd HH:mm:ss') },
+                            { field: 'end_time', title: '过期时间', templet: (d) => layui.util.toDateString(d.end_time, 'yyyy-MM-dd HH:mm:ss') },
                             { width: 100, title: '操作', templet: '#tool' }
                         ]
                     ],

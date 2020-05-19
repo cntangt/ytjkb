@@ -2,12 +2,14 @@
 using SqlSugar;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace FytSoa.Core.Model.Sys
 {
     [MySugarTable("Sys_Notice")]
     public class SysNotice
     {
+        [SugarColumn(IsIdentity = true)]
         public int id { get; set; }
         public string title { get; set; }
         public string agent_ids { get; set; }
@@ -58,11 +60,23 @@ namespace FytSoa.Core.Model.Sys
                 return role;
             }
         }
+
+        /// <summary>
+        /// 返回代理商列表
+        /// </summary>
+        [SugarColumn(IsIgnore = true)]
+        public string AgentNames
+        {
+            get
+            {
+                return string.Join("、", AgentList.Select(t => t.name).ToArray());
+            }
+        }
     }
 
     public class NoticeToList
     {
-        public string id { get; set; }
+        public int id { get; set; }
         public string name { get; set; }
     }
 }
