@@ -78,8 +78,7 @@
             <h4>选择</h4>
             <div class="role" style="overflow: auto;">
                 <div style="padding:10px">
-                    <div class="role-item" :class="active==row.guid?'active':''" v-for="row in list"
-                         v-if="row.level==1" @@click="loaduser(row)">
+                    <div class="role-item" v-bind:class="active==row.id?'active':''" v-for="row in list" @@click="loaduser(row)">
                         <i class="layui-icon layui-icon-friends"></i>{{glnode(row.name)}}
                     </div>
                 </div>
@@ -120,25 +119,24 @@
             },
             delCur(v) {
                 this.curList.some((item, i) => {
-                    if (item.guid == v.guid) {
+                    if (item.id == v.id) {
                         this.curList.splice(i, 1);
                         return true;
                     }
                 });
             },
             loaduser(v) {
-                this.active = v.guid;
+                this.active = v.id;
                 let iscz = false;
                 this.curList.some((item, i) => {
-                    if (item.guid == v.guid) {
-                        console.log(item);
+                    if (item.id == v.id) {
                         iscz = true;
                         return true;
                     }
                 });
                 if (!iscz) {
                     v.name = this.glnode(v.name);
-                    this.curList.push({ guid: v.guid, name: v.name });
+                    this.curList.push({ id: v.id, name: v.name });
                 }
             },
             submits() {
@@ -157,15 +155,15 @@
                 $$ = parent.layui.jquery;
             var index = parent.layer.getFrameIndex(window.name);
             var formId = os.getUrlParam('frameid');
-            var role = os.getUrlParam('role');
-            vm.curList = JSON.parse(unescape(role));
+            var agent = os.getUrlParam('agent');
+            vm.curList = JSON.parse(unescape(agent));
             $(".btn-open-close").on('click',
                 function () {
                     parent.layer.close(index);
                 });
             active = {
                 initTree() {
-                    os.ajax('api/role/getpages/', { limit: 1000, site: 'tree' }, function (res) {
+                    os.ajax('api/agent/getpages/', { limit: 1000, site: 'tree' }, function (res) {
                         vm.list = res.data;
                         vm.$nextTick(function () {
                             element.render();
@@ -174,11 +172,11 @@
                 },
                 subSelect() {
                     if (vm.curList.length < 1) {
-                        os.error('请选择角色');
+                        os.error('请选择代理商');
                         return;
                     }
                     var frames = $$("#" + formId)[0].contentWindow;
-                    frames.oc.saveRole(JSON.stringify(vm.curList));
+                    frames.oc.saveAgent(JSON.stringify(vm.curList));
                     parent.layer.close(index);
                 }
             }

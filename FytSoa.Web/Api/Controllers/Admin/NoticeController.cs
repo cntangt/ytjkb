@@ -60,5 +60,12 @@ namespace FytSoa.Api.Controllers
         {
             return Ok(await _noticeService.UpdateAsync(parm));
         }
+
+        [HttpPost("bymodel")]
+        public async Task<IActionResult> GetModelById([FromBody]ParmString parm)
+        {
+            var id = Convert.ToInt32(parm.parm);
+            return Ok(await _noticeService.GetModelAsync(m => m.id == id));
+        }
     }
 }
