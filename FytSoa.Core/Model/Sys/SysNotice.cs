@@ -61,15 +61,21 @@ namespace FytSoa.Core.Model.Sys
             }
         }
 
-        /// <summary>
-        /// 返回代理商列表
-        /// </summary>
         [SugarColumn(IsIgnore = true)]
         public string AgentNames
         {
             get
             {
                 return string.Join("、", AgentList.Select(t => t.name).ToArray());
+            }
+        }
+
+        [SugarColumn(IsIgnore = true)]
+        public string MerchantNames
+        {
+            get
+            {
+                return string.Join("、", MerchantList.Select(t => t.name).ToArray());
             }
         }
     }
