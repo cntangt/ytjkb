@@ -1,4 +1,6 @@
 ﻿using FytSoa.Service.DtoModel.Wx;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Converters;
 using System;
 
 namespace FytSoa.Core.Model.Wx
@@ -16,9 +18,12 @@ namespace FytSoa.Core.Model.Wx
         public string device_name { get; set; }
         public string qrcode_id { get; set; }
         public string qrcode_name { get; set; }
+        [JsonConverter(typeof(StringEnumConverter))]
         public SourceType source_type { get; set; }
         public string out_card_id { get; set; }
+        [JsonConverter(typeof(StringEnumConverter))]
         public PayPlatform sub_pay_platform { get; set; }
+        [JsonConverter(typeof(StringEnumConverter))]
         public TradeType trade_type { get; set; }
         public string out_trade_no { get; set; }
         public string transaction_id { get; set; }
@@ -56,6 +61,7 @@ namespace FytSoa.Core.Model.Wx
         public string membership_number { get; set; }
         public string uid { get; set; }
         public long credits { get; set; }
+        [JsonConverter(typeof(StringEnumConverter))]
         public RecordOrderState record_current_trade_state { get; set; }
         public string out_freeze_no { get; set; }
         public long freeze_fee { get; set; }
