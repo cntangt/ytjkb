@@ -5,7 +5,9 @@
         messList: [],
         messCount: 0,
         isDown: false,
-        siteList: []
+        siteList: [],
+        block: false,
+        unreadquantity: 0
     },
     created: function () {
         var that = this;
@@ -36,6 +38,23 @@
         },
         updatepwd: function () {
             os.Open('修改密码', '/fytadmin/updatepwd', '400px', '300px');
+        },
+        unreadcount: function () {
+            os.ajax('api/notice/unreadquantity', {}, function (res) {
+                if (res.statusCode === 200) {
+                    if (parseInt(res.data) > 0) {
+                        main_vm.block = true;
+                    } else {
+                        main_vm.block = false;
+                    }
+                    main_vm.unreadquantity = res.data;
+                } else {
+                    os.error(res.message);
+                }
+            });
+        },
+        noticelist: function () {
+            os.Open('消息列表', '/fytadmin/noticelist', '600px', '400px', main_vm.unreadcount);
         },
         qhSite: function (m) {
             os.load();
@@ -103,13 +122,12 @@ layui.config({
             os.error(res.message);
         }
     }, 'get');
-    $('.layui-layout-admin').pjax('a[data-pjax]', '#main-container',
-        {
-            fragment: "#container",
-            cache: false,
-            show: 'fade'
-        }
-    );
+    main_vm.unreadcount();
+    $('.layui-layout-admin').pjax('a[data-pjax]', '#main-container', {
+        fragment: "#container",
+        cache: false,
+        show: 'fade'
+    });
     $(document).on('pjax:start', function () { NProgress.start(); $(".load8").show(); });
     $(document).on('pjax:end', function () { NProgress.done(); $(".load8").fadeOut(200); });
 });

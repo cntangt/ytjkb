@@ -226,5 +226,30 @@ namespace FytSoa.Service.Implements
 
             return res;
         }
+
+        public async Task<ApiResult<List<SysNoticeChi>>> GetNoticeList(string admin_guid)
+        {
+            var res = new ApiResult<List<SysNoticeChi>>();
+
+            try
+            {
+                res.data = await Db.Queryable<SysNotice, SysNoticeChi>((a, b) => new object[] {
+                        JoinType.Inner, a.id == b.notice_id }).
+                            Where((a, b) => b.admin_guid == admin_guid && SqlFunc.Between(DateTime.Now, a.begin_time, a.end_time)).Select((a, b) => new SysNoticeChi
+                            {
+                                title = a.title,
+                                id = b.id,
+                                read_status = b.read_status
+                            }).ToListAsync();
+            }
+            catch (Exception ex)
+            {
+                res.message = ApiEnum.Error.GetEnumText() + ex.Message;
+                res.statusCode = (int)ApiEnum.Error;
+                Logger.Default.ProcessError((int)ApiEnum.Error, ex.Message);
+            }
+
+            return res;
+        }
     }
 }

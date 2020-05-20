@@ -54,7 +54,7 @@ namespace FytSoa.Api.Controllers
         {
             return Ok(await _noticeService.DeleteAsync(obj.parm));
         }
-        
+
         [HttpPost("edit"), ApiAuthorize(Modules = "Notice", Methods = "Update", LogType = LogEnum.UPDATE)]
         public async Task<IActionResult> Edit([FromBody]SysNotice parm)
         {
@@ -66,6 +66,12 @@ namespace FytSoa.Api.Controllers
         {
             var id = Convert.ToInt32(parm.parm);
             return Ok(await _noticeService.GetModelAsync(m => m.id == id));
+        }
+
+        [HttpPost("unreadquantity")]
+        public async Task<IActionResult> GetUnreadQuantity()
+        {
+            return Ok(await _noticeService.GetUnreadQuantity(await HttpContext.LoginUserId()));
         }
     }
 }

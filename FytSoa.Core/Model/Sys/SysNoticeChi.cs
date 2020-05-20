@@ -13,5 +13,8 @@ namespace FytSoa.Core.Model.Sys
         public string admin_guid { get; set; }
         public bool read_status { get; set; }
         public DateTime? read_time { get; set; }
+
+        [SugarColumn(IsIgnore = true)]
+        public string title { get; set; }
     }
 }

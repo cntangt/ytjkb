@@ -1,0 +1,47 @@
+﻿@page
+@model NoticeListModel
+@{
+    Layout = "_Layout";
+    ViewData["Title"] = "修改密码";
+}
+@section styles{
+    <style type="text/css">
+        table tr { height: 50px; border-bottom: 1px solid #e6e6e6; }
+            table tr td:first-child { padding-left: 20px; }
+    </style>
+}
+<table width="580" align="center">
+    @foreach (var item in Model.NoticeList)
+    {
+        <tr>
+            <td width="500"><a href="">@item.title</a></td>
+            <td>
+                @if (item.read_status)
+                {
+                    <span class="layui-badge-dot layui-bg-gray"></span>
+                }
+                else
+                {
+                    <span class="layui-badge-dot layui-bg-blue"></span>
+                }
+            </td>
+        </tr>
+    }
+</table>
+<div class="layui-input-block" style="margin-left:0px;height:70px;line-height:70px;text-align:center;">
+    <button type="button" class="layui-btn layui-btn-primary btn-open-close">关闭</button>
+</div>
+<link rel="stylesheet" href="~/themes/ztree/css/metroStyle/metroStyle.css" type="text/css">
+@section Scripts{
+    <script>
+        layui.config({
+            base: '/themes/js/modules/'
+        }).use(['layer', 'jquery', 'common', 'form'], function () {
+            var form = layui.form, $ = layui.jquery, os = layui.common;
+            var index = parent.layer.getFrameIndex(window.name);
+            $(".btn-open-close").on('click', function () {
+                parent.layer.close(index);
+            });
+        });
+    </script>
+}
