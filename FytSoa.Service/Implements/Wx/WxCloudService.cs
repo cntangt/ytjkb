@@ -109,6 +109,8 @@ namespace FytSoa.Service.Implements.Wx
             {
                 var setting = new JsonSerializerSettings();
 
+                setting.NullValueHandling = NullValueHandling.Ignore;
+
                 setting.Converters.Add(new UnixDateTimeConverter());
 
                 return setting;

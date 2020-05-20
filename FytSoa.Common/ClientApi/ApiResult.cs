@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-
-namespace FytSoa.Common
+﻿namespace FytSoa.Common
 {
     /// <summary>
     /// API 返回JSON字符串

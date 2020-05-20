@@ -1,8 +1,12 @@
-﻿using FytSoa.Extensions;
+﻿using FytSoa.Core.Model.Wx;
+using FytSoa.Service.DtoModel;
 using FytSoa.Service.DtoModel.Wx;
+using FytSoa.Service.Interfaces.Cms;
 using FytSoa.Service.Interfaces.Wx;
 using Microsoft.AspNetCore.Mvc;
 using System;
+using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 
 namespace FytSoa.Api.Controllers
@@ -12,10 +16,46 @@ namespace FytSoa.Api.Controllers
     public class SyncController : Controller
     {
         readonly IWxCloudService wx;
-
-        public SyncController(IWxCloudService wx)
+        readonly ICmsMerchantService merchantService;
+        public SyncController(IWxCloudService wx, ICmsMerchantService merchantService)
         {
             this.wx = wx;
+            this.merchantService = merchantService;
+        }
+
+        [HttpPost]
+        public async Task<PageResult<IEnumerable<TradeOrder>>> Trade(QueryOrderListRequest req)
+        {
+            var res = new PageResult<IEnumerable<TradeOrder>>();
+
+            if (req.start_time == null)
+            {
+                req.start_time = DateTime.Now.Date;
+            }
+            if (req.end_time == null)
+            {
+                req.end_time = DateTime.Now.AddDays(1).Date;
+            }
+
+            req.order_type = OrderType.支付订单;
+
+            var mch = await merchantService.GetModelAsync(p => p.sub_out_mch_id == req.out_sub_mch_id);
+            if (mch == null || mch.data == null || mch.data.id == 0)
+            {
+                res.Code = 500;
+                res.Msg = "请选择子商户查询";
+                return res;
+            }
+
+            req.AuthenKey = mch.data.authen_key;
+
+            var data = await wx.QueryAsync(req);
+
+            res.Msg = "success";
+            res.Count = data.Data.total_count;
+            res.Data = data.Data.order_details.Select(p => p.order);
+
+            return res;
         }
 
         public Task<WxResponse<QueryOrderListResponse>> OrderList()
@@ -57,7 +97,7 @@ namespace FytSoa.Api.Controllers
                 },
                 pay_mch_key = new Pay_Mch_Key
                 {
-                    pay_platform = PayPlatform.默认,
+                    //pay_platform = PayPlatform.默认,
                     out_mch_id = "sz013NzuonO6CMJd0rCB",
                     out_sub_mch_id = "sz01ELTR281OFpmdAp6J",
                     out_shop_id = "sz01qyoPJmd3j1hWmul4",
