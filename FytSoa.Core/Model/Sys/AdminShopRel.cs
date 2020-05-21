@@ -13,7 +13,7 @@ namespace FytSoa.Core.Model.Sys
         public string admin_guid { get; set; }
         public string out_shop_id { get; set; }
         public string out_mch_id { get; set; }
-        public string sub_out_mch_id { get; set; }
+        public string out_sub_mch_id { get; set; }
 
         [SugarColumn(IsIgnore = true)]
         public string shop_name { get; set; }
