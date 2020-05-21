@@ -5,53 +5,24 @@
 }
 <div id="container">
     <style>
-        .layui-col-220 .layui-nav-title {
-            line-height: 25px;
-            height: auto;
-            padding: 20px 0 20px 20px;
-            text-indent: 0px;
-            width: auto;
-        }
+        .layui-col-220 .layui-nav-title { line-height: 25px; height: auto; padding: 20px 0 20px 20px; text-indent: 0px; width: auto; }
 
-        .layui-btn-group .layui-btn {
-            background: #e7eaef !important;
-            border-color: #e7eaef !important;
-            color: #333;
-        }
+        .layui-btn-group .layui-btn { background: #e7eaef !important; border-color: #e7eaef !important; color: #333; }
 
-        .layui-btn-group .layui-btn.active {
-            background-color: #409eff !important;
-            border-color: #409eff !important;
-            color: #fff;
-        }
+            .layui-btn-group .layui-btn.active { background-color: #409eff !important; border-color: #409eff !important; color: #fff; }
 
         .layui-icon-export,
-        .layui-icon-friends {
-            margin-right: 5px;
-            color: #aee4fa;
-        }
+        .layui-icon-friends { margin-right: 5px; color: #aee4fa; }
 
-        .role-item {
-            padding: 6px 0px 6px 50px;
-            cursor: pointer
-        }
+        .role-item { padding: 6px 0px 6px 50px; cursor: pointer }
 
-        .role-item.active {
-            background-color: #dbedf5;
-        }
+            .role-item.active { background-color: #dbedf5; }
 
-        .layui-colla-content {
-            padding: 0px;
-            border-color: transparent;
-        }
+        .layui-colla-content { padding: 0px; border-color: transparent; }
 
-        .layui-colla-title {
-            background-color: transparent
-        }
+        .layui-colla-title { background-color: transparent }
 
-        .layui-colla-item {
-            border-color: transparent;
-        }
+        .layui-colla-item { border-color: transparent; }
     </style>
     <div class="list-wall">
         <div class="layui-form list-search">
@@ -202,7 +173,7 @@
                             })
                             break;
                         case "power":
-                            os.Open('门店授权', '/fytadmin/sys/admintoshop/?guid=' + data.guid, '550px', '380px', function () {
+                            os.Open('门店授权', '/fytadmin/sys/admintoshop/?guid=' + data.guid, '600px', '500px', function() {
                                 active.reload();
                             })
                             break;

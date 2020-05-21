@@ -11,6 +11,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using System.Transactions;
 
 namespace FytSoa.Service.Implements
 {
@@ -391,26 +392,17 @@ namespace FytSoa.Service.Implements
         }
 
         /// <summary>
-        /// 获取门店授权列表
+        /// 获取用户门店权限
         /// </summary>
-        /// <param name="curr_admin_guid"></param>
-        /// <param name="admin_guid"></param>
-        /// <returns></returns>
-        public async Task<ApiResult<List<AdminShopRel>>> GetPowerShops(string curr_admin_guid, string admin_guid)
+        public async Task<ApiResult<List<ShopInfo>>> GetShopsAsync(string admin_guid)
         {
-            var res = new ApiResult<List<AdminShopRel>>();
+            var res = new ApiResult<List<ShopInfo>>();
             try
             {
                 res.data = await Db.Queryable<ShopInfo, AdminShopRel>((a, b) => new object[] {
-                    JoinType.Left,a.shop_id == b.out_shop_id && b.admin_guid == admin_guid
-                        }).Select((a, b) => new AdminShopRel
-                        {
-                            id = b.id,
-                            out_shop_id = a.shop_id,
-                            out_mch_id = a.out_mch_id,
-                            out_sub_mch_id = a.out_sub_mch_id,
-                            shop_name = a.shop_name
-                        }).ToListAsync();
+                    JoinType.Inner,a.shop_id == b.out_shop_id })
+                        .Where((a, b) => b.admin_guid == admin_guid)
+                            .Select((a, b) => a).ToListAsync();
             }
             catch (Exception ex)
             {
@@ -418,6 +410,40 @@ namespace FytSoa.Service.Implements
                 res.statusCode = (int)ApiEnum.Error;
                 Logger.Default.ProcessError((int)ApiEnum.Error, ex.Message);
             }
+            return res;
+        }
+
+        /// <summary>
+        /// 添加用户门店权限
+        /// </summary>
+        public async Task<ApiResult<string>> AddShopsAsync(AdminShopRel parm)
+        {
+            var res = new ApiResult<string> { statusCode = (int)ApiEnum.ParameterError };
+
+            try
+            {
+                using var tran = new TransactionScope();
+
+                await Db.Deleteable<AdminShopRel>().Where(t => t.admin_guid == parm.admin_guid).ExecuteCommandAsync();
+
+                await Db.Insertable(parm.shopList.Select(t => new AdminShopRel
+                {
+                    admin_guid = parm.admin_guid,
+                    out_shop_id = t.shop_id,
+                    out_mch_id = t.out_mch_id,
+                    out_sub_mch_id = t.out_sub_mch_id
+                }).ToList()).ExecuteCommandAsync();
+
+                tran.Complete();
+
+                res.statusCode = (int)ApiEnum.Status;
+            }
+            catch (Exception ex)
+            {
+                res.message = ApiEnum.Error.GetEnumText() + ex.Message;
+                Logger.Default.ProcessError((int)ApiEnum.Error, ex.Message);
+            }
+
             return res;
         }
     }

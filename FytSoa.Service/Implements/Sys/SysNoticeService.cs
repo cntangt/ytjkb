@@ -17,12 +17,8 @@ namespace FytSoa.Service.Implements
 {
     public class SysNoticeService : BaseService<SysNotice>, ISysNoticeService
     {
-        readonly ICmsAgentService agent;
-        readonly ICmsMerchantService merchant;
-        public SysNoticeService(ICmsAgentService agent, ICmsMerchantService merchant, IConfiguration config) : base(config)
+        public SysNoticeService(IConfiguration config) : base(config)
         {
-            this.agent = agent;
-            this.merchant = merchant;
         }
 
         public override async Task<ApiResult<Page<SysNotice>>> GetPagesAsync(PageParm parm, bool Async = true)

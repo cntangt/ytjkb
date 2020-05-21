@@ -1,4 +1,5 @@
-﻿using Newtonsoft.Json;
+﻿using FytSoa.Core.Model.Wx;
+using Newtonsoft.Json;
 using SqlSugar;
 using System.Collections.Generic;
 using System.Linq;
@@ -16,22 +17,6 @@ namespace FytSoa.Core.Model.Sys
         public string out_sub_mch_id { get; set; }
 
         [SugarColumn(IsIgnore = true)]
-        public string shop_name { get; set; }
-
-        [SugarColumn(IsIgnore = true)]
-        public bool is_power
-        {
-            get
-            {
-                if (id > 0)
-                {
-                    return true;
-                }
-                else
-                {
-                    return false;
-                }
-            }
-        }
+        public List<ShopInfo> shopList { get; set; }
     }
 }

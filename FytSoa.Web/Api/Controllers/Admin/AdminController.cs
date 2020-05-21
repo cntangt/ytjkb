@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using FytSoa.Common;
 using FytSoa.Core.Model.Cms;
 using FytSoa.Core.Model.Sys;
+using FytSoa.Core.Model.Wx;
 using FytSoa.Extensions;
 using FytSoa.Service.DtoModel;
 using FytSoa.Service.DtoModel.Sys;
@@ -66,21 +67,23 @@ namespace FytSoa.Api.Controllers
         }
 
         /// <summary>
-        /// 获取门店授权列表
+        /// 获取用户门店权限
         /// </summary>
-        /// <param name="parm"></param>
-        /// <returns></returns>
-        [HttpGet("shops")]
+        [HttpGet("getshops")]
         public async Task<IActionResult> GetShops(string admin_guid)
         {
-            //if (!await HttpContext.IsSystem())
-            //{
-            //    parm.CreateBy = await HttpContext.LoginUserId();
-            //}
+            var res = await _adminService.GetShopsAsync(admin_guid);
 
-            var res = await _adminService.GetPowerShops("", admin_guid);
+            return Ok(new { data = new AdminShopRel { shopList = res.data } });
+        }
 
-            return Ok(new { code = 0, msg = "success", count = res.data.Count, data = res.data });
+        /// <summary>
+        /// 保存用户门店权限
+        /// </summary>
+        [HttpPost("saveshops")]
+        public async Task<IActionResult> SaveShops([FromBody]AdminShopRel parm)
+        {
+            return Ok(await _adminService.AddShopsAsync(parm));
         }
 
         /// <summary>
