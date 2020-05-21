@@ -3,6 +3,7 @@
 @using FytSoa.Service.DtoModel.Wx
 @inject FytSoa.Service.Interfaces.Cms.ICmsMerchantService ms
 @inject FytSoa.Service.Interfaces.ISysAdminService adminservice
+@inject FytSoa.Service.Interfaces.ICmsShopService shopService
 @{
     ViewBag.Title = "支付记录查询";
     var isSys = await HttpContext.IsSystem();
@@ -13,24 +14,35 @@
 <div id="container">
     <div class="list-wall">
         <div class="layui-form list-search">
-            <form autocomplete="off" id="searchform" style="float:right">
-                <span class="layui-inline">交易日期：</span>
-                <div class="layui-inline">
-                    <input type="text" class="layui-input" id="trade_date" style="width:300px">
-                    <input type="hidden" name="start_time" />
-                    <input type="hidden" name="end_time" />
+            <form autocomplete="off" id="searchform">
+                <div>
+                    <span class="layui-inline">子商户：</span>
+                    <div class="layui-inline">
+                        @Html.DropDownList("out_sub_mch_id", ms_list.Select(p => new SelectListItem { Text = p.name, Value = p.out_sub_mch_id }), new { lay_search = "" })
+                    </div>
+                    <span class="layui-inline">门店：</span>
+                    <div class="layui-inline">
+                        <div type="text" id="out_shop_id" style="width:200px"></div>
+                    </div>
+                    @*<span class="layui-inline">工号：</span>
+                    <div class="layui-inline">
+                        @Html.DropDownList("out_sub_mch_id", ms_list.Select(p => new SelectListItem { Text = p.name, Value = p.out_sub_mch_id }), new { lay_search = "" })
+                    </div>*@
                 </div>
-                <span class="layui-inline">支付渠道：</span>
-                <div class="layui-inline">
-                    <div id="pay_platform" style="width:200px" data-json='@Html.Raw(Json.Serialize(typeof(PayPlatform).ToDropdown().Select(p=>new { name=p.Text,value=p.Value})))'></div>
-                </div>
-                <span class="layui-inline">子商户：</span>
-                <div class="layui-inline">
-                    @Html.DropDownList("out_sub_mch_id", ms_list.Select(p => new SelectListItem { Text = p.name, Value = p.sub_out_mch_id }), new { lay_search = "" })
+                <div style="margin-top:10px">
+                    <span class="layui-inline">交易日期：</span>
+                    <div class="layui-inline">
+                        <input type="text" class="layui-input" id="trade_date" style="width:300px">
+                        <input type="hidden" name="start_time" />
+                        <input type="hidden" name="end_time" />
+                    </div>
+                    <span class="layui-inline">支付渠道：</span>
+                    <div class="layui-inline">
+                        <div id="pay_platform" style="width:200px" data-json='@Html.Raw(Json.Serialize(typeof(PayPlatform).ToDropdown().Select(p=>new { name=p.Text,value=p.Value})))'></div>
+                    </div>
                 </div>
                 <button type="submit" class="layui-btn layui-btn-sm" data-type="toolSearch"><i class="layui-icon layui-icon-search"></i> 搜索</button>
             </form>
-            <div style="clear:both"></div>
         </div>
         <table class="layui-hide" id="tablist" lay-filter="tool"></table>
         <script type="text/html" id="tool">
@@ -39,6 +51,14 @@
         </script>
     </div>
 </div>
+@section styles{
+    <style>
+        .loading, .uploading {
+            margin-left: 0;
+            width: 100%;
+        }
+    </style>
+}
 @section scripts{
     <script src="~/themes/js/xm-select.js"></script>
     <script>
@@ -51,6 +71,14 @@
                     dt = layui.laydate,
                     os = layui.common;
                 var pp = xmSelect.render({ el: '#pay_platform', data: $('#pay_platform').data('json') });
+                xmSelect.render({
+                    el: '#out_shop_id',
+                    name: 'out_shop_id',
+                    radio: true,
+                    filterable: true,
+                    remoteSearch: true,
+                    remoteMethod: (val, cb, show) => os.ajax('api/shop/getbymch', { key: val, out_sub_mch_id: $('#out_sub_mch_id').val() }, (res) => cb(res)),
+                });
                 table.render({
                     elem: '#tablist',
                     method: 'post',

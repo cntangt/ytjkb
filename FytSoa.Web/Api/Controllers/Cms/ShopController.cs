@@ -1,7 +1,9 @@
 ﻿using FytSoa.Extensions;
 using FytSoa.Service.DtoModel;
+using FytSoa.Service.DtoModel.Cms;
 using FytSoa.Service.Interfaces;
 using Microsoft.AspNetCore.Mvc;
+using System.Linq;
 using System.Threading.Tasks;
 
 namespace FytSoa.Api.Controllers.Cms
@@ -49,6 +51,14 @@ namespace FytSoa.Api.Controllers.Cms
             var res = await staffService.GetPagesAsync(parm);
 
             return Ok(new { code = 0, msg = "success", count = res.data.TotalItems, data = res.data.Items });
+        }
+
+        [HttpPost("getbymch")]
+        public async Task<IActionResult> GetByMerchant([FromBody]GetByMerchantRequest req)
+        {
+            var res = await shopService.GetByAdminGuidAsync(await HttpContext.LoginUserId(), req.out_sub_mch_id, req.key, 10);
+
+            return Ok(res.Select(p => new { name = p.shop_name, value = p.out_shop_id }));
         }
     }
 }

@@ -6,7 +6,7 @@
         public int id { get; set; }
         public string out_shop_id { get; set; }
         public string out_mch_id { get; set; }
-        public string sub_out_mch_id { get; set; }
+        public string out_sub_mch_id { get; set; }
         public string staff_id { get; set; }
         public string staff_name { get; set; }
         public string remark { get; set; }

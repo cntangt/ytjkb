@@ -55,7 +55,7 @@ namespace FytSoa.Service.Implements
 
             var query = Db.Queryable<CmsMerchant>()
                 .WhereIF(!string.IsNullOrEmpty(parm.CreateBy), p => p.agent_admin_guid == parm.CreateBy)
-                .WhereIF(!string.IsNullOrEmpty(parm.key), p => p.name.Contains(parm.key) || p.tel.Contains(parm.key) || p.contact.Contains(parm.key) || p.sub_out_mch_id.Contains(parm.key));
+                .WhereIF(!string.IsNullOrEmpty(parm.key), p => p.name.Contains(parm.key) || p.tel.Contains(parm.key) || p.contact.Contains(parm.key) || p.out_sub_mch_id.Contains(parm.key));
 
             res.data = await query.ToPageAsync(parm.page, parm.limit);
 
@@ -97,9 +97,9 @@ namespace FytSoa.Service.Implements
             {
                 var query = Db.Queryable<CmsMerchant>();
 
-                if (await query.AnyAsync(p => p.sub_out_mch_id == parm.sub_out_mch_id))
+                if (await query.AnyAsync(p => p.out_sub_mch_id == parm.out_sub_mch_id))
                 {
-                    throw new Exception($"商户子账号【{parm.sub_out_mch_id}】已经存在");
+                    throw new Exception($"商户子账号【{parm.out_sub_mch_id}】已经存在");
                 }
 
                 if (await query.AnyAsync(p => p.name == parm.name))
@@ -156,7 +156,7 @@ namespace FytSoa.Service.Implements
                 //var relRes = await Db.Insertable(new CmsAdminMerchantRel
                 //{
                 //    Admin_Guid = admin_guid,
-                //    Sub_Out_Mch_Id = parm.sub_out_mch_id,
+                //    out_sub_mch_id = parm.out_sub_mch_id,
                 //    Out_Mch_Id = parm.out_mch_id
                 //}).ExecuteCommandAsync();
 
@@ -193,9 +193,9 @@ namespace FytSoa.Service.Implements
             {
                 var query = Db.Queryable<CmsMerchant>();
 
-                if (await query.AnyAsync(p => p.sub_out_mch_id == parm.sub_out_mch_id && p.id != parm.id))
+                if (await query.AnyAsync(p => p.out_sub_mch_id == parm.out_sub_mch_id && p.id != parm.id))
                 {
-                    throw new Exception($"商户子账号【{parm.sub_out_mch_id}】已经存在");
+                    throw new Exception($"商户子账号【{parm.out_sub_mch_id}】已经存在");
                 }
                 if (await query.AnyAsync(p => p.name == parm.name && p.id != parm.id))
                 {

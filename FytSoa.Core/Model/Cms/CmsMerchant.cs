@@ -14,7 +14,7 @@ namespace FytSoa.Core.Model.Cms
         public string email { get; set; }
         public string appid { get; set; }
         public string out_mch_id { get; set; }
-        public string sub_out_mch_id { get; set; }
+        public string out_sub_mch_id { get; set; }
         public string order_perfix { get; set; }
         public string authen_key { get; set; }
         public decimal wxpay { get; set; }
