@@ -5,34 +5,19 @@
     Layout = "~/Pages/FytAdmin/_Layout.cshtml";
 }
 <style>
-    .layui-table-view {
-        margin-top: 0px;
-    }
+    .layui-table-view { margin-top: 0px; }
 
-    .layui-col-220 {
-        width: 200px;
-    }
+    .layui-col-220 { width: 200px; }
 
-    .right-col-body {
-        left: 200px;
-    }
+    .right-col-body { left: 200px; }
 
-    .list-wall {
-        padding-top: 0px;
-    }
+    .list-wall { padding-top: 0px; }
 
-    .fyt-center {
-        text-align: center;
-    }
+    .fyt-center { text-align: center; }
 
-    #tree {
-        height: 350px;
-        overflow: auto;
-    }
+    #tree { height: 350px; overflow: auto; }
 
-    .layui-layer-loading {
-        box-shadow: 0 0px 0px rgba(0, 0, 0, .3) !important;
-    }
+    .layui-layer-loading { box-shadow: 0 0px 0px rgba(0, 0, 0, .3) !important; }
 </style>
 <div class="list-wall" style="margin-top:15px;">
     <table class="layui-hide" id="tablist" lay-filter="tool"></table>
@@ -52,11 +37,10 @@
                 elem: '#tablist',
                 headers: os.getToken(),
                 url: '/api/admin/shops/?admin_guid=@Model.admin_guid',
-                url: '/api/role/torolelist?guid=@Model.admin_guid',
                 cols: [
                     [
                         { field: 'shop_name', title: '门店名称', sort: true, fixed: 'left' },
-                        { width: 150, title: '操作', templet: '#tool' }
+                        { width: 150, title: '操作', templet: '#tool',fixed:'left' }
                     ]
                 ],
                 id: 'tables'
@@ -102,7 +86,7 @@
         });
 </script>
 <script type="text/html" id="tool">
-    {{#  if(d.level === 1){ }}
-    <input type="checkbox" name="status" lay-skin="switch" lay-text="取消|授权" lay-filter="torole" {{ d.is_power ? 'checked' : '' }}>
-    {{#  } }}
+    @*{{#  if(d.level === 1){ }}*@
+    <input type="checkbox" name="is_power" lay-skin="switch" lay-text="取消|授权" lay-filter="torole" {{ d.is_power ? 'checked' : '' }}>
+    @*{{#  } }}*@
 </script>
