@@ -9,7 +9,7 @@ namespace FytSoa.Core.Model.Wx
         public int id { get; set; }
         public string shop_id { get; set; }
         public string out_mch_id { get; set; }
-        public string sub_out_mch_id { get; set; }
+        public string out_sub_mch_id { get; set; }
         public string shop_name { get; set; }
         public string province { get; set; }
         public string city { get; set; }

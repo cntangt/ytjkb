@@ -39,7 +39,7 @@ namespace FytSoa.Web.Pages.FytAdmin.Cms
                 ViewData["merchants"] = list.data.Items.Select(p => new SelectListItem
                 {
                     Text = p.name,
-                    Value = p.sub_out_mch_id
+                    Value = p.out_sub_mch_id
                 }).ToList();
             }
         }

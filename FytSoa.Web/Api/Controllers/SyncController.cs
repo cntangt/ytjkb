@@ -39,7 +39,7 @@ namespace FytSoa.Api.Controllers
 
             req.order_type = OrderType.支付订单;
 
-            var mch = await merchantService.GetModelAsync(p => p.sub_out_mch_id == req.out_sub_mch_id);
+            var mch = await merchantService.GetModelAsync(p => p.out_sub_mch_id == req.out_sub_mch_id);
             if (mch == null || mch.data == null || mch.data.id == 0)
             {
                 res.Code = 500;
@@ -53,7 +53,10 @@ namespace FytSoa.Api.Controllers
 
             res.Msg = "success";
             res.Count = data.Data.total_count;
-            res.Data = data.Data.order_details.Select(p => p.order);
+            if (data.Data.order_details != null)
+            {
+                res.Data = data.Data.order_details.Select(p => p.order);
+            }
 
             return res;
         }

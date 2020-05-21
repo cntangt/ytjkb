@@ -6,9 +6,12 @@ using Microsoft.Extensions.Configuration;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Converters;
 using Newtonsoft.Json.Linq;
+using Newtonsoft.Json.Serialization;
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Net.Http;
+using System.Reflection;
 using System.Security.Cryptography;
 using System.Security.Cryptography.X509Certificates;
 using System.Text;
@@ -113,6 +116,8 @@ namespace FytSoa.Service.Implements.Wx
 
                 setting.Converters.Add(new UnixDateTimeConverter());
 
+                setting.ContractResolver = new EmptyValueContractResolver();
+
                 return setting;
             }
         }
@@ -126,9 +131,9 @@ namespace FytSoa.Service.Implements.Wx
 
             try
             {
-                await Db.Deleteable<ShopInfo>(p => p.sub_out_mch_id == mch.sub_out_mch_id).ExecuteCommandAsync();
-                await Db.Deleteable<DeviceInfo>(p => p.sub_out_mch_id == mch.sub_out_mch_id).ExecuteCommandAsync();
-                await Db.Deleteable<StaffInfo>(p => p.sub_out_mch_id == mch.sub_out_mch_id).ExecuteCommandAsync();
+                await Db.Deleteable<ShopInfo>(p => p.out_sub_mch_id == mch.out_sub_mch_id).ExecuteCommandAsync();
+                await Db.Deleteable<DeviceInfo>(p => p.out_sub_mch_id == mch.out_sub_mch_id).ExecuteCommandAsync();
+                await Db.Deleteable<StaffInfo>(p => p.out_sub_mch_id == mch.out_sub_mch_id).ExecuteCommandAsync();
             }
             catch (Exception ex)
             {
@@ -144,7 +149,7 @@ namespace FytSoa.Service.Implements.Wx
                     page_num = page,
                     page_size = 10,
                     out_mch_id = out_mch_id,
-                    out_sub_mch_id = mch.sub_out_mch_id,
+                    out_sub_mch_id = mch.out_sub_mch_id,
                     AuthenKey = mch.authen_key
                 };
 
@@ -162,7 +167,7 @@ namespace FytSoa.Service.Implements.Wx
                         var shops = res.Data.shop_infos.Select(shop =>
                         {
                             shop.out_mch_id = out_mch_id;
-                            shop.sub_out_mch_id = mch.sub_out_mch_id;
+                            shop.out_sub_mch_id = mch.out_sub_mch_id;
 
                             if (!string.IsNullOrEmpty(shop.shop_name))
                             {
@@ -186,7 +191,7 @@ namespace FytSoa.Service.Implements.Wx
                             {
                                 device.out_shop_id = shop.out_shop_id;
                                 device.out_mch_id = shop.out_shop_id;
-                                device.sub_out_mch_id = shop.sub_out_mch_id;
+                                device.out_sub_mch_id = shop.out_sub_mch_id;
 
                                 return device;
                             });
@@ -199,7 +204,7 @@ namespace FytSoa.Service.Implements.Wx
                             {
                                 staff.out_shop_id = shop.out_shop_id;
                                 staff.out_mch_id = shop.out_mch_id;
-                                staff.sub_out_mch_id = shop.sub_out_mch_id;
+                                staff.out_sub_mch_id = shop.out_sub_mch_id;
 
                                 return staff;
                             });
@@ -221,5 +226,25 @@ namespace FytSoa.Service.Implements.Wx
         }
 
         #endregion
+    }
+
+    public class EmptyValueContractResolver : DefaultContractResolver
+    {
+        protected override JsonProperty CreateProperty(MemberInfo member, MemberSerialization memberSerialization)
+        {
+            var jp = base.CreateProperty(member, memberSerialization);
+
+            if (memberSerialization == MemberSerialization.OptOut && jp.PropertyType == typeof(string))
+            {
+                jp.ShouldSerialize = instance =>
+                {
+                    var val = instance.GetType().GetProperty(member.Name).GetValue(instance);
+
+                    return val != null && !string.IsNullOrEmpty(val.ToString());
+                };
+            }
+
+            return jp;
+        }
     }
 }

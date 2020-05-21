@@ -1,10 +1,13 @@
 ﻿using FytSoa.Common;
 using FytSoa.Core.Model.Cms;
+using FytSoa.Core.Model.Sys;
 using FytSoa.Core.Model.Wx;
 using FytSoa.Service.DtoModel;
 using FytSoa.Service.Extensions;
 using FytSoa.Service.Interfaces;
 using Microsoft.Extensions.Configuration;
+using SqlSugar;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -16,6 +19,46 @@ namespace FytSoa.Service.Implements
         {
         }
 
+        public async Task<IEnumerable<ShopInfo>> GetByAdminGuidAsync(string admin_guid, string out_sub_mch_id, string key, int limit)
+        {
+            var roles = await Db.Queryable<SysAdmin, SysPermissions, SysRole>((admin, perm, role) => new JoinQueryInfos(
+                 JoinType.Left, admin.Guid == perm.AdminGuid,
+                 JoinType.Left, perm.RoleGuid == role.Guid))
+              .Where((admin, perm, role) => admin.Guid == admin_guid)
+              .Select((admin, perm, role) => role)
+              .ToListAsync();
+
+            var isSystem = roles.Any(p => p.IsSystem);
+            var isAgent = roles.Any(p => p.Guid == "72171cf0-934d-4934-8e27-ee4f47e9985e");
+            var is_sub_admin = roles.Any(p => p.Guid == "8dc9b479-216d-415a-9fba-85caedd6c4df");
+
+            var query = Db.Queryable<ShopInfo, CmsMerchant, AdminShopRel>((shop, mch, rel) =>
+                new JoinQueryInfos(JoinType.Left, shop.out_sub_mch_id == mch.out_sub_mch_id, JoinType.Left, shop.out_shop_id == rel.out_shop_id));
+
+            if (isSystem)
+            {
+                //管理员不需要过滤
+            }
+            else if (isAgent)
+            {
+                query.Where((shop, mch, rel) => mch.agent_admin_guid == admin_guid);
+            }
+            else if (is_sub_admin)
+            {
+                query.Where((shop, mch, rel) => mch.admin_guid == admin_guid);
+            }
+            else // 普通员工
+            {
+                query.Where((shop, mch, rel) => rel.admin_guid == admin_guid);
+            }
+
+            query
+                .WhereIF(!string.IsNullOrEmpty(key), (shop, mch, rel) => shop.shop_name.Contains(key))
+                .WhereIF(!string.IsNullOrEmpty(out_sub_mch_id), (shop, mch, rel) => shop.out_sub_mch_id == out_sub_mch_id);
+
+            return await query.ToPageListAsync(1, limit);
+        }
+
         public override async Task<ApiResult<Page<ShopInfo>>> GetPagesAsync(PageParm parm, bool Async = true)
         {
             var res = new ApiResult<Page<ShopInfo>>();
@@ -25,9 +68,9 @@ namespace FytSoa.Service.Implements
             if (!string.IsNullOrEmpty(parm.CreateBy) || !string.IsNullOrEmpty(parm.key))
             {
                 var mchs = Db.Queryable<CmsMerchant>()
-                    .WhereIF(!string.IsNullOrEmpty(parm.key), p => p.sub_out_mch_id == parm.key)
+                    .WhereIF(!string.IsNullOrEmpty(parm.key), p => p.out_sub_mch_id == parm.key)
                     .WhereIF(!string.IsNullOrEmpty(parm.CreateBy), p => p.agent_admin_guid == parm.CreateBy)
-                    .Select(p => p.sub_out_mch_id)
+                    .Select(p => p.out_sub_mch_id)
                     .ToList();
 
                 if (mchs.Count == 0)
@@ -35,21 +78,21 @@ namespace FytSoa.Service.Implements
                     mchs.Add("-");
                 }
 
-                query.In(p => p.sub_out_mch_id, mchs);
+                query.In(p => p.out_sub_mch_id, mchs);
             }
 
             var data = await query.ToPageAsync(parm.page, parm.limit);
 
             if (data.Items.Count > 0)
             {
-                var ids = data.Items.Select(p => p.sub_out_mch_id).ToArray();
+                var ids = data.Items.Select(p => p.out_sub_mch_id).ToArray();
 
-                var mchs = await Db.Queryable<CmsMerchant>().In(p => p.sub_out_mch_id, ids).ToListAsync();
+                var mchs = await Db.Queryable<CmsMerchant>().In(p => p.out_sub_mch_id, ids).ToListAsync();
                 if (mchs.Count > 0)
                 {
                     data.Items.ForEach(shop =>
                     {
-                        var mch = mchs.FirstOrDefault(m => shop.sub_out_mch_id == m.sub_out_mch_id);
+                        var mch = mchs.FirstOrDefault(m => shop.out_sub_mch_id == m.out_sub_mch_id);
                         if (mch != null)
                         {
                             shop.out_mch_name = mch.name;

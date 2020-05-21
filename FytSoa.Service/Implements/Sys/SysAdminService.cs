@@ -86,10 +86,6 @@ namespace FytSoa.Service.Implements
         {
             try
             {
-                //Db.Queryable<SysPermissions,SysPermissions>((role,sp)=>new JoinQueryInfos(JoinType.Left,role.RoleGuid==sp.RoleGuid))
-                //    .Where((role,sp)=>role.Types==2&&role.AdminGuid==admin)
-                //    .Select((role, sp) => new { })
-                //    .ToList
                 return Db.Queryable<SysMenu, SysPermissions, SysPermissions>((sm, sp, rolesp) => new JoinQueryInfos(JoinType.Left, sm.Guid == sp.MenuGuid, JoinType.Left, sp.RoleGuid == rolesp.RoleGuid))
                 .Where((sm, sp, rolesp) => sp.Types == 1 && sm.Status && rolesp.Types == 2 && rolesp.AdminGuid == admin)
                 .OrderBy((sm, sp) => sm.Sort)
@@ -180,7 +176,7 @@ namespace FytSoa.Service.Implements
                 //    {
                 //        Admin_Guid = parm.Guid,
                 //        Out_Mch_Id = rel.Out_Mch_Id,
-                //        Sub_Out_Mch_Id = rel.Sub_Out_Mch_Id
+                //        out_sub_mch_id = rel.out_sub_mch_id
                 //    });
                 //}
 
