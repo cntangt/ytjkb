@@ -14,5 +14,24 @@ namespace FytSoa.Core.Model.Sys
         public string out_shop_id { get; set; }
         public string out_mch_id { get; set; }
         public string sub_out_mch_id { get; set; }
+
+        [SugarColumn(IsIgnore = true)]
+        public string shop_name { get; set; }
+
+        [SugarColumn(IsIgnore = true)]
+        public bool is_power
+        {
+            get
+            {
+                if (id > 0)
+                {
+                    return true;
+                }
+                else
+                {
+                    return false;
+                }
+            }
+        }
     }
 }

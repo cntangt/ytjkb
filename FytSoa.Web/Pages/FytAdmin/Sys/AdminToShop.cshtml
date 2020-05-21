@@ -1,7 +1,7 @@
 ﻿@page
-@model FytSoa.Web.Pages.FytAdmin.Sys.AdminToRoleModel
+@model AdminToShopModel
 @{
-    ViewData["Title"] = "为用户分配角色";
+    ViewData["Title"] = "为用户分配门店权限";
     Layout = "~/Pages/FytAdmin/_Layout.cshtml";
 }
 <style>
@@ -51,23 +51,14 @@
             table.render({
                 elem: '#tablist',
                 headers: os.getToken(),
-                url: '/api/role/torolelist?guid=@Model.adminGuids',
+                url: '/api/admin/shops/?admin_guid=@Model.admin_guid',
+                url: '/api/role/torolelist?guid=@Model.admin_guid',
                 cols: [
                     [
-                        {
-                            field: 'name', title: '角色名称', sort: true, fixed: 'left', templet: function (d) {
-                                if (d.level == 0) {
-                                    return d.name + '<span class="layui-badge layui-bg-cyan">组</span>';
-                                } else {
-                                    return d.name;
-                                }
-                            }
-                        },
-                        { field: 'sort', title: '排序' },
+                        { field: 'shop_name', title: '门店名称', sort: true, fixed: 'left' },
                         { width: 150, title: '操作', templet: '#tool' }
                     ]
                 ],
-                page: true,
                 id: 'tables'
             });
 
@@ -94,7 +85,7 @@
                 var index = layer.load(1, {
                     shade: [0.1, '#fff']
                 });
-                os.ajax("api/rolemenu/torole", { AdminGuid: "@Model.adminGuids", RoleGuid: strRole, Types: 2, status: obj.elem.checked }, function (res) {
+                os.ajax("api/rolemenu/torole", { }, function (res) {
                     layer.close(index);
                     if (res.statusCode === 200) {
                         if (obj.elem.checked) {
@@ -112,6 +103,6 @@
 </script>
 <script type="text/html" id="tool">
     {{#  if(d.level === 1){ }}
-    <input type="checkbox" name="status" value="{{d.guid}}" lay-skin="switch" lay-text="取消|授权" lay-filter="torole" {{ d.status ? 'checked' : '' }}>
+    <input type="checkbox" name="status" lay-skin="switch" lay-text="取消|授权" lay-filter="torole" {{ d.is_power ? 'checked' : '' }}>
     {{#  } }}
 </script>

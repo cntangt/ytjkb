@@ -10,11 +10,11 @@ namespace FytSoa.Web.Pages.FytAdmin.Sys
     public class AdminToShopModel : PageModel
     {
         [BindProperty]
-        public string adminGuids { get; set; }
+        public string admin_guid { get; set; }
 
-        public void OnGet(string roid)
+        public void OnGet(string guid)
         {
-            adminGuids = roid;
+            admin_guid = guid;
         }
     }
 }

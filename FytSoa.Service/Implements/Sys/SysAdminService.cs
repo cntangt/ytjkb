@@ -1,5 +1,6 @@
 ﻿using FytSoa.Common;
 using FytSoa.Core.Model.Sys;
+using FytSoa.Core.Model.Wx;
 using FytSoa.Service.DtoModel;
 using FytSoa.Service.DtoModel.Sys;
 using FytSoa.Service.Extensions;
@@ -388,6 +389,37 @@ namespace FytSoa.Service.Implements
             catch (Exception ex)
             {
                 res.message = ApiEnum.Error.GetEnumText() + ex.Message;
+                Logger.Default.ProcessError((int)ApiEnum.Error, ex.Message);
+            }
+            return res;
+        }
+
+        /// <summary>
+        /// 获取门店授权列表
+        /// </summary>
+        /// <param name="curr_admin_guid"></param>
+        /// <param name="admin_guid"></param>
+        /// <returns></returns>
+        public async Task<ApiResult<List<AdminShopRel>>> GetPowerShops(string curr_admin_guid, string admin_guid)
+        {
+            var res = new ApiResult<List<AdminShopRel>>();
+            try
+            {
+                res.data = await Db.Queryable<ShopInfo, AdminShopRel>((a, b) => new object[] {
+                    JoinType.Left,a.shop_id == b.out_shop_id && b.admin_guid == admin_guid
+                        }).Select((a, b) => new AdminShopRel
+                        {
+                            id = b.id,
+                            out_shop_id = a.shop_id,
+                            out_mch_id = a.out_mch_id,
+                            sub_out_mch_id = a.sub_out_mch_id,
+                            shop_name = a.shop_name
+                        }).ToListAsync();
+            }
+            catch (Exception ex)
+            {
+                res.message = ApiEnum.Error.GetEnumText() + ex.Message;
+                res.statusCode = (int)ApiEnum.Error;
                 Logger.Default.ProcessError((int)ApiEnum.Error, ex.Message);
             }
             return res;

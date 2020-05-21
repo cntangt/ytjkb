@@ -103,7 +103,7 @@
                             { title: '管理员', templet: (d) => tostatus(d.isSystem), align: 'center' },
                             { title: '状态', templet: tostatus, align: 'center' },
                             { field: 'loginDate', width: 180, title: '最后登录时间' },
-                            { width: 100, title: '操作', templet: '#tool' }
+                            { width: 200, title: '操作', templet: '#tool', align: 'center' }
                         ]
                     ],
                     page: true,
@@ -195,16 +195,24 @@
                 //监听工具条
                 table.on('tool(tool)', function (obj) {
                     var data = obj.data;
-                    if (obj.event === 'edit') {
-                        os.Open('编辑用户', '/fytadmin/sys/adminmodify/?guid=' + data.guid, '725px', '380px', function () {
-                            active.reload();
-                        })
+                    switch (obj.event) {
+                        case "edit":
+                            os.Open('编辑用户', '/fytadmin/sys/adminmodify/?guid=' + data.guid, '725px', '380px', function () {
+                                active.reload();
+                            })
+                            break;
+                        case "power":
+                            os.Open('门店授权', '/fytadmin/sys/admintoshop/?guid=' + data.guid, '550px', '38px', function () {
+                                active.reload();
+                            })
+                            break;
                     }
                 });
             });</script>
     <script type="text/html" id="tool">
         {{#  if(!d.isSystem){ }}
         <a class="layui-btn layui-btn-primary layui-btn-xs" lay-event="edit"><i class="layui-icon"></i> 修改</a>
+        <a class="layui-btn layui-btn-primary layui-btn-xs" lay-event="power"><i class="layui-icon">&#xe672;</i> 门店授权</a>
         {{#  } }}
     </script>
 

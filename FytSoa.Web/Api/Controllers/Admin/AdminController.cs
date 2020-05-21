@@ -30,18 +30,21 @@ namespace FytSoa.Api.Controllers
         private readonly ICmsSiteService _siteService;
         private readonly IConfiguration _config;
         private readonly IDistributedCache _cache;
+        private readonly ICmsShopService _shop;
         public AdminController(
             ISysAdminService adminService,
             ISysLogService logService,
             ICmsSiteService siteService,
             IConfiguration config,
-            IDistributedCache cache) : base(cache)
+            IDistributedCache cache,
+            ICmsShopService shop) : base(cache)
         {
             _adminService = adminService;
             _logService = logService;
             _siteService = siteService;
             _config = config;
             _cache = cache;
+            _shop = shop;
         }
 
         /// <summary>
@@ -60,6 +63,24 @@ namespace FytSoa.Api.Controllers
             var res = await _adminService.GetPagesAsync(parm);
 
             return Ok(new { code = 0, msg = "success", count = res.data.TotalItems, data = res.data.Items });
+        }
+
+        /// <summary>
+        /// 获取门店授权列表
+        /// </summary>
+        /// <param name="parm"></param>
+        /// <returns></returns>
+        [HttpGet("shops")]
+        public async Task<IActionResult> GetShops(string admin_guid)
+        {
+            //if (!await HttpContext.IsSystem())
+            //{
+            //    parm.CreateBy = await HttpContext.LoginUserId();
+            //}
+
+            var res = await _adminService.GetPowerShops("", admin_guid);
+
+            return Ok(new { code = 0, msg = "success", count = res.data.Count, data = res.data });
         }
 
         /// <summary>
@@ -300,6 +321,9 @@ namespace FytSoa.Api.Controllers
             return Ok(new ApiResult<string>() { data = "/fytadmin/login/" });
         }
 
+        /// <summary>
+        /// 修改用户密码
+        /// </summary>
         [HttpPost("updatepwd"), Log("Admin:Update", LogType = LogEnum.UPDATE)]
         public async Task<IActionResult> UpdatePwd([FromBody]UpdatePwdDto parm)
         {

@@ -2,6 +2,7 @@
 using FytSoa.Core.Model.Sys;
 using FytSoa.Service.DtoModel;
 using FytSoa.Service.DtoModel.Sys;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 
 namespace FytSoa.Service.Interfaces
@@ -47,5 +48,11 @@ namespace FytSoa.Service.Interfaces
         /// </summary>
         /// <returns></returns>
         Task<ApiResult<string>> UpdatePwdAsync(UpdatePwdDto parm);
+
+        /// <summary>
+        /// 获得列表
+        /// </summary>
+        /// <returns></returns>
+        Task<ApiResult<List<AdminShopRel>>> GetPowerShops(string curr_admin_guid, string admin_guid);
     }
 }
