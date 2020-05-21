@@ -408,7 +408,7 @@ namespace FytSoa.Service.Implements
                             id = b.id,
                             out_shop_id = a.shop_id,
                             out_mch_id = a.out_mch_id,
-                            sub_out_mch_id = a.sub_out_mch_id,
+                            sub_out_mch_id = a.out_sub_mch_id,
                             shop_name = a.shop_name
                         }).ToListAsync();
             }
