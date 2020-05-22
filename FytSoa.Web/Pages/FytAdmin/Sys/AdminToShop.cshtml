@@ -1,116 +1,152 @@
 ﻿@page
-@model FytSoa.Web.Pages.FytAdmin.Sys.AdminToRoleModel
+@model AdminToShopModel
 @{
     ViewData["Title"] = "为用户分配角色";
 }
 <style>
-    .layui-table-view {
-        margin-top: 0px;
-    }
+    .layui-icon-export,
+    .layui-icon-friends { margin-right: 5px; color: #aee4fa; }
 
-    .layui-col-220 {
-        width: 200px;
-    }
+    .role-item { padding: 10px 5px; cursor: pointer }
 
-    .right-col-body {
-        left: 200px;
-    }
+        .role-item.active { background-color: #dbedf5; }
 
-    .list-wall {
-        padding-top: 0px;
-    }
+    .layui-colla-content { padding: 0px; border-color: transparent; }
 
-    .fyt-center {
-        text-align: center;
-    }
+    .layui-colla-title { background-color: transparent }
 
-    #tree {
-        height: 350px;
-        overflow: auto;
-    }
+    .layui-colla-item { border-color: transparent; }
 
-    .layui-layer-loading {
-        box-shadow: 0 0px 0px rgba(0, 0, 0, .3) !important;
-    }
+    .role { height: 350px; border: 1px solid #dedede; border-radius: 4px; background: #f4f6f8; }
+
+    #app { overflow: hidden; padding: 15px 40px; }
+
+    h4 { line-height: 31px; font-size: 16px; }
+
+    .layui-input-block { text-align: center; margin: 0px; }
+
+    .role ul { padding: 10px; }
+
+    .select-item { cursor: pointer; padding: 10px 5px; }
+
+        .select-item:hover { background-color: #e7eaef; }
+
+    .layui-col-xs2 { text-align: right; }
 </style>
-<div class="list-wall" style="margin-top:15px;">
-    <table class="layui-hide" id="tablist" lay-filter="tool"></table>
+<div id="app">
+    <div class="layui-row layui-col-space20">
+        <div class="layui-col-sm6 layui-col-xs6">
+            <h4>选择</h4>
+            <div class="role" style="overflow: auto;">
+                <div style="padding:10px">
+                    <div class="role-item" v-bind:class="active==row.id?'active':''" v-for="row in list" @@click="loaduser(row)">
+                        <i class="layui-icon layui-icon-friends"></i>{{glnode(row.shop_name)}}
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="layui-col-sm6 layui-col-xs6">
+            <h4>已选</h4>
+            <div class="role" style="overflow: auto;">
+                <ul>
+                    <li class="layui-row select-item" v-for="it in curList">
+                        <div class="layui-col-xs10"><i class="layui-icon layui-icon-friends"></i>{{it.shop_name}}</div>
+                        <div class="layui-col-xs2">
+                            <i @@click="delCur(it)" class="layui-icon layui-icon-close"></i>
+                        </div>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </div>
+    <div class="layui-input-block">
+        <button class="layui-btn" @@click="submits">
+            <i class="layui-icon layui-icon-loading layui-icon layui-anim layui-anim-rotate layui-anim-loop layui-hide"></i>确定
+        </button>
+        <button type="button" class="layui-btn layui-btn-primary btn-open-close">取消</button>
+    </div>
 </div>
 <script>
-    layui.config({
-        base: '/themes/js/modules/'
-    }).use(['table', 'layer', 'jquery', 'common'],
-        function () {
-            var table = layui.table,
-                layer = layui.layer,
-                $ = layui.jquery,
-                os = layui.common,
-                form = layui.form;
-
-            table.render({
-                elem: '#tablist',
-                headers: os.getToken(),
-                url: '/api/role/torolelist?guid=@Model.adminGuids',
-                cols: [
-                    [
-                        {
-                            field: 'name', title: '角色名称', sort: true, fixed: 'left', templet: function (d) {
-                                if (d.level == 0) {
-                                    return d.name + '<span class="layui-badge layui-bg-cyan">组</span>';
-                                } else {
-                                    return d.name;
-                                }
-                            }
-                        },
-                        { field: 'sort', title: '排序' },
-                        { width: 150, title: '操作', templet: '#tool' }
-                    ]
-                ],
-                page: true,
-                id: 'tables'
-            });
-
-            var guid = '', typeName = '', active = {
-                reload: function () {
-                    table.reload('tables',
-                        {
-                            page: {
-                                    curr: 1
-                                }
-                        });
-                }
-            };
-
-            $('.list-search .layui-btn').on('click', function () {
-                var type = $(this).data('type');
-                active[type] ? active[type].call(this) : '';
-            });
-
-            //监听授权操作
-            form.on('switch(torole)', function (obj) {
-                var strRole = this.value;
-                //开始提交信息
-                var index = layer.load(1, {
-                    shade: [0.1, '#fff']
-                });
-                os.ajax("api/rolemenu/torole", { AdminGuid: "@Model.adminGuids", RoleGuid: strRole, Types: 2, status: obj.elem.checked }, function (res) {
-                    layer.close(index);
-                    if (res.statusCode === 200) {
-                        if (obj.elem.checked) {
-                            os.success('授权成功~');
-                        }
-                        else {
-                            os.success('取消授权~');
-                        }
-                    } else {
-                        os.error(res.message);
+    var active, vm = new Vue({
+        el: '#app',
+        data: {
+            list: {},
+            active: '',
+            curList: []
+        },
+        methods: {
+            glnode(v) {
+                return v.replace('　|--', '');
+            },
+            delCur(v) {
+                this.curList.some((item, i) => {
+                    if (item.id == v.id) {
+                        this.curList.splice(i, 1);
+                        return true;
                     }
                 });
+            },
+            loaduser(v) {
+                this.active = v.id;
+                let iscz = false;
+                this.curList.some((item, i) => {
+                    if (item.id == v.id) {
+                        iscz = true;
+                        return true;
+                    }
+                });
+                if (!iscz) {
+                    v.shop_name = this.glnode(v.shop_name);
+                    this.curList.push(v);
+                }
+            },
+            submits() {
+                active.subSelect();
+            }
+        }
+    });
+    layui.config({
+        base: '/themes/js/modules/'
+    }).use(['element', 'layer', 'jquery', 'common'],
+        function () {
+            var element = layui.element,
+                $ = layui.jquery,
+                os = layui.common,
+                index = parent.layer.getFrameIndex(window.name),
+                guid = os.getUrlParam('guid');
+            $(".btn-open-close").on('click', function () {
+                parent.layer.close(index);
             });
+            active = {
+                initTree() {
+                    os.ajax('api/shop/getpages/', { limit: 1000, site: 'tree' }, function (res) {
+                        vm.list = res.data;
+                        vm.$nextTick(function () {
+                            element.render();
+                        });
+                    }, 'get');
+                    os.ajax('api/admin/getshops/', { admin_guid: guid }, function (res) {
+                        vm.curList = res.data.shopList;
+                        vm.$nextTick(function () {
+                            element.render();
+                        });
+                    }, 'get');
+                },
+                subSelect() {
+                    if (vm.curList.length < 1) {
+                        os.error('请选择授权门店');
+                        return;
+                    }
+                    var parm = { shopList: vm.curList, admin_guid: guid };
+                    os.ajax('api/admin/saveshops/', parm, function (res) {
+                        if (res.statusCode == 200) {
+                            parent.layer.close(index);
+                        } else {
+                            os.error(res.message);
+                        }
+                    });
+                }
+            }
+            active.initTree();
         });
-</script>
-<script type="text/html" id="tool">
-    {{#  if(d.level === 1){ }}
-    <input type="checkbox" name="status" value="{{d.guid}}" lay-skin="switch" lay-text="取消|授权" lay-filter="torole" {{ d.status ? 'checked' : '' }}>
-    {{#  } }}
 </script>

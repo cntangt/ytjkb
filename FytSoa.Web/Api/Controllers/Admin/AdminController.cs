@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using FytSoa.Common;
 using FytSoa.Core.Model.Cms;
 using FytSoa.Core.Model.Sys;
+using FytSoa.Core.Model.Wx;
 using FytSoa.Extensions;
 using FytSoa.Service.DtoModel;
 using FytSoa.Service.DtoModel.Sys;
@@ -30,18 +31,21 @@ namespace FytSoa.Api.Controllers
         private readonly ICmsSiteService _siteService;
         private readonly IConfiguration _config;
         private readonly IDistributedCache _cache;
+        private readonly ICmsShopService _shop;
         public AdminController(
             ISysAdminService adminService,
             ISysLogService logService,
             ICmsSiteService siteService,
             IConfiguration config,
-            IDistributedCache cache) : base(cache)
+            IDistributedCache cache,
+            ICmsShopService shop) : base(cache)
         {
             _adminService = adminService;
             _logService = logService;
             _siteService = siteService;
             _config = config;
             _cache = cache;
+            _shop = shop;
         }
 
         /// <summary>
@@ -60,6 +64,26 @@ namespace FytSoa.Api.Controllers
             var res = await _adminService.GetPagesAsync(parm);
 
             return Ok(new { code = 0, msg = "success", count = res.data.TotalItems, data = res.data.Items });
+        }
+
+        /// <summary>
+        /// 获取用户门店权限
+        /// </summary>
+        [HttpGet("getshops")]
+        public async Task<IActionResult> GetShops(string admin_guid)
+        {
+            var res = await _adminService.GetShopsAsync(admin_guid);
+
+            return Ok(new { data = new AdminShopRel { shopList = res.data } });
+        }
+
+        /// <summary>
+        /// 保存用户门店权限
+        /// </summary>
+        [HttpPost("saveshops")]
+        public async Task<IActionResult> SaveShops([FromBody]AdminShopRel parm)
+        {
+            return Ok(await _adminService.AddShopsAsync(parm));
         }
 
         /// <summary>
@@ -300,6 +324,9 @@ namespace FytSoa.Api.Controllers
             return Ok(new ApiResult<string>() { data = "/fytadmin/login/" });
         }
 
+        /// <summary>
+        /// 修改用户密码
+        /// </summary>
         [HttpPost("updatepwd"), Log("Admin:Update", LogType = LogEnum.UPDATE)]
         public async Task<IActionResult> UpdatePwd([FromBody]UpdatePwdDto parm)
         {

@@ -1,7 +1,9 @@
 ﻿using FytSoa.Common;
 using FytSoa.Core.Model.Sys;
+using FytSoa.Core.Model.Wx;
 using FytSoa.Service.DtoModel;
 using FytSoa.Service.DtoModel.Sys;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 
 namespace FytSoa.Service.Interfaces
@@ -47,5 +49,17 @@ namespace FytSoa.Service.Interfaces
         /// </summary>
         /// <returns></returns>
         Task<ApiResult<string>> UpdatePwdAsync(UpdatePwdDto parm);
+
+        /// <summary>
+        /// 获取用户门店权限
+        /// </summary>
+        /// <returns></returns>
+        Task<ApiResult<List<ShopInfo>>> GetShopsAsync(string admin_guid);
+
+        /// <summary>
+        /// 添加用户门店权限
+        /// </summary>
+        /// <returns></returns>
+        Task<ApiResult<string>> AddShopsAsync(AdminShopRel parm);
     }
 }

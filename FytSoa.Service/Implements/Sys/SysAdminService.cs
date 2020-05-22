@@ -1,5 +1,6 @@
 ﻿using FytSoa.Common;
 using FytSoa.Core.Model.Sys;
+using FytSoa.Core.Model.Wx;
 using FytSoa.Service.DtoModel;
 using FytSoa.Service.DtoModel.Sys;
 using FytSoa.Service.Extensions;
@@ -10,6 +11,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using System.Transactions;
 
 namespace FytSoa.Service.Implements
 {
@@ -386,6 +388,62 @@ namespace FytSoa.Service.Implements
                 res.message = ApiEnum.Error.GetEnumText() + ex.Message;
                 Logger.Default.ProcessError((int)ApiEnum.Error, ex.Message);
             }
+            return res;
+        }
+
+        /// <summary>
+        /// 获取用户门店权限
+        /// </summary>
+        public async Task<ApiResult<List<ShopInfo>>> GetShopsAsync(string admin_guid)
+        {
+            var res = new ApiResult<List<ShopInfo>>();
+            try
+            {
+                res.data = await Db.Queryable<ShopInfo, AdminShopRel>((a, b) => new object[] {
+                    JoinType.Inner,a.shop_id == b.out_shop_id })
+                        .Where((a, b) => b.admin_guid == admin_guid)
+                            .Select((a, b) => a).ToListAsync();
+            }
+            catch (Exception ex)
+            {
+                res.message = ApiEnum.Error.GetEnumText() + ex.Message;
+                res.statusCode = (int)ApiEnum.Error;
+                Logger.Default.ProcessError((int)ApiEnum.Error, ex.Message);
+            }
+            return res;
+        }
+
+        /// <summary>
+        /// 添加用户门店权限
+        /// </summary>
+        public async Task<ApiResult<string>> AddShopsAsync(AdminShopRel parm)
+        {
+            var res = new ApiResult<string> { statusCode = (int)ApiEnum.ParameterError };
+
+            try
+            {
+                using var tran = new TransactionScope();
+
+                await Db.Deleteable<AdminShopRel>().Where(t => t.admin_guid == parm.admin_guid).ExecuteCommandAsync();
+
+                await Db.Insertable(parm.shopList.Select(t => new AdminShopRel
+                {
+                    admin_guid = parm.admin_guid,
+                    out_shop_id = t.shop_id,
+                    out_mch_id = t.out_mch_id,
+                    out_sub_mch_id = t.out_sub_mch_id
+                }).ToList()).ExecuteCommandAsync();
+
+                tran.Complete();
+
+                res.statusCode = (int)ApiEnum.Status;
+            }
+            catch (Exception ex)
+            {
+                res.message = ApiEnum.Error.GetEnumText() + ex.Message;
+                Logger.Default.ProcessError((int)ApiEnum.Error, ex.Message);
+            }
+
             return res;
         }
     }
