@@ -3,7 +3,7 @@
 @using Microsoft.Extensions.Caching.Distributed
 @inject IDistributedCache cache
 @{
-    Layout = string.IsNullOrEmpty(Context.Request.Query["_pjax"]) ? "_LayoutMain" : "_Layout";
+    Layout = string.IsNullOrEmpty(Context.Request.Query["__f"]) ? "_LayoutMain" : "_Layout";
     var site = await cache.GetAsync<CmsSite>(KeyHelper.NOWSITE);
     ViewData["SiteName"] = site?.SiteName;
 }

@@ -9,7 +9,7 @@
         .layui-tree-cus li{padding:0px;}
         .layui-tree-cus ul li{padding-left:20px; line-height:30px;}
     </style>
-    <div class="layui-col-220" data-pjax>
+    <div class="layui-col-220">
         <ul id="tree" class="layui-tree-cus">
             <item class="item"
                   :model="treeData">
@@ -24,7 +24,7 @@
             <div :class="{bold: isFolder}">
                 <span v-if="isFolder && open" @@click="toggle"><i class="layui-icon layui-icon-triangle-d"></i></span>
                 <span v-if="isFolder && !open" @@click="toggle"><i class="layui-icon layui-icon-triangle-r"></i></span>
-                <a cur-pjax :href="model.href" v-if="!isModify(model.href)">{{ model.name }}</a>
+                <a :href="model.href" v-if="!isModify(model.href)">{{ model.name }}</a>
                 <a href="javascript:void(0)" @@click="goOpen(model)" v-if="isModify(model.href)">{{ model.name }}</a>
             </div>
             <ul v-show="open" v-if="isFolder">
@@ -81,7 +81,7 @@
 
         layui.config({
             base: '/themes/js/modules/'
-        }).use(['layer', 'jquery', 'common', 'pjax'],
+        }).use(['layer', 'jquery', 'common'],
             function () {
                 var layer = layui.layer,
                     $ = layui.jquery,
@@ -112,20 +112,6 @@
                         return false;
                     }
                 };
-                $.pjax({
-                    url: '/fytadmin/cms/article/?column=0',
-                    container: '#content-body',
-                    fragment: '#content-body',
-                    push: false
-                });
-                $(document).pjax('a[cur-pjax]', '#content-body',
-                    {
-                        fragment: "#content-body",
-                        cache: false,
-                        push:false,
-                        show: 'fade'
-                    }
-                );
             });
     </script>
 

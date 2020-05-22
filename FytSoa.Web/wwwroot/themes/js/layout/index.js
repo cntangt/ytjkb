@@ -55,7 +55,7 @@ var rm_vm = new Vue({
 });
 layui.config({
     base: '/themes/js/modules/'
-}).use(['element', 'layer', 'jquery', 'common', 'pjax'], function () {
+}).use(['element', 'layer', 'jquery', 'common'], function () {
     var element = layui.element
         , $ = layui.jquery;
     os = layui.common;
@@ -100,18 +100,4 @@ layui.config({
             os.error(res.message);
         }
     },'get');
-    $.pjax({
-        url: '/fytadmin/default',
-        container: '#main-container',
-        fragment: '#container'
-    });
-    $('.layui-layout-admin').pjax('a[data-pjax]', '#main-container',
-        {
-            fragment: "#container",
-            cache: false,
-            show: 'fade'
-        }
-    );
-    $(document).on('pjax:start', function () { NProgress.start(); $(".load8").show(); });
-    $(document).on('pjax:end', function () { NProgress.done(); $(".load8").fadeOut(200); });
 });

@@ -1,15 +1,14 @@
-﻿layui.define(['layer', 'toastr', 'pjax'], function (exports) {
+﻿layui.define(['layer', 'toastr'], function (exports) {
     "use strict";
 
     var $ = layui.jquery,
         layer = layui.layer,
-        toastr = layui.toastr,
-        pjax = layui.pjax;
+        toastr = layui.toastr;
     toastr.options = {
         "positionClass": "toast-top-right",
         "timeOut": "1500"
     };
-    var tmls,tool = {
+    var tmls, tool = {
         error: function (msg) {
             toastr.error(msg);
         },
@@ -19,7 +18,7 @@
         success: function (msg) {
             toastr.success(msg);
         },
-        ajax: function (url, options, callFun,method='post') {
+        ajax: function (url, options, callFun, method = 'post') {
             var httpUrl = "/", token = tool.GetSession('FYTADMIN_ACCESS_TOKEN');
             var _headers = {};
             if (token !== null) {
@@ -38,8 +37,8 @@
                 timeout: 10 * 1000, //超时时间设置为50秒；
                 headers: _headers,
                 success: function (data) {
-                    if (data.statusCode == 408 || data.statusCode == 407) {
-                        window.location.href = '/fytadmin/login?ReturnUrl='+window.location.href;
+                    if (data.statusCode === 408 || data.statusCode === 407) {
+                        window.location.href = '/fytadmin/login?ReturnUrl=' + window.location.href;
                     } else {
                         callFun(data);
                     }
@@ -49,7 +48,7 @@
                         tool.error('连接超时，请稍后重试！');
                     } else if (type === 'error') {
                         //tool.error('连接异常，请稍后重试！');
-                        layer.confirm('连接异常，请重新登录', ['确定'], () => window.location.href = '/fytadmin/login?ReturnUrl=' + window.location.href)
+                        layer.confirm('连接异常，请重新登录', ['确定'], () => window.location.href = '/fytadmin/login?ReturnUrl=' + window.location.href);
                     }
                 }
             });
@@ -64,15 +63,15 @@
                 skin: 'layer-cur-open',
                 maxmin: false, //开启最大化最小化按钮
                 area: [width, height],
-                content: url,
+                content: url + (url.indexOf('?') > 0 ? '&__f=open' : '?__f=open'),
                 zIndex: "10000",
                 end: function () {
                     if (fun) fun();
                 }
             });
         },
-        OpenRight: function (title, url, width, height, fun,cancelFun) {
-            var index=layer.open({
+        OpenRight: function (title, url, width, height, fun, cancelFun) {
+            var index = layer.open({
                 title: title
                 , type: 2
                 , area: [width, height]
@@ -96,13 +95,13 @@
         },
         getToken: function () {
             var token = tool.GetSession('FYTADMIN_ACCESS_TOKEN');
-            return { 'Authorization': 'Bearer ' + token};
+            return { 'Authorization': 'Bearer ' + token };
         },
         closeOpen: function () {
             layer.closeAll();
         },
         tableLoading: function () {
-            tmls = layer.msg('<i class="layui-icon layui-icon-loading layui-icon layui-anim layui-anim-rotate layui-anim-loop"></i> 正在加载数据哦', { time: 20000});
+            tmls = layer.msg('<i class="layui-icon layui-icon-loading layui-icon layui-anim layui-anim-rotate layui-anim-loop"></i> 正在加载数据哦', { time: 20000 });
         },
         tableLoadingClose: function () {
             setTimeout(function () {
@@ -120,7 +119,7 @@
         getUrlParam: function (name) {
             var reg = new RegExp("(^|&)" + name + "=([^&]*)(&|$)");
             var r = window.location.search.substr(1).match(reg);
-            if (r != null) return unescape(r[2]); return null;
+            if (r !== null) return unescape(r[2]); return null;
         },
         formatdate: function (str) {
             if (str) {
@@ -128,10 +127,11 @@
                 var ar_date = [
                     d.getFullYear(), d.getMonth() + 1, d.getDate()
                 ];
-                for (var i = 0; i < ar_date.length; i++) ar_date[i] = dFormat(ar_date[i]);
+                for (var i = 0; i < ar_date.length; i++) {
+                    var _data = ar_date[i];
+                    ar_date[i] = _data < 10 ? '0' + _data.toString() : _data;
+                }
                 return ar_date.slice(0, 3).join('-') + ' ' + ar_date.slice(3).join(':');
-
-                function dFormat(i) { return i < 10 ? "0" + i.toString() : i; }
             } else {
                 return "无信息";
             }
@@ -141,7 +141,7 @@
         },
         GetSession: function (key) {
             var obj = localStorage.getItem(key);
-            if (obj != null) {
+            if (obj !== null) {
                 return JSON.parse(obj);
             }
             return null;
@@ -165,14 +165,14 @@
                 var input_text = $(this).data("text");
                 var showImg = $(this).data('img');
                 var type = $(this).data('type'); //edit=编辑器  sign=默认表单  iframe=弹出层  form=带图片显示
-                var frameId = window.frameElement && window.frameElement.id || '',frameUrl='';
+                var frameId = window.frameElement && window.frameElement.id || '', frameUrl = '';
                 if (frameId) {
                     frameUrl = '&frameid=' + frameId;
                 }
                 tool.Open('媒体资源库', '/fytadmin/file/cloud/?type=' + type + '&img=' + showImg + '&control=' + input_text + frameUrl, '950px', '600px');
             });
         },
-        isExtImage: function(name){
+        isExtImage: function (name) {
             var imgExt = new Array(".png", ".jpg", ".jpeg", ".bmp", ".gif");
             name = name.toLowerCase();
             var i = name.lastIndexOf(".");
@@ -180,8 +180,8 @@
             if (i > -1) {
                 ext = name.substring(i);
             }
-            for (var i = 0; i < imgExt.length; i++) {
-                if (imgExt[i] === ext)
+            for (var j = 0; j < imgExt.length; j++) {
+                if (imgExt[j] === ext)
                     return true;
             }
             return false;

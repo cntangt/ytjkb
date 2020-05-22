@@ -27,10 +27,10 @@
             </ul>
             <ul class="layui-nav layui-layout-right">
                 <li class="layui-nav-item">
-                    <a data-pjax href="/fytadmin" style="padding-right:0px;"><i class="layui-icon"></i>主页</a>
+                    <a href="/fytadmin" style="padding-right:0px;"><i class="layui-icon"></i>主页</a>
                 </li>
                 <li class="layui-nav-item">
-                    <a data-pjax href="javascript:void(0);" style="padding-right:15px;" @@click="noticelist"><i class="layui-icon">&#xe667;</i></a>
+                    <a href="javascript:void(0);" style="padding-right:15px;" @@click="noticelist"><i class="layui-icon">&#xe667;</i></a>
                     <div v-if="block" class="unreadquantity">{{ unreadquantity }}</div>
                 </li>
                 <li class="layui-nav-item">
@@ -38,7 +38,7 @@
                         <span class="username">@User.Identities.First(u => u.IsAuthenticated).FindFirst(ClaimTypes.WindowsAccountName).Value <i class="layui-icon"></i></span>
                     </a>
                     <dl class="layui-nav-child">
-                        <dd><a data-pjax href="javascript:void(0);" @@click="updatepwd()">修改密码</a></dd>
+                        <dd><a href="javascript:void(0);" @@click="updatepwd()">修改密码</a></dd>
                         <hr />
                         <dd><a href="javascript:void(0)" @@click="logout()">退出登录</a></dd>
                     </dl>
@@ -51,7 +51,7 @@
                     <li class="layui-nav-item" :class="index==0?'layui-nav-itemed':''" v-for="(it,index) in list" v-cloak v-if="it.layer===2 && it.parentGuid===m.guid">
                         <a class="" href="javascript:;"><i :class="'layui-icon '+it.icon"></i>{{it.name}}</a>
                         <dl class="layui-nav-child">
-                            <dd v-for="row in list" v-if="row.layer===3 && row.parentGuid===it.guid"><a data-pjax :href="row.urls">{{row.name}}</a></dd>
+                            <dd v-for="row in list" v-if="row.layer===3 && row.parentGuid===it.guid"><a :href="row.urls">{{row.name}}</a></dd>
                         </dl>
                     </li>
                 </ul>
