@@ -16,3 +16,4 @@
 *.DS_Store
 /obj
 /bin
+/FytSoa.Web/node_modules

@@ -99,6 +99,7 @@
 
     public enum RecordRefundOrderState
     {
+        未知 = 0,
         退款单初始态 = 1,
         退款单成功态 = 2
     }

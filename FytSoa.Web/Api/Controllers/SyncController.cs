@@ -79,38 +79,42 @@ namespace FytSoa.Api.Controllers
 
         public async Task<IActionResult> ShopInfo(int id) => Ok(await wx.SyncShopInfo(id));
 
-        public Task<WxResponse<RefundResponse>> Refund()
+        [HttpPost]
+        public async Task<PageResult<IEnumerable<RefundOrder>>> Refund(QueryOrderListRequest req)
         {
-            var req = new RefundRequest
-            {
-                refund_content = new Refund_Content
-                {
-                    out_trade_no = "sz0100lmnx12020051312422304jvek8",
-                    out_refund_no = $"sz0100lmnx{DateTime.Now:yyyyMMddHHmmssffffff}",
-                    refund_fee = 1,
-                    refund_fee_type = "CNY",//需要和来源订单保持一至
-                    refund_reason = "就是任性",
-                    total_fee = 1
-                },
-                order_client = new Order_Client
-                {
-                    terminal_type = TerminalType.Windows,
-                    sdk_version = "1.0",
-                    spbill_create_ip = "171.221.202.167"
-                },
-                pay_mch_key = new Pay_Mch_Key
-                {
-                    //pay_platform = PayPlatform.默认,
-                    out_mch_id = "sz013NzuonO6CMJd0rCB",
-                    out_sub_mch_id = "sz01ELTR281OFpmdAp6J",
-                    out_shop_id = "sz01qyoPJmd3j1hWmul4",
-                    is_sub_mch_admin = true,
-                    //authorization_name=
-                },
-                AuthenKey = "lSCp1M5grGWFD7rJzaZaqixsvOhORp2P",
-            };
+            var res = new PageResult<IEnumerable<RefundOrder>>();
 
-            return wx.QueryAsync(req);
+            if (req.start_time == null)
+            {
+                req.start_time = DateTime.Now.Date;
+            }
+            if (req.end_time == null)
+            {
+                req.end_time = DateTime.Now.AddDays(1).Date;
+            }
+
+            req.order_type = OrderType.退款单;
+
+            var mch = await merchantService.GetModelAsync(p => p.out_sub_mch_id == req.out_sub_mch_id);
+            if (mch == null || mch.data == null || mch.data.id == 0)
+            {
+                res.Code = 500;
+                res.Msg = "请选择子商户查询";
+                return res;
+            }
+
+            req.AuthenKey = mch.data.authen_key;
+
+            var data = await wx.QueryAsync(req);
+
+            res.Msg = "success";
+            res.Count = data.Data.total_count;
+            if (data.Data.order_details != null)
+            {
+                res.Data = data.Data.order_details.Select(p => p.refund_order);
+            }
+
+            return res;
         }
 
     }
