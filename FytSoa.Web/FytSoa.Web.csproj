@@ -27,8 +27,6 @@
     <Content Remove="package.json" />
     <Content Remove="Pages\FytAdmin\Sys\Organize.cshtml" />
     <Content Remove="Pages\FytAdmin\Sys\OrganizeModify.cshtml" />
-    <Content Remove="wwwroot\build\admin\css\site.min.css" />
-    <Content Remove="wwwroot\build\admin\css\site.min.css" />
     <Content Remove="wwwroot\themes\js\modules\pjax.js" />
   </ItemGroup>
   <ItemGroup>
