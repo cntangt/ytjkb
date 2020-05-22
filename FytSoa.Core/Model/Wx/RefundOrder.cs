@@ -22,7 +22,7 @@ namespace FytSoa.Core.Model.Wx
         public SourceType source_type { get; set; }
         public string out_card_id { get; set; }
         [JsonConverter(typeof(StringEnumConverter))]
-        public PayPlatform sub_pay_platform { get; set; }
+        public SubPayPlatform sub_pay_platform { get; set; }
         [JsonConverter(typeof(StringEnumConverter))]
         public TradeType trade_type { get; set; }
         public string out_trade_no { get; set; }

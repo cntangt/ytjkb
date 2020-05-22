@@ -140,7 +140,7 @@ namespace FytSoa.Api.Controllers
                 refund_content = new Refund_Content
                 {
                     out_trade_no = req_data.out_trade_no,
-                    out_refund_no = $"sz0100lmnx{DateTime.Now:yyyyMMddHHmmssffffff}",
+                    out_refund_no = $"{mch.data.order_perfix}{DateTime.Now:yyyyMMddHHmmssffffff}",
                     refund_fee = (int)(req_data.refund_fee * 100),
                     refund_fee_type = req_data.refund_fee_type,
                     refund_reason = req_data.refund_reason,
@@ -154,7 +154,7 @@ namespace FytSoa.Api.Controllers
                 },
                 pay_mch_key = new Pay_Mch_Key
                 {
-                    pay_platform = PayPlatform.默认, // 文档使用此值 //req_data.sub_pay_platform,
+                    pay_platform = PayPlatform.微信支付,
                     out_mch_id = config["out_mch_id"],
                     out_sub_mch_id = req_data.out_sub_mch_id,
                     out_shop_id = req_data.out_shop_id,

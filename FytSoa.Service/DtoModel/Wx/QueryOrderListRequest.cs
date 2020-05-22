@@ -13,7 +13,7 @@ namespace FytSoa.Service.DtoModel.Wx
         public DateTime? end_time { get; set; }
         public int page_num { get; set; }
         public int page_size { get; set; }
-        public PayPlatform[] sub_pay_platforms { get; set; }
+        public SubPayPlatform[] sub_pay_platforms { get; set; }
         public string staff_id { get; set; }
         public string out_shop_id { get; set; }
         public TradeType? trade_type { get; set; }

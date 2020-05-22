@@ -38,7 +38,7 @@
                 <div style="margin:10px 0 0">
                     <span class="layui-inline">支付渠道：</span>
                     <div class="layui-inline">
-                        <div id="pay_platform" style="width:400px" data-json='@Html.Raw(Json.Serialize(typeof(PayPlatform).ToDropdown().Select(p=>new { name=p.Text,value=p.Value})))'></div>
+                        <div id="pay_platform" style="width:400px" data-json='@Html.Raw(Json.Serialize(typeof(SubPayPlatform).ToDropdown().Select(p=>new { name=p.Text,value=p.Value})))'></div>
                     </div>
                     <span class="layui-inline">支付类型：</span>
                     <div class="layui-inline">

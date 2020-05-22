@@ -41,17 +41,20 @@
         小程序支付 = 9
     }
 
-    public enum PayPlatform
+    public enum SubPayPlatform
     {
-        /// <summary>
-        /// 退款支付平台类型为此值
-        /// </summary>
-        默认 = 1,
         普通微信支付 = 100,
         普通支付宝 = 200,
         代金券校园卡 = 300,
         银行卡记账 = 401,
         现金记账 = 402
+    }
+
+    public enum PayPlatform
+    {
+        微信支付 = 1,
+        支付宝 = 2,
+        记账模式 = 3
     }
 
     public enum AlipayRefundOrderState
