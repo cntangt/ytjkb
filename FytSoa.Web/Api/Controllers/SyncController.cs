@@ -1,9 +1,12 @@
-﻿using FytSoa.Core.Model.Wx;
+﻿using FytSoa.Common;
+using FytSoa.Core.Model.Wx;
+using FytSoa.Extensions;
 using FytSoa.Service.DtoModel;
 using FytSoa.Service.DtoModel.Wx;
 using FytSoa.Service.Interfaces.Cms;
 using FytSoa.Service.Interfaces.Wx;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Configuration;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -17,10 +20,13 @@ namespace FytSoa.Api.Controllers
     {
         readonly IWxCloudService wx;
         readonly ICmsMerchantService merchantService;
-        public SyncController(IWxCloudService wx, ICmsMerchantService merchantService)
+        readonly IConfiguration config;
+
+        public SyncController(IWxCloudService wx, ICmsMerchantService merchantService, IConfiguration config)
         {
             this.wx = wx;
             this.merchantService = merchantService;
+            this.config = config;
         }
 
         [HttpPost]
@@ -117,5 +123,53 @@ namespace FytSoa.Api.Controllers
             return res;
         }
 
+        [HttpPost]
+        public async Task<ApiResult<RefundResponse>> DoRefund(DoRefundRequest req_data)
+        {
+            var res = new ApiResult<RefundResponse>();
+
+            var mch = await merchantService.GetModelAsync(p => p.out_sub_mch_id == req_data.out_sub_mch_id);
+            if (mch == null || mch.data == null || mch.data.id == 0)
+            {
+                res.statusCode = (int)ApiEnum.Error;
+                res.message = "请选择子商户查询";
+                return res;
+            }
+            var req = new RefundRequest
+            {
+                refund_content = new Refund_Content
+                {
+                    out_trade_no = req_data.out_trade_no,
+                    out_refund_no = $"sz0100lmnx{DateTime.Now:yyyyMMddHHmmssffffff}",
+                    refund_fee = (int)(req_data.refund_fee * 100),
+                    refund_fee_type = req_data.refund_fee_type,
+                    refund_reason = req_data.refund_reason,
+                    total_fee = (int)(req_data.total_fee * 100)
+                },
+                order_client = new Order_Client
+                {
+                    terminal_type = TerminalType.Windows,
+                    sdk_version = "1.0",
+                    spbill_create_ip = HttpContext.GetIP()
+                },
+                pay_mch_key = new Pay_Mch_Key
+                {
+                    pay_platform = PayPlatform.默认, // 文档使用此值 //req_data.sub_pay_platform,
+                    out_mch_id = config["out_mch_id"],
+                    out_sub_mch_id = req_data.out_sub_mch_id,
+                    out_shop_id = req_data.out_shop_id,
+                    is_sub_mch_admin = true,
+                },
+                AuthenKey = mch.data.authen_key
+            };
+
+            var result = await wx.QueryAsync(req);
+
+            res.message = result.Description;
+            res.statusCode = result.Status;
+            res.data = result.Data;
+
+            return res;
+        }
     }
 }

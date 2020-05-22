@@ -114,31 +114,65 @@
                 </div>
             </form>
         </script>
+        <script type="text/html" id="refund">
+            <form class="layui-form form-details">
+                <fieldset class="layui-elem-field layui-field-title" style="margin-top: 20px;"><legend><i class="layui-icon layui-icon-component"></i></legend></fieldset>
+                <div class="layui-form-item">
+                    <label class="layui-form-label">交易流水号</label>
+                    <div class="layui-input-block">
+                        <input type="text" value="{{ d.out_trade_no }}" disabled class="layui-input">
+                    </div>
+                    <label class="layui-form-label">交易时间</label>
+                    <div class="layui-input-block">
+                        <input type="text" value="{{ layui.util.toDateString(d.time_end, 'yyyy-MM-dd HH:mm:ss') }}" disabled class="layui-input">
+                    </div>
+                </div>
+                <div class="layui-form-item">
+                    <label class="layui-form-label">支付渠道</label>
+                    <div class="layui-input-block">
+                        <input type="text" value="{{ d.sub_pay_platform }}" disabled class="layui-input">
+                    </div>
+                    <label class="layui-form-label">支付类型</label>
+                    <div class="layui-input-block">
+                        <input type="text" value="{{ d.trade_type }}" disabled class="layui-input">
+                    </div>
+                </div>
+                <div class="layui-form-item">
+                    <label class="layui-form-label">订单金额</label>
+                    <div class="layui-input-block">
+                        <input type="text" value="{{ d.total_fee.tc() }}" disabled class="layui-input">
+                    </div>
+                    <label class="layui-form-label">手续费</label>
+                    <div class="layui-input-block">
+                        <input type="text" value="{{ d.poundage.tc() }}" disabled class="layui-input">
+                    </div>
+                </div>
+                <div class="layui-form-item">
+                    <label class="layui-form-label">可退金额</label>
+                    <div class="layui-input-block">
+                        <input type="text" value="{{ (d.total_fee - d.refunded_fee).tc() }}" disabled class="layui-input">
+                    </div>
+                    <label class="layui-form-label">退款金额</label>
+                    <div class="layui-input-block">
+                        <input type="text" name="refund_fee" value="{{ (d.total_fee - d.refunded_fee)/100 }}" class="layui-input">
+                    </div>
+                </div>
+                <div class="layui-form-item">
+                    <label class="layui-form-label">退款原因</label>
+                    <div class="layui-input-block">
+                        <input type="text" class="layui-input" name="refund_reason" style="width:550px">
+                    </div>
+                </div>
+                <input type="hidden" name="out_trade_no" value="{{ d.out_trade_no }}" />
+                <input type="hidden" name="total_fee" value="{{ d.total_fee }}" />
+                <input type="hidden" name="sub_pay_platform" value="{{ d.sub_pay_platform }}" />
+                <input type="hidden" name="out_sub_mch_id" value="{{ d.out_sub_mch_id }}" />
+                <input type="hidden" name="out_shop_id" value="{{ d.out_shop_id }}" />
+                <input type="hidden" name="refund_fee_type" value="{{ d.fee_type }}" />
+            </form>
+        </script>
     </div>
 </div>
-@section styles{
-    <style>
-        .loading, .uploading {
-            margin-left: 0;
-            width: 100%;
-        }
-
-        .layui-form-label {
-            width: 80px;
-        }
-
-        .layui-form-item {
-            margin-bottom: 8px;
-        }
-
-        .layui-input-block {
-            margin-left: 0px;
-            width: 220px;
-            float: left;
-        }
-
-    </style>
-}
 @section scripts{
     <script src="~/themes/js/xm-select.js"></script>
     <script>
@@ -274,16 +308,27 @@
                     return false;
                 });
                 table.on('tool(tool)', function (obj) {
-                    var id = obj.data.id;
                     switch (obj.event) {
                         case 'detail':
                             tpl(details.innerHTML).render(obj.data, (html) => l.open({ title: '交易订单详情', area: ['720px', '480px'], content: html }));
                             break;
                         case 'refund':
-                            layer.confirm('确定要同步门店信息', ['确定', '取消'], (i) => {
-                                os.Open('同步商户门店信息', '/api/sync/shopinfo/?id=' + id, '720px', '640px');
-                                layer.close(i);
-                            }, null);
+                            tpl(refund.innerHTML).render(obj.data, (html) => l.open({
+                                title: '订单退款',
+                                area: ['720px', '480px'],
+                                content: html,
+                                btn: ['退款', '取消'],
+                                yes: (i, l) => {
+                                    os.ajax('api/sync/dorefund', $(l).find('form').serializeArray().js(), (res) => {
+                                        if (res.statusCode) {
+                                            os.error(res.message);
+                                        }
+                                        else {
+                                            layer.close(i);
+                                        }
+                                    });
+                                }
+                            }));
                             break;
                     }
                 });

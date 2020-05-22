@@ -1,0 +1,22 @@
+﻿.loading, .uploading {
+    margin-left: 0;
+    width: 100%;
+}
+
+.layui-form-label {
+    width: 80px;
+}
+
+.layui-form-item {
+    margin-bottom: 8px;
+}
+
+.layui-input-block {
+    margin-left: 0px;
+    width: 220px;
+    float: left;
+}
+
+.layui-input-block input:disabled {
+    background-color: #eee;
+}

@@ -1,7 +1,4 @@
-﻿using Newtonsoft.Json.Converters;
-using System.Text.Json.Serialization;
-
-namespace FytSoa.Service.DtoModel.Wx
+﻿namespace FytSoa.Service.DtoModel.Wx
 {
     public class RefundRequest : WxRequest<RefundResponse>
     {
