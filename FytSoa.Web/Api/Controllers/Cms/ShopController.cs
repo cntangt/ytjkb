@@ -53,12 +53,20 @@ namespace FytSoa.Api.Controllers.Cms
             return Ok(new { code = 0, msg = "success", count = res.data.TotalItems, data = res.data.Items });
         }
 
-        [HttpPost("getbymch")]
-        public async Task<IActionResult> GetByMerchant([FromBody]GetByMerchantRequest req)
+        [HttpPost("getshopbymch")]
+        public async Task<IActionResult> GetShopByMerchant([FromBody]GetShopByMerchantRequest req)
         {
             var res = await shopService.GetByAdminGuidAsync(await HttpContext.LoginUserId(), req.out_sub_mch_id, req.key, 10);
 
             return Ok(res.Select(p => new { name = p.shop_name, value = p.out_shop_id }));
+        }
+
+        [HttpPost("getstaffbyshop")]
+        public async Task<IActionResult> GetStaffByMerchant([FromBody]GetStaffByShopRequest req)
+        {
+            var res = await staffService.GetByShop(await HttpContext.LoginUserId(), key: req.key, out_sub_mch_id: req.out_sub_mch_id, out_shop_id: req.out_shop_id, limit: 10);
+
+            return Ok(res.Select(p => new { name = p.staff_name, value = p.staff_id }));
         }
     }
 }

@@ -16,32 +16,42 @@
         <div class="layui-form list-search">
             <form autocomplete="off" id="searchform">
                 <div>
-                    <span class="layui-inline">子商户：</span>
+                    <span class="layui-inline">　子商户：</span>
                     <div class="layui-inline">
-                        @Html.DropDownList("out_sub_mch_id", ms_list.Select(p => new SelectListItem { Text = p.name, Value = p.out_sub_mch_id }), new { lay_search = "" })
+                        <div id="out_sub_mch_id" style="width:200px" data-json='@Html.Raw(Json.Serialize(ms_list.Select(p=>new { name = p.name, value = p.out_sub_mch_id })))'></div>
                     </div>
                     <span class="layui-inline">门店：</span>
                     <div class="layui-inline">
                         <div type="text" id="out_shop_id" style="width:200px"></div>
                     </div>
-                    @*<span class="layui-inline">工号：</span>
+                    <span class="layui-inline">工号：</span>
                     <div class="layui-inline">
-                        @Html.DropDownList("out_sub_mch_id", ms_list.Select(p => new SelectListItem { Text = p.name, Value = p.out_sub_mch_id }), new { lay_search = "" })
-                    </div>*@
-                </div>
-                <div style="margin-top:10px">
+                        <div type="text" id="staff_id" style="width:200px"></div>
+                    </div>
                     <span class="layui-inline">交易日期：</span>
                     <div class="layui-inline">
                         <input type="text" class="layui-input" id="trade_date" style="width:300px">
                         <input type="hidden" name="start_time" />
                         <input type="hidden" name="end_time" />
                     </div>
+                </div>
+                <div style="margin:10px 0 0">
                     <span class="layui-inline">支付渠道：</span>
                     <div class="layui-inline">
-                        <div id="pay_platform" style="width:200px" data-json='@Html.Raw(Json.Serialize(typeof(PayPlatform).ToDropdown().Select(p=>new { name=p.Text,value=p.Value})))'></div>
+                        <div id="pay_platform" style="width:400px" data-json='@Html.Raw(Json.Serialize(typeof(PayPlatform).ToDropdown().Select(p=>new { name=p.Text,value=p.Value})))'></div>
+                    </div>
+                    <span class="layui-inline">支付类型：</span>
+                    <div class="layui-inline">
+                        <div id="trade_type" style="width:200px" data-json='@Html.Raw(Json.Serialize(typeof(TradeType).ToDropdown().Select(p=>new { name=p.Text,value=p.Value})))'></div>
+                    </div>
+                    <span class="layui-inline">支付状态：</span>
+                    <div class="layui-inline">
+                        <div id="status" style="width:200px" data-json='@Html.Raw(Json.Serialize(typeof(PayStatus).ToDropdown().Select(p=>new { name=p.Text,value=p.Value})))'></div>
+                    </div>
+                    <div class="layui-inline">
+                        <button type="submit" class="layui-btn layui-btn-sm" style="margin-left:50px" data-type="toolSearch"><i class="layui-icon layui-icon-search"></i> 搜索</button>
                     </div>
                 </div>
-                <button type="submit" class="layui-btn layui-btn-sm" data-type="toolSearch"><i class="layui-icon layui-icon-search"></i> 搜索</button>
             </form>
         </div>
         <table class="layui-hide" id="tablist" lay-filter="tool"></table>
@@ -70,14 +80,76 @@
                     $ = layui.jquery,
                     dt = layui.laydate,
                     os = layui.common;
-                var pp = xmSelect.render({ el: '#pay_platform', data: $('#pay_platform').data('json') });
-                xmSelect.render({
+                var pp = xmSelect.render({
+                    el: '#pay_platform',
+                    size: 'small',
+                    name: 'sub_pay_platforms',
+                    data: $('#pay_platform').data('json'),
+                });
+                var mp_data = $('#out_sub_mch_id').data('json');
+                if (mp_data.length) {
+                    mp_data[0].selected = true;
+                }
+                var mp = xmSelect.render({
+                    el: '#out_sub_mch_id',
+                    name: 'out_sub_mch_id',
+                    radio: true,
+                    size: 'small',
+                    layVerify: 'required',
+                    data: mp_data,
+                    on: (e) => {
+                        if (e.arr.length) {
+                            var out_sub_mch_id = e.arr[0].value;
+                            os.ajax('api/shop/getshopbymch', { out_sub_mch_id: out_sub_mch_id }, (res) => {
+                                sp.update({ data: res });
+                                os.ajax('api/shop/getstaffbyshop', { out_sub_mch_id: out_sub_mch_id }, (res) => sf.update({ data: res }));
+                            });
+                        }
+                        else {
+                            sp.reset();
+                            sf.reset();
+                        }
+                    }
+                });
+                var sp = xmSelect.render({
                     el: '#out_shop_id',
                     name: 'out_shop_id',
                     radio: true,
+                    size: 'small',
+                    clickClose: true,
                     filterable: true,
                     remoteSearch: true,
-                    remoteMethod: (val, cb, show) => os.ajax('api/shop/getbymch', { key: val, out_sub_mch_id: $('#out_sub_mch_id').val() }, (res) => cb(res)),
+                    remoteMethod: (val, cb, show) => os.ajax('api/shop/getshopbymch', { key: val, out_sub_mch_id: pp.getValue('valueStr') }, (res) => cb(res)),
+                    on: (e) => {
+                        if (e.arr.length) {
+                            os.ajax('api/shop/getstaffbyshop', { out_sub_mch_id: mp.getValue('valueStr'), out_shop_id: e.arr[0].value }, (res) => sf.update({ data: res }));
+                        }
+                        else {
+                            sf.reset();
+                        }
+                    }
+                });
+                var sf = xmSelect.render({
+                    el: '#staff_id',
+                    name: 'staff_id',
+                    radio: true,
+                    size: 'small',
+                    clickClose: true,
+                    filterable: true,
+                    remoteSearch: true,
+                    remoteMethod: (val, cb, show) => os.ajax('api/shop/getstaffbyshop', { key: val, out_sub_mch_id: pp.getValue('valueStr'), out_shop_id: sp.getValue('valueStr') }, (res) => cb(res)),
+                });
+                xmSelect.render({
+                    el: '#trade_type',
+                    size: 'small',
+                    name: 'trade_type',
+                    data: $('#trade_type').data('json'),
+                });
+                xmSelect.render({
+                    el: '#status',
+                    size: 'small',
+                    name: 'status',
+                    data: $('#status').data('json'),
                 });
                 table.render({
                     elem: '#tablist',
