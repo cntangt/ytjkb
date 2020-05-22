@@ -17,9 +17,6 @@
         </div>
         <table class="layui-hide" id="tablist" lay-filter="tool"></table>
     </div>
-    <script type="text/html" id="switchTpl">
-        <input type="checkbox" name="status" value="{{d.guid}}" lay-skin="switch" lay-text="开|关" lay-filter="statusedit" {{ d.iosAudit==1?'checked':''}}>
-    </script>
     <script type="text/html" id="tool">
         <a class="layui-btn layui-btn-primary layui-btn-xs" lay-event="detail"><i class="layui-icon">&#xe702;</i> 详情</a>
         <a class="layui-btn layui-btn-primary layui-btn-xs" lay-event="edit"><i class="layui-icon"></i> 修改</a>
