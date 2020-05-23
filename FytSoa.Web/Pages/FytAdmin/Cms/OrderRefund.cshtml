@@ -11,6 +11,14 @@
     var admin = await adminservice.GetModelAsync(p => p.Guid == admin_guid);
     var ms_list = (await ms.GetListAsync(p => (isSys || p.admin_guid == admin_guid || p.admin_guid == admin.data.CreateBy) && p.status, p => p.id, Common.DbOrderEnum.Asc)).data;
 }
+@section styles{
+    <style>
+        .layui-form-label { width: 100px; }
+        .layui-form-item { margin-bottom: 8px; }
+        .layui-input-block { margin-left: 0px; width: 200px; float: left; }
+        /*.layui-layer-btn { padding: 0 35px 65px !important; }*/
+    </style>
+}
 <div id="container">
     <div class="list-wall">
         <div class="layui-form list-search">
