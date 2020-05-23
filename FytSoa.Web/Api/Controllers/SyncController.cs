@@ -194,6 +194,6 @@ namespace FytSoa.Api.Controllers
             return res;
         }
 
-        public Task<ApiResult<string>> DailyJob(DateTime day) => cmsDaily.DailyJobAsync(day);
+        public Task<ApiResult<string>> DailyJob(DateTime? day) => cmsDaily.DailyJobAsync(day ?? DateTime.Now.AddDays(-1));
     }
 }
