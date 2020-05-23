@@ -48,7 +48,7 @@ namespace FytSoa.Api.Controllers
             var mch = await merchantService.GetModelAsync(p => p.out_sub_mch_id == req.out_sub_mch_id);
             if (mch == null || mch.data == null || mch.data.id == 0)
             {
-                res.Code = 500;
+                res.Code = ApiEnum.Error;
                 res.Msg = "请选择子商户查询";
                 return res;
             }
@@ -57,8 +57,25 @@ namespace FytSoa.Api.Controllers
 
             var data = await wx.QueryAsync(req);
 
+            if (data.Status != 0)
+            {
+                res.Msg = data.Description;
+                res.Code = ApiEnum.Error;
+
+                return res;
+            }
+
+            if (data.Data == null)
+            {
+                res.Msg = "查询结果为空";
+                res.Code = ApiEnum.Error;
+
+                return res;
+            }
+
             res.Msg = "success";
             res.Count = data.Data.total_count;
+
             if (data.Data.order_details != null)
             {
                 res.Data = data.Data.order_details.Select(p => p.order);
@@ -104,7 +121,7 @@ namespace FytSoa.Api.Controllers
             var mch = await merchantService.GetModelAsync(p => p.out_sub_mch_id == req.out_sub_mch_id);
             if (mch == null || mch.data == null || mch.data.id == 0)
             {
-                res.Code = 500;
+                res.Code = ApiEnum.Error;
                 res.Msg = "请选择子商户查询";
                 return res;
             }
@@ -113,8 +130,25 @@ namespace FytSoa.Api.Controllers
 
             var data = await wx.QueryAsync(req);
 
+            if (data.Status != 0)
+            {
+                res.Msg = data.Description;
+                res.Code = ApiEnum.Error;
+
+                return res;
+            }
+
+            if (data.Data == null)
+            {
+                res.Msg = "查询结果为空";
+                res.Code = ApiEnum.Error;
+
+                return res;
+            }
+
             res.Msg = "success";
             res.Count = data.Data.total_count;
+
             if (data.Data.order_details != null)
             {
                 res.Data = data.Data.order_details.Select(p => p.refund_order);

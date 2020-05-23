@@ -43,7 +43,7 @@ namespace FytSoa.Extensions
                     new Claim (JwtRegisteredClaimNames.Exp,$"{new DateTimeOffset(DateTime.Now.AddMinutes(exp)).ToUnixTimeSeconds()}"),
                     new Claim(JwtRegisteredClaimNames.Iss,jwtConfig.Issuer),
                     new Claim(JwtRegisteredClaimNames.Aud,jwtConfig.Audience),
-                    new Claim(ClaimTypes.Role,tokenModel.Role),
+                    //new Claim(ClaimTypes.Role,tokenModel.Role),
                };
             //秘钥
             var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtConfig.JWTSecretKey));
@@ -58,7 +58,7 @@ namespace FytSoa.Extensions
             var encodedJwt = jwtHandler.WriteToken(jwt);
             return encodedJwt;
         }
-        
+
 
         /// <summary>
         /// 解析
@@ -83,7 +83,7 @@ namespace FytSoa.Extensions
             var tm = new TokenModel
             {
                 Uid = jwtToken.Id,
-                UserName=userName.ToString()
+                UserName = userName.ToString()
             };
             return tm;
         }

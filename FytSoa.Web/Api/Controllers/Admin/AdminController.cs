@@ -202,13 +202,12 @@ namespace FytSoa.Api.Controllers
                 var identity = new ClaimsPrincipal(
                  new ClaimsIdentity(new[]
                      {
-                              new Claim(ClaimTypes.PrimarySid,user.IsSystem.ToString()),
-                              new Claim(ClaimTypes.Sid,user.Guid),
-                              new Claim(ClaimTypes.Role,user.DepartmentName),
-                              new Claim(ClaimTypes.Thumbprint,user.HeadPic),
-                              new Claim(ClaimTypes.Name,user.LoginName),
-                              new Claim(ClaimTypes.WindowsAccountName,user.LoginName),
-                              new Claim(ClaimTypes.UserData,user.UpLoginDate.ToString())
+                        new Claim(ClaimTypes.PrimarySid, user.IsSystem.ToString()),
+                        new Claim(ClaimTypes.Sid, user.Guid),
+                        //new Claim(ClaimTypes.Role, user.DepartmentName),
+                        new Claim(ClaimTypes.Name, user.LoginName),
+                        new Claim(ClaimTypes.WindowsAccountName, user.LoginName),
+                        new Claim(ClaimTypes.UserData, user.UpLoginDate.ToString())
                      }, CookieAuthenticationDefaults.AuthenticationScheme)
                 );
                 //如果保存用户类型是Session，则默认设置cookie退出浏览器 清空
