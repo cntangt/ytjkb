@@ -3,6 +3,7 @@ using FytSoa.Tasks;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
+using Microsoft.AspNetCore.DataProtection;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.HttpOverrides;
@@ -13,6 +14,7 @@ using Microsoft.IdentityModel.Tokens;
 using NLog;
 using Quartz.Impl.AdoJobStore;
 using Quartz.Impl.AdoJobStore.Common;
+using StackExchange.Redis;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -71,13 +73,17 @@ namespace FytSoa.Web
                 });
 
             services
+                .AddDataProtection(p => p.ApplicationDiscriminator = "ytjbk")
+                .PersistKeysToStackExchangeRedis(ConnectionMultiplexer.Connect(config["Cache:Configuration"]));
+
+            services
                 .AddAuthorization(options =>
                 {
                     options.AddPolicy("App", policy => policy.RequireRole("App").Build());
                     options.AddPolicy("Admin", policy => policy.RequireRole("Admin").Build());
                     options.AddPolicy("AdminOrApp", policy => policy.RequireRole("Admin,App").Build());
                 })
-                .AddDistributedRedisCache(p => p.Configuration = config["Cache:Configuration"])
+                .AddStackExchangeRedisCache(p => p.Configuration = config["Cache:Configuration"])
                 .AddSingleton(HtmlEncoder.Create(UnicodeRanges.All))
                 .AddSingleton(GetScheduler())
                 .AddResponseCompression()
