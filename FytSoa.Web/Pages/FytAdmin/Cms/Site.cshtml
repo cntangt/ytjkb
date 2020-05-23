@@ -6,50 +6,15 @@
 
 <div id="container">
     <style>
-        .layui-field-title i {
-            margin-right: 5px;
-            font-size: 25px;
-            position: relative;
-            top: 2px;
-        }
-
-        .layui-form-item {
-            width: 60%;
-        }
-        .layui-col-220 {
-            width: 280px;
-        }
-
-        .right-col-body {
-            left: 280px;
-        }
-        .site-list ul li {
-            cursor: pointer;
-            padding: 15px 0 15px 35px;
-            position: relative;
-            border-bottom: 1px solid #e6e6e6;
-            color: #76838f;
-        }
-            .site-list ul li .tool {
-                display: none;
-                position: absolute;
-                right: 10px;
-                top: 9px;
-                z-index: 1000;
-            }
-                .site-list ul li .tool a {
-                    display: inline-block;
-                    padding: 5px 10px;
-                    font-size: 20px;
-                    margin-left: 10px;
-                    color: #96a5aa;
-                }
-            .site-list ul li:hover, .site-list ul li.active {
-                background-color: #f3f8ff;
-            }
-            .site-list ul li:hover .tool{
-                display:block;
-            }
+        .layui-field-title i { margin-right: 5px; font-size: 25px; position: relative; top: 2px; }
+        .layui-form-item { width: 60%; }
+        .layui-col-220 { width: 280px; }
+        .right-col-body { left: 280px; }
+        .site-list ul li { cursor: pointer; padding: 15px 0 15px 35px; position: relative; border-bottom: 1px solid #e6e6e6; color: #76838f; }
+            .site-list ul li .tool { display: none; position: absolute; right: 10px; top: 9px; z-index: 1000; }
+                .site-list ul li .tool a { display: inline-block; padding: 5px 10px; font-size: 20px; margin-left: 10px; color: #96a5aa; }
+            .site-list ul li:hover, .site-list ul li.active { background-color: #f3f8ff; }
+                .site-list ul li:hover .tool { display: block; }
     </style>
     <div id="app">
         <div class="layui-col-220 site-list">
@@ -196,7 +161,7 @@
         </div>
     </div>
     <script>
-        var os,$,fun,form,vm = new Vue({
+        var os, $, fun, form, vm = new Vue({
             el: '#app',
             data: {
                 list: [],
@@ -209,9 +174,9 @@
                     $('#WeiBo').val(m.weiBo);
                     $('#WeiXin').val(m.weiXin);
                     if (m.status) {
-                        $('input:checkbox').prop("checked",true);
+                        $('input:checkbox').prop("checked", true);
                     }
-                    else{
+                    else {
                         $('input:checkbox').prop("checked", false);
                     }
                     form.render('checkbox');
@@ -249,15 +214,14 @@
         layui.config({
             base: '/themes/js/modules/'
         }).use(['layer', 'jquery', 'common', 'form'], function () {
-            form = layui.form;os = layui.common; $ = layui.$;
+            form = layui.form; os = layui.common; $ = layui.$;
             os.cloudFile();
-
             fun = {
                 init: function () {
                     os.ajax('api/cmssite/list', {}, function (res) {
                         if (res.statusCode === 200) {
-                            console.log(res.data);
                             vm.list = res.data;
+                            if (res.data.length > 0) vm.selSite(res.data[0]);
                         } else {
                             os.error(res.message);
                         }
@@ -267,8 +231,7 @@
             fun.init();
             //监听提交
             form.on('submit(submit)', function (data) {
-                var urls = "api/cmssite/savesite";                
-                
+                var urls = "api/cmssite/savesite";
                 vm.m.status = data.field.Status === 'on' ? true : false;
                 vm.m.siteLogo = $('#SiteLogo').val();
                 vm.m.weiBo = $('#WeiBo').val();

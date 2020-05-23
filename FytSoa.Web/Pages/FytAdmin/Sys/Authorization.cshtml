@@ -131,13 +131,13 @@
             methods: {
                 roleGoMenu: function (m, index) {
                     var that = this;
-                    layer.confirm('授权功能尚未保存，是否确认查看其它角色权限？', function (is) {
-                        layer.close(is);
+                    //layer.confirm('授权功能尚未保存，是否确认查看其它角色权限？', function (is) {
+                    //    layer.close(is);
                         that.roleActive = index;
                         that.roleGuid = m.guid;
                         that.menuList = [];
                         fun.menuList(m.guid);
-                    });
+                    //});
                 },
                 selectCbk: function (m, e) {
                     var that = this;

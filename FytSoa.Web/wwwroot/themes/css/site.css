@@ -11,11 +11,11 @@
     margin-bottom: 8px;
 }
 
-.layui-input-block {
+/*.layui-input-block {
     margin-left: 0px;
     width: 220px;
     float: left;
-}
+}*/
 
 .layui-input-block input:disabled {
     background-color: #eee;

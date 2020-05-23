@@ -37,7 +37,7 @@
             });
         },
         updatepwd: function () {
-            os.Open('修改密码', '/fytadmin/updatepwd', '400px', '300px');
+            os.Open('修改密码', '/fytadmin/updatepwd', '500px', '340px');
         },
         unreadcount: function () {
             os.ajax('api/notice/unreadquantity', {}, function (res) {

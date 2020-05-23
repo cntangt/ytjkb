@@ -75,7 +75,7 @@
                         return false;
                     },
                     toolAdd: function () {
-                        os.Open('添加子商户信息', '/fytadmin/cms/merchantmodify', '720px', '640px', active.reload);
+                        os.Open('添加子商户信息', '/fytadmin/cms/merchantmodify', '700px', '580px', active.reload);
                     },
                     toolDel: function () {
                         var checkStatus = table.checkStatus('tables')
@@ -111,14 +111,14 @@
                     var id = obj.data.id;
                     switch (obj.event) {
                         case 'edit':
-                            os.Open('修改子商户信息', '/fytadmin/cms/merchantmodify/?id=' + id, '720px', '640px', active.reload);
+                            os.Open('修改子商户信息', '/fytadmin/cms/merchantmodify/?id=' + id, '700px', '580px', active.reload);
                             break;
                         case 'detail':
-                            os.Open('查看子商户详情', '/fytadmin/cms/merchantdetail/?id=' + id, '720px', '640px');
+                            os.Open('查看子商户详情', '/fytadmin/cms/merchantdetail/?id=' + id, '700px', '580px');
                             break;
                         case 'sync':
                             layer.confirm('确定要同步门店信息', ['确定', '取消'], (i) => {
-                                os.Open('同步商户门店信息', '/api/sync/shopinfo/?id=' + id, '720px', '640px');
+                                os.Open('同步商户门店信息', '/api/sync/shopinfo/?id=' + id, '700px', '580px');
                                 layer.close(i);
                             }, null);
                             break;

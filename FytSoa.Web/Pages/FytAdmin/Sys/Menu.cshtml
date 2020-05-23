@@ -3,7 +3,9 @@
 @{
     ViewData["Title"] = "菜单管理";
 }
-<style>#tree{overflow:auto;}</style>
+<style>
+    #tree { overflow: auto; }
+</style>
 <div id="container">
     <div class="layui-col-220">
         <div class="layui-nav-title">菜单管理</div>
@@ -18,7 +20,8 @@
             <table class="layui-hide" id="tablist" lay-filter="tool"></table>
         </div>
     </div>
-    <script>layui.config({
+    <script>
+    layui.config({
             base: '/themes/js/modules/'
         }).use(['table', 'layer', 'jquery', 'common', 'tree'],
             function () {
@@ -57,13 +60,16 @@
                 var guid = '', typeName = '', active = {
                     initTree() {
                         os.ajax('api/menu/gettree/', {}, function (res) {
-                            console.log(res);
+                            if (res.length > 0) {
+                                guid = res[0].id;
+                                active.reload();
+                            }
                             tree.render({
                                 elem: '#tree'
                                 , data: res
-                                , onlyIconControl: true 
+                                , onlyIconControl: true
                                 , click: function (obj) {
-                                    guid=obj.data.id;
+                                    guid = obj.data.id;
                                     active.reload();
                                 }
                             });
