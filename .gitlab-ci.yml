@@ -1,0 +1,8 @@
+stages:
+    - build
+build:
+    stage: build
+    only:
+        - tags
+    script:
+        - docker build -t ytjbk -t ytjbk:$CI_COMMIT_REF_NAME -f FytSoa.Web/Dockerfile .
