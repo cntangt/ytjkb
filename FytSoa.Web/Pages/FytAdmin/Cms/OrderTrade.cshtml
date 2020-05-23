@@ -11,6 +11,14 @@
     var admin = await adminservice.GetModelAsync(p => p.Guid == admin_guid);
     var ms_list = (await ms.GetListAsync(p => (isSys || p.admin_guid == admin_guid || p.admin_guid == admin.data.CreateBy) && p.status, p => p.id, Common.DbOrderEnum.Asc)).data;
 }
+@section styles{
+    <style>
+        .layui-form-label { width: 100px; }
+        .layui-form-item { margin-bottom: 8px; }
+        .layui-input-block { margin-left: 0px; width: 200px; float: left; }
+        .layui-layer-btn { padding: 0 35px 65px !important; }
+    </style>
+}
 <div id="container">
     <div class="list-wall">
         <div class="layui-form list-search">
@@ -160,7 +168,7 @@
                 <div class="layui-form-item">
                     <label class="layui-form-label">退款原因</label>
                     <div class="layui-input-block">
-                        <input type="text" class="layui-input" name="refund_reason" style="width:550px">
+                        <input type="text" class="layui-input" name="refund_reason" style="width:530px">
                     </div>
                 </div>
                 <input type="hidden" name="out_trade_no" value="{{ d.out_trade_no }}" />
