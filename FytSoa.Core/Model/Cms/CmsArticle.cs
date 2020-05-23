@@ -1,5 +1,4 @@
-﻿using SqlSugar;
-using System;
+﻿using System;
 
 namespace FytSoa.Core.Model.Cms
 {

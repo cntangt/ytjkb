@@ -35,7 +35,7 @@ namespace FytSoa.Core.Model.Wx
         public long discount_fee { get; set; }
         public long recharge_bonus_fee { get; set; }
         public bool is_card_recharge { get; set; }
-        public double poundage { get; set; }
+        public long poundage { get; set; }
         //public string coupon_infos { get; set; }
         public long remaining_settlement_fee { get; set; }
         public long income_fee { get; set; }

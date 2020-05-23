@@ -168,18 +168,7 @@ namespace FytSoa.Service.Implements.Wx
                         {
                             shop.out_mch_id = out_mch_id;
                             shop.out_sub_mch_id = mch.out_sub_mch_id;
-
-                            if (!string.IsNullOrEmpty(shop.shop_name))
-                            {
-                                if (shop.shop_name.Length > 4)
-                                {
-                                    shop.erp_org = shop.shop_name.Substring(0, 4);
-                                }
-                                else
-                                {
-                                    shop.erp_org = shop.shop_name;
-                                }
-                            }
+                            shop.erp_org = shop.shop_name.GetShopErpOrg();
 
                             return shop;
                         }).ToArray();

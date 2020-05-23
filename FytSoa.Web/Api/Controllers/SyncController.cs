@@ -3,10 +3,12 @@ using FytSoa.Core.Model.Wx;
 using FytSoa.Extensions;
 using FytSoa.Service.DtoModel;
 using FytSoa.Service.DtoModel.Wx;
+using FytSoa.Service.Interfaces;
 using FytSoa.Service.Interfaces.Cms;
 using FytSoa.Service.Interfaces.Wx;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
+using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -20,12 +22,14 @@ namespace FytSoa.Api.Controllers
     {
         readonly IWxCloudService wx;
         readonly ICmsMerchantService merchantService;
+        readonly ICmsDailySettlementService cmsDaily;
         readonly IConfiguration config;
 
-        public SyncController(IWxCloudService wx, ICmsMerchantService merchantService, IConfiguration config)
+        public SyncController(IWxCloudService wx, ICmsMerchantService merchantService, ICmsDailySettlementService cmsDaily, IConfiguration config)
         {
             this.wx = wx;
             this.merchantService = merchantService;
+            this.cmsDaily = cmsDaily;
             this.config = config;
         }
 
@@ -82,22 +86,6 @@ namespace FytSoa.Api.Controllers
             }
 
             return res;
-        }
-
-        public Task<WxResponse<QueryOrderListResponse>> OrderList()
-        {
-            var req = new QueryOrderListRequest
-            {
-                order_type = OrderType.全部单据,
-                start_time = DateTime.Now.Date.AddDays(-3),
-                end_time = DateTime.Now.Date,
-                page_num = 1,
-                page_size = 100,
-                out_sub_mch_id = "sz01ELTR281OFpmdAp6J",
-                AuthenKey = "lSCp1M5grGWFD7rJzaZaqixsvOhORp2P"
-            };
-
-            return wx.QueryAsync(req);
         }
 
         public async Task<IActionResult> ShopInfo(int id) => Ok(await wx.SyncShopInfo(id));
@@ -205,5 +193,7 @@ namespace FytSoa.Api.Controllers
 
             return res;
         }
+
+        public Task<ApiResult<string>> DailyJob(DateTime day) => cmsDaily.DailyJobAsync(day);
     }
 }
