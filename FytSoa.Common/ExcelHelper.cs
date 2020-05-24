@@ -8,6 +8,15 @@ namespace FytSoa.Common
 {
     public static class ExcelHelper
     {
+        public static async Task<byte[]> Write<T>(this IEnumerable<T> source, string sheetName, params Func<T, (string, object)>[] columns)
+        {
+            var stream = new MemoryStream();
+
+            await Write(source, stream, sheetName, columns);
+
+            return stream.ToArray();
+        }
+
         public static async Task Write<T>(this IEnumerable<T> source, Stream output, string sheetName = "导出数据", params Func<T, (string, object)>[] columns)
         {
             var ep = new ExcelPackage();

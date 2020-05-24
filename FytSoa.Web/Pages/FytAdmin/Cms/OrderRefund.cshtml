@@ -13,10 +13,23 @@
 }
 @section styles{
     <style>
-        .layui-form-label { width: 100px; }
-        .layui-form-item { margin-bottom: 8px; }
-        .layui-input-block { margin-left: 0px; width: 200px; float: left; }
-        .layui-layer-btn { padding: 0 35px 65px !important; }
+        .layui-form-label {
+            width: 100px;
+        }
+
+        .layui-form-item {
+            margin-bottom: 8px;
+        }
+
+        .layui-input-block {
+            margin-left: 0px;
+            width: 200px;
+            float: left;
+        }
+
+        .layui-layer-btn {
+            padding: 0 35px 65px !important;
+        }
     </style>
 }
 <div id="container">
@@ -260,7 +273,7 @@
                     return false;
                 });
                 $('#export').on('click', () => {
-                    l.open({ title: '订单数据导出', area: ['720px', '480px'], content: '/api/sync/refundexport/?q=' + encodeURI(JSON.stringify(data())), type: 2 });
+                    l.open({ title: '退款数据导出', area: ['720px', '480px'], content: '/api/sync/refundexport/?q=' + encodeURI(JSON.stringify(data())), type: 2 });
                 });
                 table.on('tool(tool)', function (obj) {
                     tpl(details.innerHTML).render(obj.data, (html) => l.open({ title: '退款单详情', area: ['720px', '480px'], content: html }));

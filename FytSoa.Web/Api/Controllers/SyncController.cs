@@ -78,10 +78,7 @@ namespace FytSoa.Api.Controllers
                 return Content("没有数据");
             }
 
-            var stream = new MemoryStream();
-
-            await list.Write(stream,
-                "交易订单",
+            var data = await list.Write("交易订单",
                 p => ("支付渠道", p.sub_pay_platform.ToString()),
                 p => ("流水单号", p.out_trade_no),
                 p => ("商户名称", mch.data.name),
@@ -95,7 +92,7 @@ namespace FytSoa.Api.Controllers
                 p => ("手续费", p.poundage.TC()));
 
             return File(
-                stream.ToArray(),
+                data,
                 "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
                 $"（交易订单）{mch.data.name}{req.start_time:yyyyMMddHHmmss}-{req.end_time:yyyyMMddHHmmss}.xlsx");
         }
@@ -144,10 +141,7 @@ namespace FytSoa.Api.Controllers
                 return Content("没有数据");
             }
 
-            var stream = new MemoryStream();
-
-            await list.Write(stream,
-                "退款订单",
+            var data = await list.Write("退款订单",
                 p => ("支付渠道", p.sub_pay_platform.ToString()),
                 p => ("交易单号", p.out_trade_no),
                 p => ("退款单号", p.out_refund_no),
@@ -162,7 +156,7 @@ namespace FytSoa.Api.Controllers
                 p => ("店员名称", p.staff_name));
 
             return File(
-                stream.ToArray(),
+                data,
                 "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
                 $"（退款订单）{mch.data.name}{req.start_time:yyyyMMddHHmmss}-{req.end_time:yyyyMMddHHmmss}.xlsx");
         }
