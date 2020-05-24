@@ -26,7 +26,7 @@
                 <div>
                     <span class="layui-inline">　子商户：</span>
                     <div class="layui-inline">
-                        <div id="out_sub_mch_id" style="width:200px" data-json='@Html.Raw(Json.Serialize(ms_list.Select(p=>new { name = p.name, value = p.out_sub_mch_id })))'></div>
+                        <div id="out_sub_mch_id" style="width:250px" data-json='@Html.Raw(Json.Serialize(ms_list.Select(p=>new { name = p.name, value = p.out_sub_mch_id })))'></div>
                     </div>
                     <span class="layui-inline">门店：</span>
                     <div class="layui-inline">
@@ -57,7 +57,8 @@
                         <div id="status" style="width:200px" data-json='@Html.Raw(Json.Serialize(typeof(PayStatus).ToDropdown().Select(p=>new { name=p.Text,value=p.Value})))'></div>
                     </div>
                     <div class="layui-inline">
-                        <button type="submit" class="layui-btn layui-btn-sm" style="margin-left:50px" data-type="toolSearch"><i class="layui-icon layui-icon-search"></i> 搜索</button>
+                        <button type="submit" class="layui-btn layui-btn-sm"><i class="layui-icon layui-icon-search"></i> 搜索</button>
+                        <button type="button" id="export" class="layui-btn layui-btn-sm"><i class="layui-icon layui-icon-export"></i> 导出</button>
                     </div>
                 </div>
             </form>
@@ -257,6 +258,9 @@
                             where: data()
                         });
                     return false;
+                });
+                $('#export').on('click', () => {
+                    l.open({ title: '订单数据导出', area: ['720px', '480px'], content: '/api/sync/refundexport/?q=' + encodeURI(JSON.stringify(data())), type: 2 });
                 });
                 table.on('tool(tool)', function (obj) {
                     tpl(details.innerHTML).render(obj.data, (html) => l.open({ title: '退款单详情', area: ['720px', '480px'], content: html }));

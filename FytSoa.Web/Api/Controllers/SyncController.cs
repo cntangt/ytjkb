@@ -11,6 +11,7 @@ using Microsoft.Extensions.Configuration;
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -33,7 +34,139 @@ namespace FytSoa.Api.Controllers
             this.config = config;
         }
 
-        [HttpPost]
+        public async Task<IActionResult> TradeExport(string q)
+        {
+            var req = JsonConvert.DeserializeObject<QueryOrderListRequest>(q);
+
+            if (req.start_time == null)
+            {
+                req.start_time = DateTime.Now.Date;
+            }
+            if (req.end_time == null)
+            {
+                req.end_time = DateTime.Now.AddDays(1).Date;
+            }
+
+            req.order_type = OrderType.支付订单;
+
+            var mch = await merchantService.GetModelAsync(p => p.out_sub_mch_id == req.out_sub_mch_id);
+            if (mch == null || mch.data == null || mch.data.id == 0)
+            {
+                return Content("请选择导出商户");
+            }
+
+            req.AuthenKey = mch.data.authen_key;
+
+            req.page_size = 50;
+
+            var list = new List<TradeOrder>();
+
+            for (req.page_num = 1; ; req.page_num++)
+            {
+                var d = await wx.QueryAsync(req);
+
+                if (d.Status > 0 || d.Data == null || d.Data.order_details == null || d.Data.order_details.Length == 0)
+                {
+                    break;
+                }
+
+                list.AddRange(d.Data.order_details.Where(p => p.order != null).Select(p => p.order));
+            }
+
+            if (list.Count == 0)
+            {
+                return Content("没有数据");
+            }
+
+            var stream = new MemoryStream();
+
+            await list.Write(stream,
+                "交易订单",
+                p => ("支付渠道", p.sub_pay_platform.ToString()),
+                p => ("流水单号", p.out_trade_no),
+                p => ("商户名称", mch.data.name),
+                p => ("门店名称", p.shop_name),
+                p => ("订单金额", p.total_fee.TC()),
+                p => ("支付类型", p.trade_type.ToString()),
+                p => ("支付状态", p.record_current_trade_state.ToString()),
+                p => ("交易时间", p.time_end.ToString("yyyy年MM月dd日 HH:mm:ss")),
+                p => ("设备号", p.device_id),
+                p => ("店员名称", p.staff_name),
+                p => ("手续费", p.poundage.TC()));
+
+            return File(
+                stream.ToArray(),
+                "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+                $"（交易订单）{mch.data.name}{req.start_time:yyyyMMddHHmmss}-{req.end_time:yyyyMMddHHmmss}.xlsx");
+        }
+
+        public async Task<IActionResult> RefundExport(string q)
+        {
+            var req = JsonConvert.DeserializeObject<QueryOrderListRequest>(q);
+
+            if (req.start_time == null)
+            {
+                req.start_time = DateTime.Now.Date;
+            }
+            if (req.end_time == null)
+            {
+                req.end_time = DateTime.Now.AddDays(1).Date;
+            }
+
+            req.order_type = OrderType.退款单;
+
+            var mch = await merchantService.GetModelAsync(p => p.out_sub_mch_id == req.out_sub_mch_id);
+            if (mch == null || mch.data == null || mch.data.id == 0)
+            {
+                return Content("请选择导出商户");
+            }
+
+            req.AuthenKey = mch.data.authen_key;
+
+            req.page_size = 50;
+
+            var list = new List<RefundOrder>();
+
+            for (req.page_num = 1; ; req.page_num++)
+            {
+                var d = await wx.QueryAsync(req);
+
+                if (d.Status > 0 || d.Data == null || d.Data.order_details == null || d.Data.order_details.Length == 0)
+                {
+                    break;
+                }
+
+                list.AddRange(d.Data.order_details.Where(p => p.refund_order != null).Select(p => p.refund_order));
+            }
+
+            if (list.Count == 0)
+            {
+                return Content("没有数据");
+            }
+
+            var stream = new MemoryStream();
+
+            await list.Write(stream,
+                "退款订单",
+                p => ("支付渠道", p.sub_pay_platform.ToString()),
+                p => ("交易单号", p.out_trade_no),
+                p => ("退款单号", p.out_refund_no),
+                p => ("商户名称", mch.data.name),
+                p => ("门店名称", p.shop_name),
+                p => ("订单金额", p.total_fee.TC()),
+                p => ("退款金额", p.refund_fee.TC()),
+                p => ("支付类型", p.trade_type.ToString()),
+                p => ("退款状态", p.record_refund_state.ToString()),
+                p => ("退款时间", p.last_update_time.ToString("yyyy年MM月dd日 HH:mm:ss")),
+                p => ("设备号", p.device_id),
+                p => ("店员名称", p.staff_name));
+
+            return File(
+                stream.ToArray(),
+                "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+                $"（退款订单）{mch.data.name}{req.start_time:yyyyMMddHHmmss}-{req.end_time:yyyyMMddHHmmss}.xlsx");
+        }
+
         public async Task<PageResult<IEnumerable<TradeOrder>>> Trade(QueryOrderListRequest req)
         {
             var res = new PageResult<IEnumerable<TradeOrder>>();

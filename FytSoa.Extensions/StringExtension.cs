@@ -16,5 +16,10 @@
 
             return shopName.Substring(0, 4);
         }
+
+        public static string TC(this long fee)
+        {
+            return (fee / 100M).ToString("C");
+        }
     }
 }

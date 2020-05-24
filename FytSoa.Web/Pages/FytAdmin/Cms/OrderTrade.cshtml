@@ -13,10 +13,23 @@
 }
 @section styles{
     <style>
-        .layui-form-label { width: 100px; }
-        .layui-form-item { margin-bottom: 8px; }
-        .layui-input-block { margin-left: 0px; width: 200px; float: left; }
-        .layui-layer-btn { padding: 0 35px 65px !important; }
+        .layui-form-label {
+            width: 100px;
+        }
+
+        .layui-form-item {
+            margin-bottom: 8px;
+        }
+
+        .layui-input-block {
+            margin-left: 0px;
+            width: 200px;
+            float: left;
+        }
+
+        .layui-layer-btn {
+            padding: 0 35px 65px !important;
+        }
     </style>
 }
 <div id="container">
@@ -26,7 +39,7 @@
                 <div>
                     <span class="layui-inline">　子商户：</span>
                     <div class="layui-inline">
-                        <div id="out_sub_mch_id" style="width:200px" data-json='@Html.Raw(Json.Serialize(ms_list.Select(p=>new { name = p.name, value = p.out_sub_mch_id })))'></div>
+                        <div id="out_sub_mch_id" style="width:250px" data-json='@Html.Raw(Json.Serialize(ms_list.Select(p=>new { name = p.name, value = p.out_sub_mch_id })))'></div>
                     </div>
                     <span class="layui-inline">门店：</span>
                     <div class="layui-inline">
@@ -57,7 +70,8 @@
                         <div id="status" style="width:200px" data-json='@Html.Raw(Json.Serialize(typeof(PayStatus).ToDropdown().Select(p=>new { name=p.Text,value=p.Value})))'></div>
                     </div>
                     <div class="layui-inline">
-                        <button type="submit" class="layui-btn layui-btn-sm" style="margin-left:50px" data-type="toolSearch"><i class="layui-icon layui-icon-search"></i> 搜索</button>
+                        <button type="submit" class="layui-btn layui-btn-sm"><i class="layui-icon layui-icon-search"></i> 搜索</button>
+                        <button type="button" id="export" class="layui-btn layui-btn-sm"><i class="layui-icon layui-icon-export"></i> 导出</button>
                     </div>
                 </div>
             </form>
@@ -283,6 +297,7 @@
                             { field: 'out_trade_no', title: '流水单号', width: 260 },
                             { field: 'shop_name', title: '门店名称' },
                             { title: '订单金额', templet: (d) => d.total_fee.tc(), width: 150, align: 'right' },
+                            { field: 'trade_type', title: '支付类型', width: 120, align: 'center' },
                             { field: 'record_current_trade_state', title: '支付状态', width: 120, align: 'center' },
                             { align: 'center', title: '创建时间', width: 160, templet: (d) => layui.util.toDateString(d.time_end, 'yyyy-MM-dd HH:mm:ss') },
                             { field: 'device_id', title: '设备号', width: 200 },
@@ -314,6 +329,9 @@
                             where: data()
                         });
                     return false;
+                });
+                $('#export').on('click', () => {
+                    l.open({ title: '订单数据导出', area: ['720px', '480px'], content: '/api/sync/tradeexport/?q=' + encodeURI(JSON.stringify(data())), type: 2 });
                 });
                 table.on('tool(tool)', function (obj) {
                     switch (obj.event) {
