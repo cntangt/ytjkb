@@ -8,7 +8,7 @@ namespace FytSoa.Common
 {
     public static class ExcelHelper
     {
-        public static async Task<byte[]> Write<T>(this IEnumerable<T> source, string sheetName, params Func<T, (string, object)>[] columns)
+        public static async Task<byte[]> Write<T>(this IEnumerable<T> source, string sheetName, params Func<T, (string header, object value)>[] columns)
         {
             var stream = new MemoryStream();
 
@@ -17,7 +17,7 @@ namespace FytSoa.Common
             return stream.ToArray();
         }
 
-        public static async Task Write<T>(this IEnumerable<T> source, Stream output, string sheetName = "导出数据", params Func<T, (string, object)>[] columns)
+        public static async Task Write<T>(this IEnumerable<T> source, Stream output, string sheetName = "导出数据", params Func<T, (string header, object value)>[] columns)
         {
             var ep = new ExcelPackage();
 
@@ -35,10 +35,10 @@ namespace FytSoa.Common
 
                         if (r == 2)
                         {
-                            sheet.SetValue(r - 1, c, col_data.Item1);
+                            sheet.SetValue(r - 1, c, col_data.header);
                         }
 
-                        sheet.SetValue(r, c, col_data.Item2);
+                        sheet.SetValue(r, c, col_data.value);
 
                         c++;
                     }
