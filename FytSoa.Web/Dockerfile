@@ -21,6 +21,12 @@ FROM build AS publish
 RUN dotnet publish "FytSoa.Web.csproj" -c Release -o /app/publish
 
 FROM base AS final
+ENV TZ Asia/Shanghai
 WORKDIR /app
+RUN curl -L -o /etc/apt/sources.list http://mirrors.163.com/.help/sources.list.stretch \
+	&& apt update \
+	&& apt install libgdiplus -y \
+	&& apt-get clean \
+	&& apt-get autoclean
 COPY --from=publish /app/publish .
 ENTRYPOINT ["dotnet", "FytSoa.Web.dll"]
