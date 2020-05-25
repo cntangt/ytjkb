@@ -43,7 +43,8 @@ namespace FytSoa.Api.Controllers
 
             return new IndexModel
             {
-                PlatformInfos = await settlementService.GetPlatformInfoAsync(admin_guid, start, end)
+                PlatformInfos = await settlementService.GetPlatformInfoAsync(admin_guid, start, end),
+                Trends = await settlementService.GetTrendAsync(admin_guid, start, end)
             };
         }
     }
