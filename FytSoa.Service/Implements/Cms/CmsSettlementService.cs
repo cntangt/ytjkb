@@ -4,6 +4,7 @@ using FytSoa.Core.Model.Sys;
 using FytSoa.Core.Model.Wx;
 using FytSoa.Service.DtoModel.Cms;
 using FytSoa.Service.DtoModel.Wx;
+using FytSoa.Service.Extensions;
 using FytSoa.Service.Interfaces;
 using FytSoa.Service.Interfaces.Wx;
 using Microsoft.AspNetCore.Mvc.Rendering;
@@ -232,6 +233,55 @@ namespace FytSoa.Service.Implements
                 }
                 return d;
             });
+        }
+
+        public async Task<ApiResult<Page<CmsDailySettlement>>> GetShopDailyReport(QueryOrderListRequest parm)
+        {
+            var res = new ApiResult<Page<CmsDailySettlement>>();
+
+            var query = Db.Queryable<CmsDailySettlement>();
+                //.WhereIF(parm.sub_pay_platforms != null, t => parm.sub_pay_platforms.Contains(t.sub_pay_platform))
+                //.WhereIF(parm.start_time != null, t => t.business_date >= parm.start_time)
+                //.WhereIF(parm.end_time != null, t => t.business_date <= parm.end_time)
+                //.WhereIF(!string.IsNullOrEmpty(parm.out_shop_id), t => t.out_shop_id == parm.out_shop_id);
+
+            var data = await query.Select(t => new CmsDailySettlement
+            {
+                business_date = t.business_date,
+                out_shop_id = t.out_shop_id,
+                count_trade = SqlFunc.AggregateSum(t.count_trade),
+                total_trade_fee = SqlFunc.AggregateSum(t.total_trade_fee),
+                count_refund = SqlFunc.AggregateSum(t.count_refund),
+                total_refund_fee = SqlFunc.AggregateSum(t.total_refund_fee),
+                receivable_fee = SqlFunc.AggregateSum(t.receivable_fee),
+                discount_fee = SqlFunc.AggregateSum(t.discount_fee),
+                poundage_fee = SqlFunc.AggregateSum(t.poundage_fee),
+                settlement_fee = SqlFunc.AggregateSum(t.settlement_fee)
+            }).GroupBy(t => new { t.business_date, t.out_shop_id }).ToPageAsync(parm.page_num, parm.page_size);
+
+            if (data.Items.Count > 0)
+            {
+                var ids = data.Items.Select(p => p.out_shop_id).ToArray();
+
+                var shopInfos = await Db.Queryable<ShopInfo>().In(p => p.out_shop_id, ids).ToListAsync();
+                if (shopInfos.Count > 0)
+                {
+                    data.Items.ForEach(shop =>
+                    {
+                        var shopInfo = shopInfos.FirstOrDefault(m => shop.out_shop_id == m.out_shop_id);
+                        if (shopInfo != null)
+                        {
+                            shop.shop_name = shopInfo.shop_name;
+                            shop.erp_org = shopInfo.erp_org;
+                        }
+                    });
+                }
+            }
+
+            res.data = data;
+            res.statusCode = (int)ApiEnum.Status;
+
+            return res;
         }
     }
 }

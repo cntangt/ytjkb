@@ -324,5 +324,12 @@ namespace FytSoa.Api.Controllers
         public Task<ApiResult<string>> DailyJob(DateTime? day) => cmsDaily.DailyJobAsync(day ?? DateTime.Now.AddDays(-1));
 
         public Task<ApiResult<string>> MonthlyJob() => cmsDaily.MonthlyJobAsync(DateTime.Now);
+
+        [HttpPost]
+        public async Task<IActionResult> DailyReport(QueryOrderListRequest req)
+        {
+            var res = await cmsDaily.GetShopDailyReport(req);
+            return Ok(new { code = 0, msg = "success", count = res.data.TotalItems, data = res.data.Items });
+        }
     }
 }
