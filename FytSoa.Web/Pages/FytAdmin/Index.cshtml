@@ -11,7 +11,6 @@
     </style>
 }
 <div id="container">
-
     <div class="layui-fluid" id="defaultapp">
         <div class="layui-row layui-col-space15">
             <div class="layui-col-md12 layui-col-lg12">
@@ -53,7 +52,6 @@
             </div>
         </div>
     </div>
-
 </div>
 <script type="text/html" id="platforminfo">
     {{#  layui.each(d.platformInfos, function(index, item){ }}
@@ -67,8 +65,8 @@
 @section scripts{
     <script src="https://cdn.bootcdn.net/ajax/libs/echarts/4.7.0/echarts.min.js"></script>
     <script>
-        layui.use(['jquery', 'common', 'laytpl'], function () {
-            var os = layui.common, l = layui.laytpl, $ = layui.jquery;
+        layui.use(['jquery', 'common', 'laytpl', 'util'], function () {
+            var os = layui.common, l = layui.laytpl, $ = layui.jquery, u = layui.util;
             os.ajax('api/chart', null, function (res) {
                 l(platforminfo.innerHTML).render(res, (html) => $('#platforminfo_c').html(html));
 
@@ -80,16 +78,16 @@
                 });
                 echarts.init(document.getElementById('platforminfo_chart')).setOption({
                     legend: { orient: 'vertical', left: 'left', data: legends },
-                    tooltip: { trigger: 'item', formatter: '{a} <br/>{b} : {c} ({d}%)' },
+                    tooltip: { trigger: 'item', formatter: '{a} <br/>{b} : {c}单 ({d}%)' },
                     series: [{ name: '支付占比', type: 'pie', radius: '55%', center: ['60%', '50%'], data: lds }]
                 });
 
                 var days = [], t1 = [], t2 = [], r1 = [], r2 = [];
                 $(res.trends).each((i, obj) => {
                     days.push(obj.day);
-                    t1.push(obj.totalTrade/100);
+                    t1.push(obj.totalTrade / 100);
                     t2.push(obj.countTrade);
-                    r1.push(obj.totalRefund/100);
+                    r1.push(obj.totalRefund / 100);
                     r2.push(obj.countRefund);
                 });
                 var o2 = {
@@ -99,58 +97,32 @@
                             type: 'cross',
                             crossStyle: {
                                 color: '#999'
-                            }
-                        }
-                    },
-                    toolbox: {
-                        feature: {
-                            dataView: { show: true, readOnly: false },
-                            magicType: { show: true, type: ['line', 'bar'] },
-                            restore: { show: true },
-                            saveAsImage: { show: true }
-                        }
-                    },
-                    legend: {
-                        data: ['蒸发量', '降水量', '平均温度']
-                    },
-                    xAxis: [
-                        {
-                            type: 'category',
-                            data: days,
-                            formatter: function (value, index) {
-                                // 格式化成月/日，只在第一个刻度显示年份
-                                var date = new Date(value);
-                                var texts = [(date.getMonth() + 1), date.getDate()];
-                                if (index === 0) {
-                                    texts.unshift(date.getYear());
+                            },
+                            label: {
+                                formatter: (val) => {
+                                    switch (val.axisDimension) {
+                                        case 'x': return u.toDateString(val.value, 'yyyy-MM-dd');
+                                        case 'y':
+                                            if (val.axisIndex === 0) {
+                                                return val.value.ntc();
+                                            }
+                                            else {
+                                                return parseInt(val.value) + '单';
+                                            }
+                                    }
                                 }
-                                return texts.join('/');
                             }
                         }
-                    ],
+                    },
+                    legend: { data: ['交易金额', '退款金额', '交易数量', '退款数量'] },
+                    xAxis: [{ type: 'category', data: days, axisLabel: { formatter: (val, idx) => u.toDateString(val, 'MM/dd') } }],
                     yAxis: [
-                        {
-                            type: 'value',
-                            name: '数量',
-                            interval: 50,
-                            axisLabel: {
-                                formatter: '{value} ml'
-                            }
-                        },
-                        {
-                            type: 'value',
-                            name: '金额',
-                            interval: 500,
-                            axisLabel: {
-                                formatter: function (value, index) {debugger
-                                    return value.tc();
-                                }
-                            }
-                        }
+                        { type: 'value', name: '金额', axisLabel: { formatter: '￥{value}' } },
+                        { type: 'value', name: '单量', axisLabel: { formatter: '{value}单' } }
                     ],
                     series: [
-                        { name: '交易金额', type: 'bar', data: t1 },
-                        { name: '退款金额', type: 'bar', data: r1 },
+                        { name: '交易金额', type: 'bar', data: t1, label: { show: true, position: 'top', formatter: (val) => val.value.ntc() } },
+                        { name: '退款金额', type: 'bar', data: r1, label: { show: true, position: 'top', formatter: (val) => val.value.ntc() } },
                         { name: '交易数量', type: 'line', yAxisIndex: 1, data: t2 },
                         { name: '退款数量', type: 'line', yAxisIndex: 1, data: r2 }
                     ]

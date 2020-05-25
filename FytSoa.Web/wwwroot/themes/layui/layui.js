@@ -32,6 +32,10 @@ Number.prototype.tc = function () {
     return '￥' + number_format(this / 100, 2);
 };
 
+Number.prototype.ntc = function () {
+    return '￥' + number_format(this, 2);
+};
+
 function number_format(number, decimals, dec_point, thousands_sep) {
     /*
     * 参数说明：
