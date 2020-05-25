@@ -15,35 +15,29 @@ namespace FytSoa.Service.Implements
 {
     public class CmsShopService : BaseService<ShopInfo>, ICmsShopService
     {
-        public CmsShopService(IConfiguration config) : base(config)
+        readonly ISysRoleService roleService;
+
+        public CmsShopService(ISysRoleService roleService, IConfiguration config) : base(config)
         {
+            this.roleService = roleService;
         }
 
         public async Task<IEnumerable<ShopInfo>> GetByAdminGuidAsync(string admin_guid, string out_sub_mch_id, string key, int limit)
         {
-            var roles = await Db.Queryable<SysAdmin, SysPermissions, SysRole>((admin, perm, role) => new JoinQueryInfos(
-                 JoinType.Left, admin.Guid == perm.AdminGuid,
-                 JoinType.Left, perm.RoleGuid == role.Guid))
-              .Where((admin, perm, role) => admin.Guid == admin_guid)
-              .Select((admin, perm, role) => role)
-              .ToListAsync();
-
-            var isSystem = roles.Any(p => p.IsSystem);
-            var isAgent = roles.Any(p => p.Guid == "72171cf0-934d-4934-8e27-ee4f47e9985e");
-            var is_sub_admin = roles.Any(p => p.Guid == "8dc9b479-216d-415a-9fba-85caedd6c4df");
+            var role_info = await roleService.GetRoleByAdminGuid(admin_guid);
 
             var query = Db.Queryable<ShopInfo, CmsMerchant, AdminShopRel>((shop, mch, rel) =>
                 new JoinQueryInfos(JoinType.Left, shop.out_sub_mch_id == mch.out_sub_mch_id, JoinType.Left, shop.out_shop_id == rel.out_shop_id));
 
-            if (isSystem)
+            if (role_info.isSystem)
             {
                 //管理员不需要过滤
             }
-            else if (isAgent)
+            else if (role_info.isAgent)
             {
                 query.Where((shop, mch, rel) => mch.agent_admin_guid == admin_guid);
             }
-            else if (is_sub_admin)
+            else if (role_info.isSubAdmin)
             {
                 query.Where((shop, mch, rel) => mch.admin_guid == admin_guid);
             }

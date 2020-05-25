@@ -1,17 +1,13 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using FytSoa.Service.Extensions;
-using FytSoa.Common;
-using FytSoa.Core;
+﻿using FytSoa.Common;
 using FytSoa.Core.Model.Sys;
 using FytSoa.Service.DtoModel;
+using FytSoa.Service.Extensions;
 using FytSoa.Service.Interfaces;
-using SqlSugar;
 using Microsoft.Extensions.Configuration;
-
+using SqlSugar;
+using System;
 using System.Linq;
+using System.Threading.Tasks;
 
 namespace FytSoa.Service.Implements
 {
@@ -136,6 +132,22 @@ namespace FytSoa.Service.Implements
                 Logger.Default.ProcessError((int)ApiEnum.Error, ex.Message);
             }
             return res;
+        }
+
+        public async Task<(bool isSystem, bool isAgent, bool isSubAdmin)> GetRoleByAdminGuid(string admin_guid)
+        {
+            var roles = await Db.Queryable<SysAdmin, SysPermissions, SysRole>((admin, perm, role) => new JoinQueryInfos(
+                 JoinType.Left, admin.Guid == perm.AdminGuid,
+                 JoinType.Left, perm.RoleGuid == role.Guid))
+              .Where((admin, perm, role) => admin.Guid == admin_guid)
+              .Select((admin, perm, role) => role)
+              .ToListAsync();
+
+            var isSystem = roles.Any(p => p.IsSystem);
+            var isAgent = roles.Any(p => p.Guid == "72171cf0-934d-4934-8e27-ee4f47e9985e");
+            var is_sub_admin = roles.Any(p => p.Guid == "8dc9b479-216d-415a-9fba-85caedd6c4df");
+
+            return (isSystem, isAgent, is_sub_admin);
         }
 
         /// <summary>

@@ -1,10 +1,15 @@
 ﻿using FytSoa.Common;
 using FytSoa.Core.Model.Cms;
+using FytSoa.Core.Model.Sys;
+using FytSoa.Core.Model.Wx;
+using FytSoa.Service.DtoModel.Cms;
 using FytSoa.Service.DtoModel.Wx;
 using FytSoa.Service.Interfaces;
 using FytSoa.Service.Interfaces.Wx;
+using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.Extensions.Configuration;
 using Newtonsoft.Json;
+using SqlSugar;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -18,11 +23,13 @@ namespace FytSoa.Service.Implements
 
         readonly IWxCloudService wx;
         readonly IConfiguration config;
+        readonly ISysRoleService roleService;
 
-        public CmsSettlementService(IWxCloudService wx, IConfiguration config) : base(config)
+        public CmsSettlementService(IWxCloudService wx, IConfiguration config, ISysRoleService roleService) : base(config)
         {
             this.wx = wx;
             this.config = config;
+            this.roleService = roleService;
         }
 
         public async Task<ApiResult<string>> DailyJobAsync(DateTime day)
@@ -172,6 +179,59 @@ namespace FytSoa.Service.Implements
             res.success = true;
 
             return res;
+        }
+
+        public async Task<IEnumerable<PlatformInfo>> GetPlatformInfoAsync(string admin_guid, DateTime start, DateTime end)
+        {
+            var role_info = await roleService.GetRoleByAdminGuid(admin_guid);
+
+            ISugarQueryable<CmsDailySettlement> query;
+
+            if (role_info.isSystem)
+            {
+                query = Db.Queryable<CmsDailySettlement>();
+            }
+            else if (role_info.isAgent)
+            {
+                query = Db.Queryable<CmsDailySettlement, CmsMerchant>((daily, mch) => daily.out_sub_mch_id == mch.out_sub_mch_id)
+                    .Where((daily, mch) => mch.agent_admin_guid == admin_guid).Select((daily, mch) => daily);
+            }
+            else if (role_info.isSubAdmin)
+            {
+                query = Db.Queryable<CmsDailySettlement, CmsMerchant>((daily, mch) => daily.out_sub_mch_id == mch.out_sub_mch_id)
+                    .Where((daily, mch) => mch.admin_guid == admin_guid).Select((daily, mch) => daily);
+            }
+            else
+            {
+                query = Db.Queryable<CmsDailySettlement, AdminShopRel>((daily, rel) => daily.out_shop_id == rel.out_shop_id)
+                    .Where((daily, rel) => rel.admin_guid == admin_guid).Select((daily, rel) => daily);
+            }
+
+            var data = await query
+                .Where(daily => daily.business_date >= start && daily.business_date <= end)
+                .GroupBy(daily => daily.sub_pay_platform)
+                .Select(daily => new
+                {
+                    name = daily.sub_pay_platform,
+                    trade_num = SqlFunc.AggregateSum(daily.count_trade),
+                    trade_total = SqlFunc.AggregateSum(daily.total_trade_fee),
+                    refund_total = SqlFunc.AggregateSum(daily.total_refund_fee)
+                }).ToListAsync();
+
+            return typeof(SubPayPlatform).ToDropdown().Select(p =>
+            {
+                var info = data.FirstOrDefault(i => i.name.ToString() == p.Text);
+                var d = new PlatformInfo
+                {
+                    Name = p.Text
+                };
+                if (info != null)
+                {
+                    d.Number = info.trade_num;
+                    d.Total = info.trade_total - info.refund_total;
+                }
+                return d;
+            });
         }
     }
 }
