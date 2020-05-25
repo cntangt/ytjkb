@@ -22,6 +22,7 @@ RUN dotnet publish "FytSoa.Web.csproj" -c Release -o /app/publish
 
 FROM base AS final
 ENV TZ Asia/Shanghai
+ENV LANG zh-CN.UTF-8
 WORKDIR /app
 RUN curl -L -o /etc/apt/sources.list http://mirrors.163.com/.help/sources.list.stretch \
 	&& apt update \

@@ -116,6 +116,8 @@ namespace FytSoa.Service.Implements.Wx
 
                 setting.Converters.Add(new UnixDateTimeConverter());
 
+                setting.DateTimeZoneHandling = DateTimeZoneHandling.Local;
+
                 setting.ContractResolver = new EmptyValueContractResolver();
 
                 return setting;
