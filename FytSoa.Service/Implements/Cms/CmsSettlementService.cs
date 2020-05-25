@@ -4,7 +4,6 @@ using FytSoa.Core.Model.Sys;
 using FytSoa.Core.Model.Wx;
 using FytSoa.Service.DtoModel.Cms;
 using FytSoa.Service.DtoModel.Wx;
-using FytSoa.Service.Extensions;
 using FytSoa.Service.Interfaces;
 using FytSoa.Service.Interfaces.Wx;
 using Microsoft.AspNetCore.Mvc.Rendering;
@@ -184,32 +183,7 @@ namespace FytSoa.Service.Implements
 
         public async Task<IEnumerable<PlatformInfo>> GetPlatformInfoAsync(string admin_guid, DateTime start, DateTime end)
         {
-            var role_info = await roleService.GetRoleByAdminGuid(admin_guid);
-
-            ISugarQueryable<CmsDailySettlement> query;
-
-            if (role_info.isSystem)
-            {
-                query = Db.Queryable<CmsDailySettlement>();
-            }
-            else if (role_info.isAgent)
-            {
-                query = Db.Queryable<CmsDailySettlement, CmsMerchant>((daily, mch) => daily.out_sub_mch_id == mch.out_sub_mch_id)
-                    .Where((daily, mch) => mch.agent_admin_guid == admin_guid).Select((daily, mch) => daily);
-            }
-            else if (role_info.isSubAdmin)
-            {
-                query = Db.Queryable<CmsDailySettlement, CmsMerchant>((daily, mch) => daily.out_sub_mch_id == mch.out_sub_mch_id)
-                    .Where((daily, mch) => mch.admin_guid == admin_guid).Select((daily, mch) => daily);
-            }
-            else
-            {
-                query = Db.Queryable<CmsDailySettlement, AdminShopRel>((daily, rel) => daily.out_shop_id == rel.out_shop_id)
-                    .Where((daily, rel) => rel.admin_guid == admin_guid).Select((daily, rel) => daily);
-            }
-
-            var data = await query
-                .Where(daily => daily.business_date >= start && daily.business_date <= end)
+            var data = await query(admin_guid, start, end)
                 .GroupBy(daily => daily.sub_pay_platform)
                 .Select(daily => new
                 {
@@ -235,53 +209,49 @@ namespace FytSoa.Service.Implements
             });
         }
 
-        public async Task<ApiResult<Page<CmsDailySettlement>>> GetShopDailyReport(QueryOrderListRequest parm)
+        public async Task<IEnumerable<TrendInfo>> GetTrendAsync(string admin_guid, DateTime start, DateTime end)
         {
-            var res = new ApiResult<Page<CmsDailySettlement>>();
-
-            var query = Db.Queryable<CmsDailySettlement>();
-                //.WhereIF(parm.sub_pay_platforms != null, t => parm.sub_pay_platforms.Contains(t.sub_pay_platform))
-                //.WhereIF(parm.start_time != null, t => t.business_date >= parm.start_time)
-                //.WhereIF(parm.end_time != null, t => t.business_date <= parm.end_time)
-                //.WhereIF(!string.IsNullOrEmpty(parm.out_shop_id), t => t.out_shop_id == parm.out_shop_id);
-
-            var data = await query.Select(t => new CmsDailySettlement
-            {
-                business_date = t.business_date,
-                out_shop_id = t.out_shop_id,
-                count_trade = SqlFunc.AggregateSum(t.count_trade),
-                total_trade_fee = SqlFunc.AggregateSum(t.total_trade_fee),
-                count_refund = SqlFunc.AggregateSum(t.count_refund),
-                total_refund_fee = SqlFunc.AggregateSum(t.total_refund_fee),
-                receivable_fee = SqlFunc.AggregateSum(t.receivable_fee),
-                discount_fee = SqlFunc.AggregateSum(t.discount_fee),
-                poundage_fee = SqlFunc.AggregateSum(t.poundage_fee),
-                settlement_fee = SqlFunc.AggregateSum(t.settlement_fee)
-            }).GroupBy(t => new { t.business_date, t.out_shop_id }).ToPageAsync(parm.page_num, parm.page_size);
-
-            if (data.Items.Count > 0)
-            {
-                var ids = data.Items.Select(p => p.out_shop_id).ToArray();
-
-                var shopInfos = await Db.Queryable<ShopInfo>().In(p => p.out_shop_id, ids).ToListAsync();
-                if (shopInfos.Count > 0)
+            var data = await query(admin_guid, start, end)
+                .GroupBy(daily => daily.business_date)
+                .Select(daily => new TrendInfo
                 {
-                    data.Items.ForEach(shop =>
-                    {
-                        var shopInfo = shopInfos.FirstOrDefault(m => shop.out_shop_id == m.out_shop_id);
-                        if (shopInfo != null)
-                        {
-                            shop.shop_name = shopInfo.shop_name;
-                            shop.erp_org = shopInfo.erp_org;
-                        }
-                    });
-                }
+                    Day = daily.business_date,
+                    CountTrade = SqlFunc.AggregateSum(daily.count_trade),
+                    TotalTrade = SqlFunc.AggregateSum(daily.total_trade_fee),
+                    CountRefund = SqlFunc.AggregateSum(daily.count_refund),
+                    TotalRefund = SqlFunc.AggregateSum(daily.total_refund_fee)
+                }).ToListAsync();
+
+            return data;
+        }
+
+        private ISugarQueryable<CmsDailySettlement> query(string admin_guid, DateTime start, DateTime end)
+        {
+            var role_info = roleService.GetRoleByAdminGuid(admin_guid).Result;
+
+            ISugarQueryable<CmsDailySettlement> query;
+
+            if (role_info.isSystem)
+            {
+                query = Db.Queryable<CmsDailySettlement>();
+            }
+            else if (role_info.isAgent)
+            {
+                query = Db.Queryable<CmsDailySettlement, CmsMerchant>((daily, mch) => daily.out_sub_mch_id == mch.out_sub_mch_id)
+                    .Where((daily, mch) => mch.agent_admin_guid == admin_guid).Select((daily, mch) => daily);
+            }
+            else if (role_info.isSubAdmin)
+            {
+                query = Db.Queryable<CmsDailySettlement, CmsMerchant>((daily, mch) => daily.out_sub_mch_id == mch.out_sub_mch_id)
+                    .Where((daily, mch) => mch.admin_guid == admin_guid).Select((daily, mch) => daily);
+            }
+            else
+            {
+                query = Db.Queryable<CmsDailySettlement, AdminShopRel>((daily, rel) => daily.out_shop_id == rel.out_shop_id)
+                    .Where((daily, rel) => rel.admin_guid == admin_guid).Select((daily, rel) => daily);
             }
 
-            res.data = data;
-            res.statusCode = (int)ApiEnum.Status;
-
-            return res;
+            return query.Where(daily => daily.business_date >= start && daily.business_date <= end);
         }
     }
 }
