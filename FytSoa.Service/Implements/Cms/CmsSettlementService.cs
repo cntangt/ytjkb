@@ -12,14 +12,14 @@ using System.Threading.Tasks;
 
 namespace FytSoa.Service.Implements
 {
-    public class CmsDailySettlementService : BaseService<CmsDailySettlement>, ICmsDailySettlementService
+    public class CmsSettlementService : BaseService<CmsDailySettlement>, ICmsSettlementService
     {
         static readonly object daily_locker = new object();
 
         readonly IWxCloudService wx;
         readonly IConfiguration config;
 
-        public CmsDailySettlementService(IWxCloudService wx, IConfiguration config) : base(config)
+        public CmsSettlementService(IWxCloudService wx, IConfiguration config) : base(config)
         {
             this.wx = wx;
             this.config = config;
@@ -150,6 +150,28 @@ namespace FytSoa.Service.Implements
             result.success = true;
 
             return result;
+        }
+
+        public async Task<ApiResult<string>> MonthlyJobAsync(DateTime day)
+        {
+            var res = new ApiResult<string>();
+
+            var count = await Db.Ado.UseStoredProcedure().GetIntAsync(config["monthly_proc"], new { });
+
+            if (count == 0)
+            {
+                res.message = "执行月结任务失败";
+                res.success = false;
+
+                return res;
+            }
+
+            res.data = DateTime.Now.ToString();
+            res.message = "执行月结任务完成";
+            res.statusCode = 200;
+            res.success = true;
+
+            return res;
         }
     }
 }

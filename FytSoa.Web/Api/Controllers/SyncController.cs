@@ -23,10 +23,10 @@ namespace FytSoa.Api.Controllers
     {
         readonly IWxCloudService wx;
         readonly ICmsMerchantService merchantService;
-        readonly ICmsDailySettlementService cmsDaily;
+        readonly ICmsSettlementService cmsDaily;
         readonly IConfiguration config;
 
-        public SyncController(IWxCloudService wx, ICmsMerchantService merchantService, ICmsDailySettlementService cmsDaily, IConfiguration config)
+        public SyncController(IWxCloudService wx, ICmsMerchantService merchantService, ICmsSettlementService cmsDaily, IConfiguration config)
         {
             this.wx = wx;
             this.merchantService = merchantService;
@@ -322,5 +322,7 @@ namespace FytSoa.Api.Controllers
         }
 
         public Task<ApiResult<string>> DailyJob(DateTime? day) => cmsDaily.DailyJobAsync(day ?? DateTime.Now.AddDays(-1));
+
+        public Task<ApiResult<string>> MonthlyJob() => cmsDaily.MonthlyJobAsync(DateTime.Now);
     }
 }
