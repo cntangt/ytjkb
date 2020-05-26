@@ -259,12 +259,12 @@ namespace FytSoa.Service.Implements
         {
             var res = new ApiResult<Page<CmsDailySettlement>>();
 
-            var query = Db.Queryable<CmsDailySettlement>()
-                .WhereIF(!string.IsNullOrEmpty(parm.out_sub_mch_id), t => t.out_sub_mch_id == parm.out_sub_mch_id)
-                .WhereIF(!string.IsNullOrEmpty(parm.out_shop_id), t => t.out_shop_id == parm.out_shop_id)
-                .WhereIF(parm.sub_pay_platforms.Length > 0, t => t.sub_pay_platform == parm.sub_pay_platforms[0])
-                .WhereIF(parm.start_time != null, t => t.business_date >= parm.start_time)
-                .WhereIF(parm.end_time != null, t => t.business_date <= parm.end_time);
+            var query = Db.Queryable<CmsDailySettlement>();
+                //.WhereIF(!string.IsNullOrEmpty(parm.out_sub_mch_id), t => t.out_sub_mch_id == parm.out_sub_mch_id)
+                //.WhereIF(!string.IsNullOrEmpty(parm.out_shop_id), t => t.out_shop_id == parm.out_shop_id)
+                //.WhereIF(parm.sub_pay_platforms.Length > 0, t => t.sub_pay_platform == parm.sub_pay_platforms[0])
+                //.WhereIF(parm.start_time != null, t => t.business_date >= parm.start_time)
+                //.WhereIF(parm.end_time != null, t => t.business_date <= parm.end_time);
 
             var data = await query.Select(t => new CmsDailySettlement
             {
@@ -294,6 +294,50 @@ namespace FytSoa.Service.Implements
                         {
                             shop.shop_name = shopInfo.shop_name;
                             shop.erp_org = shopInfo.erp_org;
+                        }
+                    });
+                }
+            }
+
+            res.data = data;
+            res.statusCode = (int)ApiEnum.Status;
+
+            return res;
+        }
+
+        public async Task<ApiResult<Page<CmsDailySettlement>>> GetAgentTradeSummary(QueryOrderListRequest parm)
+        {
+            var res = new ApiResult<Page<CmsDailySettlement>>();
+
+            var query = Db.Queryable<CmsDailySettlement>();
+                //.WhereIF(!string.IsNullOrEmpty(parm.out_sub_mch_id), t => t.out_sub_mch_id == parm.out_sub_mch_id)
+                //.WhereIF(parm.sub_pay_platforms.Length > 0, t => t.sub_pay_platform == parm.sub_pay_platforms[0])
+                //.WhereIF(parm.start_time != null, t => t.business_date >= parm.start_time)
+                //.WhereIF(parm.end_time != null, t => t.business_date <= parm.end_time);
+
+            var data = await query.Select(t => new CmsDailySettlement
+            {
+                out_sub_mch_id = t.out_sub_mch_id,
+                count_trade = SqlFunc.AggregateSum(t.count_trade),
+                total_trade_fee = SqlFunc.AggregateSum(t.total_trade_fee),
+                count_refund = SqlFunc.AggregateSum(t.count_refund),
+                total_refund_fee = SqlFunc.AggregateSum(t.total_refund_fee),
+                receivable_fee = SqlFunc.AggregateSum(t.receivable_fee),
+            }).GroupBy(t => new { t.out_sub_mch_id }).ToPageAsync(parm.page_num, parm.page_size);
+
+            if (data.Items.Count > 0)
+            {
+                var ids = data.Items.Select(p => p.out_sub_mch_id).ToArray();
+
+                var shopInfos = await Db.Queryable<CmsMerchant>().In(p => p.out_sub_mch_id, ids).ToListAsync();
+                if (shopInfos.Count > 0)
+                {
+                    data.Items.ForEach(shop =>
+                    {
+                        var shopInfo = shopInfos.FirstOrDefault(m => shop.out_sub_mch_id == m.out_sub_mch_id);
+                        if (shopInfo != null)
+                        {
+                            shop.shop_name = shopInfo.name;
                         }
                     });
                 }
