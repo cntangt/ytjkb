@@ -35,10 +35,15 @@ namespace FytSoa.Api.Controllers
             this.config = config;
         }
 
-        public async Task<IndexModel> Info()
+        public async Task<IndexModel> Info(int day = 7)
         {
+            if (day > 30)
+            {
+                day = 30;
+            }
+
             var admin_guid = await HttpContext.LoginUserId();
-            var start = DateTime.Now.AddDays(-15).Date;
+            var start = DateTime.Now.AddDays(-day - 1).Date;
             var end = DateTime.Now.Date;
 
             return new IndexModel
