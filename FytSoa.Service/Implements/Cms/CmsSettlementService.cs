@@ -259,11 +259,12 @@ namespace FytSoa.Service.Implements
         {
             var res = new ApiResult<Page<CmsDailySettlement>>();
 
-            var query = Db.Queryable<CmsDailySettlement>();
-            //.WhereIF(parm.sub_pay_platforms != null, t => parm.sub_pay_platforms.Contains(t.sub_pay_platform))
-            //.WhereIF(parm.start_time != null, t => t.business_date >= parm.start_time)
-            //.WhereIF(parm.end_time != null, t => t.business_date <= parm.end_time)
-            //.WhereIF(!string.IsNullOrEmpty(parm.out_shop_id), t => t.out_shop_id == parm.out_shop_id);
+            var query = Db.Queryable<CmsDailySettlement>()
+                .WhereIF(!string.IsNullOrEmpty(parm.out_sub_mch_id), t => t.out_sub_mch_id == parm.out_sub_mch_id)
+                .WhereIF(!string.IsNullOrEmpty(parm.out_shop_id), t => t.out_shop_id == parm.out_shop_id)
+                .WhereIF(parm.sub_pay_platforms.Length > 0, t => t.sub_pay_platform == parm.sub_pay_platforms[0])
+                .WhereIF(parm.start_time != null, t => t.business_date >= parm.start_time)
+                .WhereIF(parm.end_time != null, t => t.business_date <= parm.end_time);
 
             var data = await query.Select(t => new CmsDailySettlement
             {

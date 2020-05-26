@@ -32,19 +32,19 @@
                     <div class="layui-inline">
                         <div type="text" id="out_shop_id" style="width:200px"></div>
                     </div>
-                    <span class="layui-inline">交易日期：</span>
+                    <span class="layui-inline">支付渠道：</span>
                     <div class="layui-inline">
-                        <input type="text" id="start_time" name="start_time" autocomplete="off" class="layui-input">
-                    </div>
-                    <span class="layui-inline"> - </span>
-                    <div class="layui-inline">
-                        <input type="text" id="end_time" name="end_time" autocomplete="off" class="layui-input">
+                        <div id="pay_platform" style="width:200px" data-json='@Html.Raw(Json.Serialize(typeof(SubPayPlatform).ToDropdown().Select(p=>new { name=p.Text,value=p.Value})))'></div>
                     </div>
                 </div>
                 <div style="margin:10px 0 0;">
-                    <span class="layui-inline">支付渠道：</span>
+                    <span class="layui-inline">交易日期：</span>
                     <div class="layui-inline">
-                        <div id="pay_platform" style="width:400px" data-json='@Html.Raw(Json.Serialize(typeof(SubPayPlatform).ToDropdown().Select(p=>new { name=p.Text,value=p.Value})))'></div>
+                        <input type="text" id="start_time" name="start_time" value="@(DateTime.Now.ToString("yyyy-MM-dd") + " 00:00:00")" autocomplete="off" class="layui-input">
+                    </div>
+                    <span class="layui-inline"> - </span>
+                    <div class="layui-inline">
+                        <input type="text" id="end_time" name="end_time" value="@(DateTime.Now.ToString("yyyy-MM-dd") + " 23:59:59")" autocomplete="off" class="layui-input">
                     </div>
                     <div class="layui-inline">
                         <button type="submit" class="layui-btn layui-btn-sm"><i class="layui-icon layui-icon-search"></i> 搜索</button>
@@ -72,6 +72,8 @@
                 var pp = xmSelect.render({
                     el: '#pay_platform',
                     size: 'small',
+                    radio: true,
+                    clickClose: true,
                     name: 'sub_pay_platforms',
                     data: $('#pay_platform').data('json'),
                 });
@@ -104,7 +106,7 @@
                     clickClose: true,
                     filterable: true,
                     remoteSearch: true,
-                    remoteMethod: (val, cb, show) => os.ajax('api/shop/getshopbymch', { key: val, out_sub_mch_id: pp.getValue('valueStr') }, (res) => cb(res)),
+                    remoteMethod: (val, cb, show) => os.ajax('api/shop/getshopbymch', { key: val, out_sub_mch_id: mp.getValue('valueStr') }, (res) => cb(res)),
                 });
                 table.render({
                     elem: '#tablist',
