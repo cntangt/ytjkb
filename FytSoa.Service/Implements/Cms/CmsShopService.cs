@@ -7,8 +7,10 @@ using FytSoa.Service.Extensions;
 using FytSoa.Service.Interfaces;
 using Microsoft.Extensions.Configuration;
 using SqlSugar;
+using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Linq.Expressions;
 using System.Threading.Tasks;
 
 namespace FytSoa.Service.Implements
@@ -99,6 +101,23 @@ namespace FytSoa.Service.Implements
             res.statusCode = (int)ApiEnum.Status;
 
             return res;
+        }
+
+        public override async Task<ApiResult<ShopInfo>> GetModelAsync(Expression<Func<ShopInfo, bool>> where, bool Async = true)
+        {
+            var shop = await base.GetModelAsync(where, Async);
+
+            if (shop.data != null && shop.data.id > 0)
+            {
+                var mch = await Db.Queryable<CmsMerchant>().FirstAsync(p => p.out_sub_mch_id == shop.data.out_sub_mch_id);
+
+                if (mch != null && mch.id > 0)
+                {
+                    shop.data.out_mch_name = mch.name;
+                }
+            }
+
+            return shop;
         }
     }
 }

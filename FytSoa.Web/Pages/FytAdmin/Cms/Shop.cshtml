@@ -67,7 +67,7 @@
                 table.on('tool(tool)', function (obj) {
                     switch (obj.event) {
                         case 'qrcode':
-                            os.Open('店铺一码付二维码', '/fytadmin/cms/shopqrcode/?id=' + obj.data.id, '720px', '640px');
+                            os.Open('店铺一码付二维码', '/fytadmin/cms/shopqrcode/?id=' + obj.data.id, '480px', '720px');
                             break;
                         case 'device':
                             os.Open('店铺设备列表', '/fytadmin/cms/shopdevice/?id=' + obj.data.out_shop_id, '1200px', '540px');
