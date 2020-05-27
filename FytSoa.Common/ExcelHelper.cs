@@ -69,7 +69,6 @@ namespace FytSoa.Common
                         if (r == 2)
                         {
                             sheet.SetValue(r - 1, c, ec.Header);
-
                             if (!string.IsNullOrEmpty(ec.Formatter))
                             {
                                 sheet.Column(c).Style.Numberformat.Format = ec.Formatter;
@@ -83,6 +82,11 @@ namespace FytSoa.Common
 
                     r++;
                 }
+                for (int i = 1; i <= columns.Length; i++)
+                {
+                    sheet.Column(i).AutoFit();
+                }
+                sheet.View.FreezePanes(2, 1);
             });
 
             await ep.SaveAsAsync(stream);
