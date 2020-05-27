@@ -122,5 +122,6 @@ layui.config({
             os.error(res.message);
         }
     }, 'get');
+    $("#content-container").height($("#main-container").height() - 36);
     main_vm.unreadcount();
 });

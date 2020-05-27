@@ -31,7 +31,7 @@
                     os = layui.common,
                     form = layui.form,
                     tree = layui.tree;
-                $("#tree").css({ 'height': $(window).height() - 140 });
+                $("#tree").css({ 'height': $(window).height() - (140 + 36) });
                 table.render({
                     elem: '#tablist',
                     headers: os.getToken(),
@@ -51,7 +51,7 @@
                             { width: 100, title: '操作', templet: '#tool' }
                         ]
                     ],
-                    height: $(window).height() - 150,
+                    height: $(window).height() - (150 + 36),
                     page: true,
                     limit: 1000,
                     id: 'tables'

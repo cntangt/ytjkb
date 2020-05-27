@@ -4,7 +4,7 @@
     ViewData["Title"] = "站点管理";
 }
 
-<div id="container">
+<div id="container" style="padding-bottom:36px;">
     <style>
         .layui-field-title i { margin-right: 5px; font-size: 25px; position: relative; top: 2px; }
         .layui-form-item { width: 60%; }
@@ -23,7 +23,7 @@
                 <li v-cloak @@click.stop="selSite(it)" v-for="it in list" :class="it.siteName==m.siteName?'active':''">{{it.siteName}}<span class="tool"><a title="编辑" @@click.stop="selSite(it)" class="layui-icon layui-icon-edit"></a></span></li>
             </ul>
         </div>
-        <div class="right-col-body">
+        <div class="right-col-body" style="margin-bottom:36px;">
             <form class="layui-form form-cus" action="" style="padding:5px 15px;">
                 <div class="layui-tab" lay-filter="docDemoTabBrief">
                     <ul class="layui-tab-title">

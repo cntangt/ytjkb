@@ -11,19 +11,9 @@
     <link rel="stylesheet" href="~/build/admin/css/site.min.css" asp-append-version="true">
     @RenderSection("styles", false)
     <style type="text/css">
-        .unreadquantity {
-            position: absolute;
-            text-align: center;
-            top: 10px;
-            left: 45px;
-            width: 20px;
-            height: 20px;
-            line-height: 20px;
-            background: red;
-            border-radius: 50% / 50%;
-            color: #fff;
-        }
-
+        .unreadquantity { position: absolute; text-align: center; top: 10px; left: 45px; width: 20px; height: 20px; line-height: 20px; background: red; border-radius: 50% / 50%; color: #fff; }
+        .cr { background: none repeat scroll 0 0 #fff; border-top: 1px solid #e7eaec; overflow: hidden; padding: 10px 20px; text-align: right; position: relative; z-index: 999; }
+            .cr a { color: #337ab7 !important; }
     </style>
     <script src="~/themes/js/modules/vue.js" asp-append-version="true"></script>
     <script src="~/themes/layui/layui.js" asp-append-version="true"></script>
@@ -34,8 +24,7 @@
         <div class="layui-header" id="mainapp">
             <div class="layui-logo">@ViewBag.SiteName</div>
             <ul class="layui-nav layui-layout-left layui-first-nav" lay-filter="topmenu">
-                <li class="layui-nav-item layui-this" v-for="(it,index) in menulist" v-cloak v-if="it.layer===1 && index===0"><a href="javascript:void(0)" :data-index="index"><i :class="'layui-icon '+it.icon"></i>{{it.name}}</a></li>
-                <li class="layui-nav-item" v-for="(it,index) in menulist" v-cloak v-if="it.layer===1 && index!=0"><a href="javascript:void(0)" :data-index="index"><i :class="'layui-icon '+it.icon"></i>{{it.name}}</a></li>
+                <li class="" style="line-height:60px;padding-left:20px;font-size:18px !important;color:#0e9aef;">客服电话：@ViewBag.Tel</li>
             </ul>
             <ul class="layui-nav layui-layout-right">
                 <li class="layui-nav-item">
@@ -45,9 +34,6 @@
                     <a href="javascript:void(0);" style="padding-right:15px;" @@click="noticelist"><i class="layui-icon">&#xe667;</i></a>
                     <div v-if="block" class="unreadquantity">{{ unreadquantity }}</div>
                 </li>
-                @*<li class="layui-nav-item">
-                    <a title="客服电话" style="padding-right:0px;"><i class="layui-icon">&#xe626;</i>@ViewBag.Tel</a>
-                </li>*@
                 <li class="layui-nav-item">
                     <a href="javascript:void(0);">
                         <span class="username">@User.Identities.First(u => u.IsAuthenticated).FindFirst(ClaimTypes.WindowsAccountName).Value <i class="layui-icon"></i></span>
@@ -63,7 +49,7 @@
         <div class="layui-side layui-bg-black" id="rmapp">
             <div class="layui-side-scroll">
                 <ul class="layui-nav layui-nav-tree fyt-nav-tree layui-hide" v-for="(m,mindex) in tmlist">
-                    <li class="layui-nav-item" :class="index==0?'layui-nav-itemed':''" v-for="(it,index) in list" v-cloak v-if="it.layer===2 && it.parentGuid===m.guid">
+                    <li class="layui-nav-item" v-bind:class="index==0?'layui-nav-itemed':''" v-for="(it,index) in list" v-cloak v-if="it.layer===2 && it.parentGuid===m.guid">
                         <a class="" href="javascript:;"><i :class="'layui-icon '+it.icon"></i>{{it.name}}</a>
                         <dl class="layui-nav-child">
                             <dd v-for="row in list" v-if="row.layer===3 && row.parentGuid===it.guid"><a :href="row.urls">{{row.name}}</a></dd>
@@ -72,9 +58,13 @@
                 </ul>
             </div>
         </div>
-        <div class="layui-body" id="main-container">
-            @RenderBody()
-            @*<div class="cr">@Html.Raw(ViewBag.right)</div>*@
+        <div class="layui-body" id="main-container" style="overflow:hidden;">
+            <div id="content-container" style="overflow-y:auto;">
+                @RenderBody()
+            </div>
+            <div class="cr">
+                @Html.Raw(ViewBag.right)
+            </div>
         </div>
     </div>
     <div class="load-container load8">
