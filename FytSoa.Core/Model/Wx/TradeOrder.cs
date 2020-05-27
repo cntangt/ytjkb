@@ -50,12 +50,14 @@ namespace FytSoa.Core.Model.Wx
         public DateTime refund_create_time { get; set; }
         public DateTime refund_time { get; set; }
         public long refunded_settlement_fee { get; set; }
+        [JsonConverter(typeof(StringEnumConverter))]
         public WxpayOrderState wxpay_current_trade_state { get; set; }
         public string attach { get; set; }
         public string bank_type { get; set; }
         public string goods_tag { get; set; }
         public string scene_info { get; set; }
-        public AlipayRefundOrderState alipay_current_trade_state { get; set; }
+        [JsonConverter(typeof(StringEnumConverter))]
+        public AlipayOrderState alipay_current_trade_state { get; set; }
         public long discountable_amount { get; set; }
         public long undiscountable_amount { get; set; }
         public string membership_number { get; set; }
@@ -69,5 +71,20 @@ namespace FytSoa.Core.Model.Wx
         public bool is_confirm_unfreeze { get; set; }
         public long manual_unfreeze_fee { get; set; }
         public string freeze_id { get; set; }
+        public string trade_state
+        {
+            get
+            {
+                switch (sub_pay_platform)
+                {
+                    case SubPayPlatform.普通微信支付:
+                        return wxpay_current_trade_state.ToString();
+                    case SubPayPlatform.普通支付宝:
+                        return alipay_current_trade_state.ToString();
+                    default:
+                        return record_current_trade_state.ToString();
+                }
+            }
+        }
     }
 }
