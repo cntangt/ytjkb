@@ -11,7 +11,19 @@
     <link rel="stylesheet" href="~/build/admin/css/site.min.css" asp-append-version="true">
     @RenderSection("styles", false)
     <style type="text/css">
-        .unreadquantity { position: absolute; text-align: center; top: 10px; left: 45px; width: 20px; height: 20px; line-height: 20px; background: red; border-radius: 50% / 50%; color: #fff; }
+        .unreadquantity {
+            position: absolute;
+            text-align: center;
+            top: 10px;
+            left: 45px;
+            width: 20px;
+            height: 20px;
+            line-height: 20px;
+            background: red;
+            border-radius: 50% / 50%;
+            color: #fff;
+        }
+
     </style>
     <script src="~/themes/js/modules/vue.js" asp-append-version="true"></script>
     <script src="~/themes/layui/layui.js" asp-append-version="true"></script>
@@ -27,12 +39,15 @@
             </ul>
             <ul class="layui-nav layui-layout-right">
                 <li class="layui-nav-item">
-                    <a href="/fytadmin" style="padding-right:0px;"><i class="layui-icon"></i>主页</a>
+                    <a href="/fytadmin" style="padding-right:0px;"><i class="layui-icon">&#xe68e;</i>主页</a>
                 </li>
                 <li class="layui-nav-item">
                     <a href="javascript:void(0);" style="padding-right:15px;" @@click="noticelist"><i class="layui-icon">&#xe667;</i></a>
                     <div v-if="block" class="unreadquantity">{{ unreadquantity }}</div>
                 </li>
+                @*<li class="layui-nav-item">
+                    <a title="客服电话" style="padding-right:0px;"><i class="layui-icon">&#xe626;</i>@ViewBag.Tel</a>
+                </li>*@
                 <li class="layui-nav-item">
                     <a href="javascript:void(0);">
                         <span class="username">@User.Identities.First(u => u.IsAuthenticated).FindFirst(ClaimTypes.WindowsAccountName).Value <i class="layui-icon"></i></span>
@@ -59,6 +74,7 @@
         </div>
         <div class="layui-body" id="main-container">
             @RenderBody()
+            @*<div class="cr">@Html.Raw(ViewBag.right)</div>*@
         </div>
     </div>
     <div class="load-container load8">
