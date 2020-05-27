@@ -85,7 +85,7 @@ namespace FytSoa.Api.Controllers
                 p => ("门店名称", p.shop_name),
                 p => ("订单金额", p.total_fee.TC()),
                 p => ("支付类型", p.trade_type.ToString()),
-                p => ("支付状态", p.record_current_trade_state.ToString()),
+                p => ("支付状态", p.trade_state),
                 p => ("交易时间", p.time_end.ToLocalTime().ToString("yyyy年MM月dd日 HH:mm:ss")),
                 p => ("设备号", p.device_id),
                 p => ("店员名称", p.staff_name),
@@ -150,7 +150,7 @@ namespace FytSoa.Api.Controllers
                 p => ("订单金额", p.total_fee.TC()),
                 p => ("退款金额", p.refund_fee.TC()),
                 p => ("支付类型", p.trade_type.ToString()),
-                p => ("退款状态", p.record_refund_state.ToString()),
+                p => ("退款状态", p.refund_state),
                 p => ("退款时间", p.last_update_time.ToLocalTime().ToString("yyyy年MM月dd日 HH:mm:ss")),
                 p => ("设备号", p.device_id),
                 p => ("店员名称", p.staff_name));
