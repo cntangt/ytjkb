@@ -79,17 +79,17 @@ namespace FytSoa.Api.Controllers
             }
 
             var data = await list.Write("交易订单",
-                p => ("支付渠道", p.sub_pay_platform.ToString()),
-                p => ("流水单号", p.out_trade_no),
-                p => ("商户名称", mch.data.name),
-                p => ("门店名称", p.shop_name),
-                p => ("订单金额", p.total_fee.TC()),
-                p => ("支付类型", p.trade_type.ToString()),
-                p => ("支付状态", p.trade_state),
-                p => ("交易时间", p.time_end.ToLocalTime().ToString("yyyy年MM月dd日 HH:mm:ss")),
-                p => ("设备号", p.device_id),
-                p => ("店员名称", p.staff_name),
-                p => ("手续费", p.poundage.TC()));
+                p => new EC("支付渠道", p.sub_pay_platform),
+                p => new EC("流水单号", p.out_trade_no),
+                p => new EC("商户名称", mch.data.name),
+                p => new EC("门店名称", p.shop_name),
+                p => new EC("订单金额", p.total_fee / 100M, "¥#,##0.00"),
+                p => new EC("支付类型", p.trade_type),
+                p => new EC("支付状态", p.trade_state),
+                p => new EC("交易时间", p.time_end.ToLocalTime(), "yyyy年MM月dd日 HH:mm:ss"),
+                p => new EC("设备号", p.device_id),
+                p => new EC("店员名称", p.staff_name),
+                p => new EC("手续费", p.poundage / 100M, "¥#,##0.00"));
 
             return File(
                 data,
@@ -142,18 +142,18 @@ namespace FytSoa.Api.Controllers
             }
 
             var data = await list.Write("退款订单",
-                p => ("支付渠道", p.sub_pay_platform.ToString()),
-                p => ("交易单号", p.out_trade_no),
-                p => ("退款单号", p.out_refund_no),
-                p => ("商户名称", mch.data.name),
-                p => ("门店名称", p.shop_name),
-                p => ("订单金额", p.total_fee.TC()),
-                p => ("退款金额", p.refund_fee.TC()),
-                p => ("支付类型", p.trade_type.ToString()),
-                p => ("退款状态", p.refund_state),
-                p => ("退款时间", p.last_update_time.ToLocalTime().ToString("yyyy年MM月dd日 HH:mm:ss")),
-                p => ("设备号", p.device_id),
-                p => ("店员名称", p.staff_name));
+                p => new EC("支付渠道", p.sub_pay_platform),
+                p => new EC("交易单号", p.out_trade_no),
+                p => new EC("退款单号", p.out_refund_no),
+                p => new EC("商户名称", mch.data.name),
+                p => new EC("门店名称", p.shop_name),
+                p => new EC("订单金额", p.total_fee / 100M, "¥#,##0.00"),
+                p => new EC("退款金额", p.refund_fee / 100M, "¥#,##0.00"),
+                p => new EC("支付类型", p.trade_type),
+                p => new EC("退款状态", p.refund_state),
+                p => new EC("退款时间", p.last_update_time.ToLocalTime(), "yyyy年MM月dd日 HH:mm:ss"),
+                p => new EC("设备号", p.device_id),
+                p => new EC("店员名称", p.staff_name));
 
             return File(
                 data,
@@ -346,17 +346,17 @@ namespace FytSoa.Api.Controllers
             }
 
             var data = await res.data.Items.Write("门店日报表",
-                p => ("退款时间", p.business_date.ToString("yyyy-MM月-日")),
-                p => ("门店名称", p.shop_name),
-                p => ("ERP机构", p.erp_org),
-                p => ("交易笔数", p.count_trade),
-                p => ("交易金额", p.total_trade_fee.TC()),
-                p => ("退款笔数", p.count_refund),
-                p => ("退款金额", p.total_refund_fee.TC()),
-                p => ("应收金额", p.receivable_fee.TC()),
-                p => ("优惠金额", p.discount_fee.TC()),
-                p => ("手续费", p.poundage_fee.TC()),
-                p => ("结算金额", p.settlement_fee.TC()));
+                p => new EC("退款时间", p.business_date.ToLocalTime(), "yyyy年MM月dd日 HH:mm:ss"),
+                p => new EC("门店名称", p.shop_name),
+                p => new EC("ERP机构", p.erp_org),
+                p => new EC("交易笔数", p.count_trade),
+                p => new EC("交易金额", p.total_trade_fee / 100M, "¥#,##0.00"),
+                p => new EC("退款笔数", p.count_refund),
+                p => new EC("退款金额", p.total_refund_fee / 100M, "¥#,##0.00"),
+                p => new EC("应收金额", p.receivable_fee / 100M, "¥#,##0.00"),
+                p => new EC("优惠金额", p.discount_fee / 100M, "¥#,##0.00"),
+                p => new EC("手续费", p.poundage_fee / 100M, "¥#,##0.00"),
+                p => new EC("结算金额", p.settlement_fee / 100M, "¥#,##0.00"));
 
             return File(
                 data,
@@ -386,12 +386,12 @@ namespace FytSoa.Api.Controllers
             }
 
             var data = await res.data.Items.Write("代理商交易统计",
-                p => ("商户名称", p.shop_name),
-                p => ("交易笔数", p.count_trade),
-                p => ("交易金额", p.total_trade_fee.TC()),
-                p => ("退款笔数", p.count_refund),
-                p => ("退款金额", p.total_refund_fee.TC()),
-                p => ("交易净额", p.receivable_fee.TC()));
+                p => new EC("商户名称", p.shop_name),
+                p => new EC("交易笔数", p.count_trade),
+                p => new EC("交易金额", p.total_trade_fee / 100M, "¥#,##0.00"),
+                p => new EC("退款笔数", p.count_refund),
+                p => new EC("退款金额", p.total_refund_fee / 100M, "¥#,##0.00"),
+                p => new EC("交易净额", p.receivable_fee / 100M, "¥#,##0.00"));
 
             return File(
                 data,
