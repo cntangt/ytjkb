@@ -17,6 +17,7 @@
         .layui-form-item { margin-bottom: 8px; }
         .layui-input-block { margin-left: 0px; width: 200px; float: left; }
         .layui-layer-btn { padding: 0 35px 65px !important; }
+        .width-130 {width:130px;}
     </style>
 }
 <div id="container">
@@ -39,12 +40,18 @@
                 </div>
                 <div style="margin:10px 0 0;">
                     <span class="layui-inline">交易日期：</span>
-                    <div class="layui-inline">
-                        <input type="text" id="start_time" name="start_time" value="@(DateTime.Now.ToString("yyyy-MM-dd") + " 00:00:00")" autocomplete="off" class="layui-input">
+                    <div class="layui-inline width-130" style="margin-right:0px;">
+                        <input type="text" id="_start_date" name="_start_date" value="@DateTime.Now.ToString("yyyy-MM-dd")" autocomplete="off" class="layui-input">
+                    </div>
+                    <div class="layui-inline width-130">
+                        <input type="text" id="_start_time" name="_start_time" value="00:00:00" autocomplete="off" class="layui-input">
                     </div>
                     <span class="layui-inline"> - </span>
-                    <div class="layui-inline">
-                        <input type="text" id="end_time" name="end_time" value="@(DateTime.Now.ToString("yyyy-MM-dd") + " 23:59:59")" autocomplete="off" class="layui-input">
+                    <div class="layui-inline width-130" style="margin-right:0px;">
+                        <input type="text" id="_end_date" name="_end_date" value="@DateTime.Now.ToString("yyyy-MM-dd")" autocomplete="off" class="layui-input">
+                    </div>
+                    <div class="layui-inline width-130">
+                        <input type="text" id="_end_time" name="_end_time" value="23:59:59" autocomplete="off" class="layui-input">
                     </div>
                     <div class="layui-inline">
                         <button type="submit" class="layui-btn layui-btn-sm"><i class="layui-icon layui-icon-search"></i> 搜索</button>
@@ -72,8 +79,6 @@
                 var pp = xmSelect.render({
                     el: '#pay_platform',
                     size: 'small',
-                    radio: true,
-                    clickClose: true,
                     name: 'sub_pay_platforms',
                     data: $('#pay_platform').data('json'),
                 });
@@ -85,6 +90,7 @@
                     el: '#out_sub_mch_id',
                     name: 'out_sub_mch_id',
                     radio: true,
+                    clickClose: true,
                     size: 'small',
                     layVerify: 'required',
                     data: mp_data,
@@ -120,11 +126,11 @@
                     url: '/api/sync/dailyreport',
                     cols: [
                         [
-                            { align: 'business_date', title: '日期', width: 110,align:'center', templet: (d) => layui.util.toDateString(d.time_end, 'yyyy-MM-dd') },
-                            { field: 'shop_name', title: '门店名称', width: 160 },
-                            { field: 'erp_org', title: 'ERP机构', width: 160 },
-                            { field: 'count_trade', title: '交易笔数', width: 85 ,align:'right'},
-                            { title: '交易金额', templet: (d) => d.total_refund_fee.tc(), width: 110, align: 'right' },
+                            { align: 'business_date', title: '日期', width: 105, align: 'center', templet: (d) => layui.util.toDateString(d.time_end, 'yyyy-MM-dd') },
+                            { field: 'shop_name', title: '门店名称', width: 200 },
+                            { field: 'erp_org', title: 'ERP机构', width: 85, align: 'center' },
+                            { field: 'count_trade', title: '交易笔数', width: 85, align: 'right' },
+                            { title: '交易金额', templet: (d) => d.total_trade_fee.tc(), width: 110, align: 'right' },
                             { field: 'count_refund', title: '退款笔数', width: 85, align: 'right' },
                             { title: '退款金额', templet: (d) => d.total_refund_fee.tc(), width: 110, align: 'right' },
                             { title: '应收金额', templet: (d) => d.receivable_fee.tc(), width: 110, align: 'right' },
@@ -137,8 +143,10 @@
                     page: true,
                     id: 'tables'
                 });
-                dt.render({ elem: '#start_time', type: 'datetime' });
-                dt.render({ elem: '#end_time', type: 'datetime' });
+                dt.render({ elem: '#_start_date', type: 'date' });
+                dt.render({ elem: '#_start_time', type: 'time' });
+                dt.render({ elem: '#_end_date', type: 'date' });
+                dt.render({ elem: '#_end_time', type: 'time' });
                 $('#searchform').on('submit', () => {
                     table.reload('tables',
                         {
@@ -155,6 +163,8 @@
                 function data() {
                     var _data = $('#searchform').serializeArray().js();
                     _data['sub_pay_platforms'] = pp.getValue('value');
+                    _data["start_time"] = $.trim($("#_start_date").val() + " " + $("#_start_time").val());
+                    _data["end_time"] = $.trim($("#_end_date").val() + " " + $("#_end_time").val());
                     return _data;
                 }
             });

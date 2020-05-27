@@ -13,23 +13,11 @@
 }
 @section styles{
     <style>
-        .layui-form-label {
-            width: 100px;
-        }
-
-        .layui-form-item {
-            margin-bottom: 8px;
-        }
-
-        .layui-input-block {
-            margin-left: 0px;
-            width: 200px;
-            float: left;
-        }
-
-        .layui-layer-btn {
-            padding: 0 35px 65px !important;
-        }
+        .layui-form-label { width: 100px; }
+        .layui-form-item { margin-bottom: 8px; }
+        .layui-input-block { margin-left: 0px; width: 200px; float: left; }
+        .layui-layer-btn { padding: 0 35px 65px !important; }
+        .width-130 { width: 130px; }
     </style>
 }
 <div id="container">
@@ -37,7 +25,7 @@
         <div class="layui-form list-search">
             <form autocomplete="off" id="searchform">
                 <div>
-                    <span class="layui-inline">　子商户：</span>
+                    <span class="layui-inline">　商户：</span>
                     <div class="layui-inline">
                         <div id="out_sub_mch_id" style="width:250px" data-json='@Html.Raw(Json.Serialize(ms_list.Select(p=>new { name = p.name, value = p.out_sub_mch_id })))'></div>
                     </div>
@@ -49,17 +37,11 @@
                     <div class="layui-inline">
                         <div type="text" id="staff_id" style="width:200px"></div>
                     </div>
-                    <span class="layui-inline">交易日期：</span>
-                    <div class="layui-inline">
-                        <input type="text" class="layui-input" id="trade_date" style="width:300px">
-                        <input type="hidden" name="start_time" />
-                        <input type="hidden" name="end_time" />
-                    </div>
                 </div>
                 <div style="margin:10px 0 0">
                     <span class="layui-inline">支付渠道：</span>
                     <div class="layui-inline">
-                        <div id="pay_platform" style="width:400px" data-json='@Html.Raw(Json.Serialize(typeof(SubPayPlatform).ToDropdown().Select(p=>new { name=p.Text,value=p.Value})))'></div>
+                        <div id="pay_platform" style="width:200px" data-json='@Html.Raw(Json.Serialize(typeof(SubPayPlatform).ToDropdown().Select(p=>new { name=p.Text,value=p.Value})))'></div>
                     </div>
                     <span class="layui-inline">支付类型：</span>
                     <div class="layui-inline">
@@ -68,6 +50,22 @@
                     <span class="layui-inline">支付状态：</span>
                     <div class="layui-inline">
                         <div id="status" style="width:200px" data-json='@Html.Raw(Json.Serialize(typeof(PayStatus).ToDropdown().Select(p=>new { name=p.Text,value=p.Value})))'></div>
+                    </div>
+                </div>
+                <div style="margin:10px 0 0;">
+                    <span class="layui-inline">交易日期：</span>
+                    <div class="layui-inline width-130" style="margin-right:0px;">
+                        <input type="text" id="_start_date" name="_start_date" value="@DateTime.Now.ToString("yyyy-MM-dd")" autocomplete="off" class="layui-input">
+                    </div>
+                    <div class="layui-inline width-130">
+                        <input type="text" id="_start_time" name="_start_time" value="00:00:00" autocomplete="off" class="layui-input">
+                    </div>
+                    <span class="layui-inline"> - </span>
+                    <div class="layui-inline width-130" style="margin-right:0px;">
+                        <input type="text" id="_end_date" name="_end_date" value="@DateTime.Now.ToString("yyyy-MM-dd")" autocomplete="off" class="layui-input">
+                    </div>
+                    <div class="layui-inline width-130">
+                        <input type="text" id="_end_time" name="_end_time" value="23:59:59" autocomplete="off" class="layui-input">
                     </div>
                     <div class="layui-inline">
                         <button type="submit" class="layui-btn layui-btn-sm"><i class="layui-icon layui-icon-search"></i> 搜索</button>
@@ -218,6 +216,7 @@
                     el: '#out_sub_mch_id',
                     name: 'out_sub_mch_id',
                     radio: true,
+                    clickClose: true,
                     size: 'small',
                     layVerify: 'required',
                     data: $('#out_sub_mch_id').data('json'),
@@ -266,6 +265,7 @@
                 xmSelect.render({
                     el: '#trade_type',
                     radio: true,
+                    clickClose: true,
                     size: 'small',
                     name: 'trade_type',
                     data: $('#trade_type').data('json'),
@@ -273,6 +273,7 @@
                 xmSelect.render({
                     el: '#status',
                     radio: true,
+                    clickClose: true,
                     size: 'small',
                     name: 'status',
                     data: $('#status').data('json'),
@@ -291,13 +292,13 @@
                         [
                             { field: 'sub_pay_platform', title: '支付渠道', width: 120 },
                             { field: 'out_trade_no', title: '流水单号', width: 260 },
-                            { field: 'shop_name', title: '门店名称' },
-                            { title: '订单金额', templet: (d) => d.total_fee.tc(), width: 150, align: 'right' },
-                            { field: 'trade_type', title: '支付类型', width: 120, align: 'center' },
-                            { field: 'trade_state', title: '支付状态', width: 120, align: 'center' },
+                            { field: 'shop_name', title: '门店名称', width: 200 },
+                            { title: '订单金额', templet: (d) => d.total_fee.tc(), width: 110, align: 'right' },
+                            { field: 'trade_type', title: '支付类型', width: 120 },
+                            { field: 'trade_state', title: '支付状态', width: 120 },
                             { align: 'center', title: '创建时间', width: 160, templet: (d) => layui.util.toDateString(d.time_end, 'yyyy-MM-dd HH:mm:ss') },
-                            { field: 'device_id', title: '设备号', width: 200 },
-                            { field: 'staff_name', title: '店员名', width: 120, align: 'center' },
+                            { field: 'device_id', title: '设备号', width: 90, aigen: 'center' },
+                            { field: 'staff_name', title: '店员名', width: 120 },
                             { title: '手续费', templet: (d) => d.poundage.tc(), width: 100, align: 'right' },
                             { title: '操作', align: 'center', templet: '#tool', width: 180 }
                         ]
@@ -306,16 +307,10 @@
                     page: true,
                     id: 'tables'
                 });
-                dt.render({
-                    elem: '#trade_date',
-                    type: 'datetime',
-                    range: '~',
-                    done: (text) => {
-                        var dd = text.split('~');
-                        $('input[name=start_time]').val(dd[0]);
-                        $('input[name=end_time]').val(dd[1]);
-                    }
-                });
+                dt.render({ elem: '#_start_date', type: 'date' });
+                dt.render({ elem: '#_start_time', type: 'time' });
+                dt.render({ elem: '#_end_date', type: 'date' });
+                dt.render({ elem: '#_end_time', type: 'time' });
                 $('#searchform').on('submit', () => {
                     table.reload('tables',
                         {
@@ -357,6 +352,8 @@
                 function data() {
                     var _data = $('#searchform').serializeArray().js();
                     _data['sub_pay_platforms'] = pp.getValue('value');
+                    _data["start_time"] = $.trim($("#_start_date").val() + " " + $("#_start_time").val());
+                    _data["end_time"] = $.trim($("#_end_date").val() + " " + $("#_end_time").val());
                     return _data;
                 }
             });
