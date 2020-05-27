@@ -20,6 +20,7 @@
 <body>
     <div class="login-wall">
         <div class="login-left">
+            <p style="width:550px;text-align:left;font-size:32px;color:#1E9FFF">@Html.Raw(sd.SiteName)</p>
             <div class="login-left-bg"></div>
         </div>
         <div class="login-right">
@@ -38,8 +39,9 @@
         </div>
         <div class="layui-clear"></div>
     </div>
-    <script src="~/themes/layui/layui.js"></script>
-    <script src="~/build/admin/js/login.min.js"></script>
+    <p style="text-align:center;position:absolute;bottom:5%;width:100%">@Html.Raw(sd.SiteCopyright)</p>
+    <script src="~/themes/layui/layui.js" asp-append-version="true"></script>
+    <script src="~/build/admin/js/login.min.js" asp-append-version="true"></script>
     <script>document.getElementById('loginname').focus()</script>
 </body>
 </html>
