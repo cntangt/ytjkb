@@ -72,8 +72,6 @@
                 var pp = xmSelect.render({
                     el: '#pay_platform',
                     size: 'small',
-                    radio: true,
-                    clickClose: true,
                     name: 'sub_pay_platforms',
                     data: $('#pay_platform').data('json'),
                 });
@@ -85,6 +83,7 @@
                     el: '#out_sub_mch_id',
                     name: 'out_sub_mch_id',
                     radio: true,
+                    clickClose: true,
                     size: 'small',
                     layVerify: 'required',
                     data: mp_data,
@@ -124,7 +123,7 @@
                             { field: 'shop_name', title: '门店名称', width: 160 },
                             { field: 'erp_org', title: 'ERP机构', width: 160 },
                             { field: 'count_trade', title: '交易笔数', width: 85 ,align:'right'},
-                            { title: '交易金额', templet: (d) => d.total_refund_fee.tc(), width: 110, align: 'right' },
+                            { title: '交易金额', templet: (d) => d.total_trade_fee.tc(), width: 110, align: 'right' },
                             { field: 'count_refund', title: '退款笔数', width: 85, align: 'right' },
                             { title: '退款金额', templet: (d) => d.total_refund_fee.tc(), width: 110, align: 'right' },
                             { title: '应收金额', templet: (d) => d.receivable_fee.tc(), width: 110, align: 'right' },
