@@ -35,21 +35,21 @@
                     url: '/api/agent/getpages',
                     cols: [
                         [
-                            { type: 'checkbox', fixed: 'left' },
-                            { field: 'loginName', title: '登录账号', fixed: 'left' },
-                            { field: 'name', title: '姓名', fixed: 'left' },
-                            { field: 'level_Name', title: '等级', fixed: 'left' },
-                            { field: 'tel', title: '电话', fixed: 'left', width: 115 },
+                            { type: 'checkbox' },
+                            { field: 'loginName', title: '登录账号', width: 105 },
+                            { field: 'name', title: '姓名', width: 90 },
+                            { field: 'level_Name', title: '等级', align: 'center', width: 90 },
+                            { field: 'tel', title: '电话', align: 'center', width: 115 },
                             {
-                                field: 'wxpay', title: '支付渠道成本（万分之）', fixed: 'left', width: 210, templet: function (d) {
+                                field: 'wxpay', title: '支付渠道成本', width: 260, templet: function (d) {
                                     return "微信:" + d.wxpay + ",支付宝:" + d.alipay + ",其他:" + d.otherpay + "";
                                 }
                             },
-                            { field: 'settle_Name', title: '结算方式', fixed: 'left' },
-                            { field: 'account_No', title: '结算账号', fixed: 'left', width: 120 },
-                            { field: 'business_Area', title: '区域', fixed: 'left' },
-                            { field: 'create_Time', title: '加入时间', fixed: 'left', width: 100, templet: (d) => layui.util.toDateString(d.create_Time, 'yyyy-MM-dd') },
-                            { title: '操作', templet: '#tool', align: 'center',fixed: 'left', width: 165 }
+                            { field: 'settle_Name', title: '结算方式', width: 110 },
+                            { field: 'account_No', title: '结算账号', width: 120 },
+                            { field: 'business_Area', title: '区域', width: 120 },
+                            { field: 'create_Time', title: '加入时间', width: 100, templet: (d) => layui.util.toDateString(d.create_Time, 'yyyy-MM-dd') },
+                            { title: '操作', templet: '#tool', align: 'center', width: 165 }
                         ]
                     ],
                     page: true,

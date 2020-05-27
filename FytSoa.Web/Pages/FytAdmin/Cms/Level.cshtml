@@ -29,8 +29,8 @@
                     url: '/api/level/getpages',
                     cols: [
                         [
-                            { type: 'checkbox', fixed: 'left' },
-                            { field: 'name', title: '等级名称', fixed: 'left' },
+                            { type: 'checkbox' },
+                            { field: 'name', title: '等级名称' },
                             { title: '微信渠道成本', templet: '<s>{{ toper(d.wxpay) }}</s>' },
                             { title: '支付宝渠道成本', templet: '<s>{{ toper(d.alipay) }}</s>' },
                             { title: '其它渠道成本', templet: '<s>{{ toper(d.otherpay) }}</s>' },

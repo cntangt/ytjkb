@@ -40,22 +40,18 @@
                     cols: [
                         [
                             { type: 'checkbox' },
-                            { field: 'admin_name', title: '登录账号', width: 120 },
-                            { field: 'name', title: '商户名称' },
-                            { field: 'contact', title: '联系人' },
-                            { field: 'tel', title: '联系电话', width: 120 },
-                            //{ field: 'email', title: '电子邮箱' },
-                            //{ field: 'appid', title: '公众号AppId' },
+                            { field: 'admin_name', title: '登录账号', width: 105 },
+                            { field: 'name', title: '商户名称', width: 180 },
+                            { field: 'contact', title: '联系人', width: 90 },
+                            { field: 'tel', title: '联系电话', width: 115, align: 'center' },
                             { field: 'agent_admin_name', title: '代理商', width: 120 },
-                            { field: 'out_sub_mch_id', title: '商户子账号' },
-                            //{ field: 'order_perfix', title: '订单前缀', width: 100 },
-                            //{ field: 'authen_key', title: '认证密钥' },
+                            { field: 'out_sub_mch_id', title: '商户子账号', width: 180 },
                             { title: '微信', templet: '<s>{{ toper(d.wxpay) }}</s>', align: 'center', width: 80 },
                             { title: '支付宝', templet: '<s>{{ toper(d.alipay) }}</s>', align: 'center', width: 80 },
                             { title: '微(代)', templet: '<s>{{ toper(d.agent_wxpay) }}</s>', align: 'center', width: 80 },
                             { title: '支(代)', templet: '<s>{{ toper(d.agent_alipay) }}</s>', align: 'center', width: 80 },
                             { title: '状态', templet: tostatus, align: 'center', width: 60 },
-                            { align: 'center', title: '创建时间', width: 160, templet: (d) => layui.util.toDateString(d.create_time, 'yyyy-MM-dd HH:mm:ss') },
+                            { align: 'center', title: '创建时间', width: 100, templet: (d) => layui.util.toDateString(d.create_time, 'yyyy-MM-dd') },
                             { width: 240, title: '操作', templet: '#tool', align: 'center' }
                         ]
                     ],

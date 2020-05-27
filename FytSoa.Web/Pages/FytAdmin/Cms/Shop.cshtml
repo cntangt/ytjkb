@@ -37,13 +37,13 @@
                     url: '/api/shop/getpages',
                     cols: [
                         [
-                            { field: 'out_mch_name', title: '商家名称' },
-                            { field: 'out_shop_id', title: '门店编号' },
-                            { field: 'erp_org', title: 'ERP机构' },
-                            { field: 'shop_name', title: '门店名称' },
-                            { field: 'address', title: '门店详细地址' },
-                            { field: 'phone', title: '联系电话', align: 'center', width: 160 },
-                            { align: 'center', title: '创建时间', templet: '<s>{{ layui.util.toDateString(d.create_time, "yyyy-MM-dd HH:mm:ss") }}</s>', width: 160 },
+                            { field: 'out_mch_name', title: '商家名称', width: 180 },
+                            { field: 'out_shop_id', title: '门店编号', width: 200 },
+                            { field: 'erp_org', title: 'ERP机构', align: 'center', width: 90 },
+                            { field: 'shop_name', title: '门店名称', width: 200 },
+                            { field: 'address', title: '门店详细地址', width: 150 },
+                            { field: 'phone', title: '联系电话', align: 'center', width: 115 },
+                            { align: 'center', title: '创建时间', templet: '<s>{{ layui.util.toDateString(d.create_time, "yyyy-MM-dd") }}</s>', width: 110 },
                             { width: 260, title: '操作', templet: '#tool', align: 'center' }
                         ]
                     ],
