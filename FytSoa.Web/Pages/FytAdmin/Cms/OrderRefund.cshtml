@@ -185,7 +185,7 @@
                     clickClose: true,
                     filterable: true,
                     remoteSearch: true,
-                    remoteMethod: (val, cb, show) => os.ajax('api/shop/getshopbymch', { key: val, out_sub_mch_id: pp.getValue('valueStr') }, (res) => cb(res)),
+                    remoteMethod: (val, cb, show) => os.ajax('api/shop/getshopbymch', { key: val, out_sub_mch_id: mp.getValue('valueStr') }, (res) => cb(res)),
                     on: (e) => {
                         if (e.arr.length) {
                             os.ajax('api/shop/getstaffbyshop', { out_sub_mch_id: mp.getValue('valueStr'), out_shop_id: e.arr[0].value }, (res) => sf.update({ data: res }));

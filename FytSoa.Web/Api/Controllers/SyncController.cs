@@ -331,5 +331,73 @@ namespace FytSoa.Api.Controllers
             var res = await cmsDaily.GetShopDailyReport(req);
             return Ok(new { code = 0, msg = "success", count = res.data.TotalItems, data = res.data.Items });
         }
+
+        public async Task<IActionResult> DailyReportExport(string q)
+        {
+            var req = JsonConvert.DeserializeObject<QueryOrderListRequest>(q);
+
+            req.page_size = int.MaxValue;
+
+            var res = await cmsDaily.GetShopDailyReport(req);
+
+            if (res.data.Items.Count == 0)
+            {
+                return Content("没有数据");
+            }
+
+            var data = await res.data.Items.Write("门店日报表",
+                p => ("退款时间", p.business_date.ToString("yyyy-MM月-日")),
+                p => ("门店名称", p.shop_name),
+                p => ("ERP机构", p.erp_org),
+                p => ("交易笔数", p.count_trade),
+                p => ("交易金额", p.total_trade_fee.TC()),
+                p => ("退款笔数", p.count_refund),
+                p => ("退款金额", p.total_refund_fee.TC()),
+                p => ("应收金额", p.receivable_fee.TC()),
+                p => ("优惠金额", p.discount_fee.TC()),
+                p => ("手续费", p.poundage_fee.TC()),
+                p => ("结算金额", p.settlement_fee.TC()));
+
+            return File(
+                data,
+                "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+                "门店日报表.xlsx"
+            );
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> TradeSummary(QueryOrderListRequest req)
+        {
+            var res = await cmsDaily.GetAgentTradeSummary(req);
+            return Ok(new { code = 0, msg = "success", count = res.data.TotalItems, data = res.data.Items });
+        }
+
+        public async Task<IActionResult> TradeSummaryExport(string q)
+        {
+            var req = JsonConvert.DeserializeObject<QueryOrderListRequest>(q);
+
+            req.page_size = int.MaxValue;
+
+            var res = await cmsDaily.GetAgentTradeSummary(req);
+
+            if (res.data.Items.Count == 0)
+            {
+                return Content("没有数据");
+            }
+
+            var data = await res.data.Items.Write("代理商交易统计",
+                p => ("商户名称", p.shop_name),
+                p => ("交易笔数", p.count_trade),
+                p => ("交易金额", p.total_trade_fee.TC()),
+                p => ("退款笔数", p.count_refund),
+                p => ("退款金额", p.total_refund_fee.TC()),
+                p => ("交易净额", p.receivable_fee.TC()));
+
+            return File(
+                data,
+                "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+                "代理商交易统计.xlsx"
+            );
+        }
     }
 }
