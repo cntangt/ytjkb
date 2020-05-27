@@ -156,17 +156,13 @@
                     name: 'sub_pay_platforms',
                     data: $('#pay_platform').data('json'),
                 });
-                var mp_data = $('#out_sub_mch_id').data('json');
-                if (mp_data.length) {
-                    mp_data[0].selected = true;
-                }
                 var mp = xmSelect.render({
                     el: '#out_sub_mch_id',
                     name: 'out_sub_mch_id',
                     radio: true,
                     size: 'small',
                     layVerify: 'required',
-                    data: mp_data,
+                    data: $('#out_sub_mch_id').data('json'),
                     on: (e) => {
                         if (e.arr.length) {
                             var out_sub_mch_id = e.arr[0].value;
@@ -241,7 +237,7 @@
                             { field: 'shop_name', title: '门店名称' },
                             { title: '订单金额', templet: (d) => d.total_fee.tc(), width: 150, align: 'right' },
                             { title: '退款金额', templet: (d) => d.refund_fee.tc(), width: 150, align: 'right' },
-                            { field: 'record_refund_state', title: '退款状态', width: 120, align: 'center' },
+                            { field: 'refund_state', title: '退款状态', width: 120, align: 'center' },
                             { align: 'center', title: '退款时间', width: 160, templet: (d) => layui.util.toDateString(d.last_update_time, 'yyyy-MM-dd HH:mm:ss') },
                             { field: 'device_id', title: '设备号', width: 200 },
                             { field: 'staff_name', title: '店员名', width: 120, align: 'center' },

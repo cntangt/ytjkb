@@ -52,5 +52,20 @@ namespace FytSoa.Core.Model.Wx
         public bool is_deposit_mode { get; set; }
         public string out_freeze_no { get; set; }
         public long freeze_fee { get; set; }
+        public string refund_state
+        {
+            get
+            {
+                switch (sub_pay_platform)
+                {
+                    case SubPayPlatform.普通微信支付:
+                        return wxpay_refund_state.ToString();
+                    case SubPayPlatform.普通支付宝:
+                        return alipay_refund_state.ToString();
+                    default:
+                        return record_refund_state.ToString();
+                }
+            }
+        }
     }
 }

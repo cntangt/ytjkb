@@ -66,6 +66,16 @@
         订单不存在 = 5
     }
 
+    public enum AlipayOrderState
+    {
+        订单初始态 = 1,
+        成功 = 2,
+        等待用户支付 = 4,
+        已关闭或者已退款 = 5,
+        交易结束_不可退款 = 6,
+        订单不存在 = 7
+    }
+
     public enum WxpayOrderState
     {
         订单初始态 = 1,
