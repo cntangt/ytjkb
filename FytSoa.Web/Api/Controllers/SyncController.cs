@@ -180,7 +180,7 @@ namespace FytSoa.Api.Controllers
             if (mch == null || mch.data == null || mch.data.id == 0)
             {
                 res.Code = ApiEnum.Error;
-                res.Msg = "请选择子商户查询";
+                res.Msg = "请选择商户查询";
                 return res;
             }
 
@@ -237,7 +237,7 @@ namespace FytSoa.Api.Controllers
             if (mch == null || mch.data == null || mch.data.id == 0)
             {
                 res.Code = ApiEnum.Error;
-                res.Msg = "请选择子商户查询";
+                res.Msg = "请选择商户查询";
                 return res;
             }
 
