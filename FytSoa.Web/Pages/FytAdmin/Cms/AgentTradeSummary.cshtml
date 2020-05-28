@@ -9,7 +9,7 @@
     var isSys = await HttpContext.IsSystem();
     var admin_guid = await HttpContext.LoginUserId();
     var admin = await adminservice.GetModelAsync(p => p.Guid == admin_guid);
-    var ms_list = (await ms.GetListAsync(p => (isSys || p.admin_guid == admin_guid || p.admin_guid == admin.data.CreateBy) && p.status, p => p.id, Common.DbOrderEnum.Asc)).data;
+    var ms_list = (await ms.GetListAsync(p => (isSys || p.admin_guid == admin_guid || p.agent_admin_guid == admin_guid || p.admin_guid == admin.data.CreateBy) && p.status, p => p.id, Common.DbOrderEnum.Asc)).data;
     var def_date = DateTime.Now.AddDays(-1).ToString("yyyy-MM-dd");
 }
 @section styles{
