@@ -57,25 +57,30 @@ namespace FytSoa.Service.Implements
 
         public override async Task<ApiResult<Page<ShopInfo>>> GetPagesAsync(PageParm parm, bool Async = true)
         {
+            var role_info = await roleService.GetRoleByAdminGuid(parm.CreateBy);
+
             var res = new ApiResult<Page<ShopInfo>>();
 
-            var query = Db.Queryable<ShopInfo>();
-
-            if (!string.IsNullOrEmpty(parm.CreateBy) || !string.IsNullOrEmpty(parm.key))
+            var query = Db.Queryable<ShopInfo, CmsMerchant, AdminShopRel>((shop, mch, rel) =>
+                new JoinQueryInfos(JoinType.Left, shop.out_sub_mch_id == mch.out_sub_mch_id, JoinType.Left, shop.out_shop_id == rel.out_shop_id));
+            if (role_info.isSystem)
             {
-                var mchs = Db.Queryable<CmsMerchant>()
-                    .WhereIF(!string.IsNullOrEmpty(parm.key), p => p.out_sub_mch_id == parm.key)
-                    .WhereIF(!string.IsNullOrEmpty(parm.CreateBy), p => p.agent_admin_guid == parm.CreateBy)
-                    .Select(p => p.out_sub_mch_id)
-                    .ToList();
-
-                if (mchs.Count == 0)
-                {
-                    mchs.Add("-");
-                }
-
-                query.In(p => p.out_sub_mch_id, mchs);
+                //管理员不需要过滤
             }
+            else if (role_info.isAgent)
+            {
+                query.Where((shop, mch, rel) => mch.agent_admin_guid == parm.CreateBy);
+            }
+            else if (role_info.isSubAdmin)
+            {
+                query.Where((shop, mch, rel) => mch.admin_guid == parm.CreateBy);
+            }
+            else // 普通员工
+            {
+                query.Where((shop, mch, rel) => rel.admin_guid == parm.CreateBy);
+            }
+
+            query.WhereIF(!string.IsNullOrEmpty(parm.key), (shop, mch, rel) => shop.out_sub_mch_id == parm.key);
 
             var data = await query.ToPageAsync(parm.page, parm.limit);
 
