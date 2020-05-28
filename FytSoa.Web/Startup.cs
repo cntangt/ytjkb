@@ -1,3 +1,4 @@
+using BotDetect.Web;
 using FytSoa.Extensions;
 using FytSoa.Tasks;
 using Microsoft.AspNetCore.Authentication.Cookies;
@@ -88,6 +89,7 @@ namespace FytSoa.Web
                 .AddSingleton(GetScheduler())
                 .AddResponseCompression()
                 .AddHttpClient()
+                .AddSingleton<IHttpContextAccessor, HttpContextAccessor>()
                 .AddCors(c =>
                 {
                     c.AddPolicy("Any", policy =>
@@ -103,6 +105,7 @@ namespace FytSoa.Web
                     p.EnableEndpointRouting = false;
                 })
                 .AddNewtonsoftJson();
+            services.Configure<IISServerOptions>(option => option.AllowSynchronousIO = true);
         }
 
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env, ILoggerFactory loggerFactory)
@@ -124,6 +127,8 @@ namespace FytSoa.Web
             LogManager.LoadConfiguration("nlog.config").GetCurrentClassLogger();
             LogManager.Configuration.Variables["connectionString"] = config["DBConnection:MySqlConnectionString"];
             Encoding.RegisterProvider(CodePagesEncodingProvider.Instance);  //避免日志中的中文输出乱码
+
+            app.UseSimpleCaptcha(config.GetSection("BotDetect"));
 
             app.UseAuthentication(); // 认证
             app.UseResponseCompression(); //性能压缩

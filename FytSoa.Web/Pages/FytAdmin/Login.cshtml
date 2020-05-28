@@ -30,6 +30,8 @@
                 <div class="cell"><span class="icon-user"></span><input type="text" name="loginname" id="loginname" lay-verify="required" lay-verType="tips" placeholder="登录账号"></div>
                 <div class="cell"><span class="icon-pwd"></span><input type="password" name="password" id="password" lay-verify="required" lay-verType="tips" placeholder="登录密码"></div>
                 <div class="login-tip"><span></span></div>
+                <div id="botdetect-captcha" data-captchastylename="LoginCaptchaStyle"></div>
+                <input id="code" type="text" />
                 <div class="login-btn">
                     <button class="layui-btn layui-btn-normal" lay-submit="" lay-filter="loginsub">登录</button>
                     <button type="button" class="layui-btn layui-btn-danger">重置</button>
@@ -42,6 +44,16 @@
     <p style="text-align:center;position:absolute;bottom:5%;width:100%">@Html.Raw(sd.SiteCopyright)</p>
     <script src="~/themes/layui/layui.js" asp-append-version="true"></script>
     <script src="~/build/admin/js/login.min.js" asp-append-version="true"></script>
-    <script>document.getElementById('loginname').focus()</script>
+    <script src="https://cdn.bootcdn.net/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
+    <script src="~/themes/js/jquery-captcha.min.js" asp-append-version="true"></script>
+    <script>
+        $(() => {
+            document.getElementById('loginname').focus();
+            var captcha = $('#botdetect-captcha').captcha({ captchaEndpoint: '/captcha.ashx' });
+            $('#botdetect-captcha').on('click', '#LoginCaptchaStyle_CaptchaImage_HelpLink', function () {
+                captcha.reloadImage();
+                return false;
+            })
+        });</script>
 </body>
 </html>
