@@ -56,14 +56,14 @@
                 <div style="margin:10px 0 0;">
                     <span class="layui-inline">交易日期：</span>
                     <div class="layui-inline width-130" style="margin-right:0px;">
-                        <input type="text" id="_start_date" name="_start_date" value="@DateTime.Now.ToString("yyyy-MM-dd")" autocomplete="off" class="layui-input">
+                        <input type="text" id="_start_date" name="_start_date" value="@def_date" autocomplete="off" class="layui-input">
                     </div>
                     <div class="layui-inline width-130">
                         <input type="text" id="_start_time" name="_start_time" value="00:00:00" autocomplete="off" class="layui-input">
                     </div>
                     <span class="layui-inline"> - </span>
                     <div class="layui-inline width-130" style="margin-right:0px;">
-                        <input type="text" id="_end_date" name="_end_date" value="@DateTime.Now.ToString("yyyy-MM-dd")" autocomplete="off" class="layui-input">
+                        <input type="text" id="_end_date" name="_end_date" value="@def_date" autocomplete="off" class="layui-input">
                     </div>
                     <div class="layui-inline width-130">
                         <input type="text" id="_end_time" name="_end_time" value="23:59:59" autocomplete="off" class="layui-input">
@@ -273,6 +273,14 @@
                 function data() {
                     var _data = $('#searchform').serializeArray().js();
                     _data['sub_pay_platforms'] = pp.getValue('value');
+
+                    if ($.trim($("#_start_date").val()).length == 0) {
+                        $("#_start_date").val('@def_date');
+                    }
+                    if ($.trim($("#_end_date").val()).length == 0) {
+                        $("#_end_date").val('@def_date');
+                    }
+
                     _data["start_time"] = $.trim($("#_start_date").val() + " " + $("#_start_time").val());
                     _data["end_time"] = $.trim($("#_end_date").val() + " " + $("#_end_time").val());
                     return _data;

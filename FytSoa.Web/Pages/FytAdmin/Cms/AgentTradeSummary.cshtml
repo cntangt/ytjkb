@@ -123,6 +123,16 @@
                 function data() {
                     var _data = $('#searchform').serializeArray().js();
                     _data['sub_pay_platforms'] = pp.getValue('value');
+
+                    if ($.trim(_data['start_time']).length == 0) {
+                        _data['start_time'] = '@def_date';
+                        $("#start_time").val('@def_date');
+                    }
+                    if ($.trim(_data['end_time']).length == 0) {
+                        _data['end_time'] = '@def_date';
+                        $("#end_time").val('@def_date');
+                    }
+
                     return _data;
                 }
             });
