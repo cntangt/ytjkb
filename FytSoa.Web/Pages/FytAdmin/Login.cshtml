@@ -16,6 +16,9 @@
     <link rel="stylesheet" href="~/themes/layui/css/layui.css" asp-append-version="true" />
     <link rel="stylesheet" href="~/build/admin/css/login.min.css" asp-append-version="true">
     <title>@sd.SeoTitle - @sd.SiteName</title>
+    <style type="text/css">
+        .cr a { color: #337ab7 !important; }
+    </style>
 </head>
 <body>
     <div class="login-wall">
@@ -39,7 +42,7 @@
         </div>
         <div class="layui-clear"></div>
     </div>
-    <p style="text-align:center;position:absolute;bottom:5%;width:100%">@Html.Raw(sd.SiteCopyright)</p>
+    <p class="cr" style="text-align:center;position:absolute;bottom:5%;width:100%">@Html.Raw(sd.SiteCopyright)</p>
     <script src="~/themes/layui/layui.js" asp-append-version="true"></script>
     <script src="~/build/admin/js/login.min.js" asp-append-version="true"></script>
     <script>document.getElementById('loginname').focus()</script>
