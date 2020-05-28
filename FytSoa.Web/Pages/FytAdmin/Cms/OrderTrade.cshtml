@@ -10,6 +10,7 @@
     var admin_guid = await HttpContext.LoginUserId();
     var admin = await adminservice.GetModelAsync(p => p.Guid == admin_guid);
     var ms_list = (await ms.GetListAsync(p => (isSys || p.admin_guid == admin_guid || p.admin_guid == admin.data.CreateBy) && p.status, p => p.id, Common.DbOrderEnum.Asc)).data;
+    var def_date = DateTime.Now.ToString("yyyy-MM-dd");
 }
 @section styles{
     <style>
@@ -307,9 +308,9 @@
                     page: true,
                     id: 'tables'
                 });
-                dt.render({ elem: '#_start_date', type: 'date' });
+                dt.render({ elem: '#_start_date', type: 'date', max: '@def_date' });
                 dt.render({ elem: '#_start_time', type: 'time' });
-                dt.render({ elem: '#_end_date', type: 'date' });
+                dt.render({ elem: '#_end_date', type: 'date', max: '@def_date' });
                 dt.render({ elem: '#_end_time', type: 'time' });
                 $('#searchform').on('submit', () => {
                     table.reload('tables',
