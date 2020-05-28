@@ -27,10 +27,7 @@ namespace FytSoa.Api.Controllers.Cms
         [HttpGet("getpages")]
         public async Task<IActionResult> GetPages([FromQuery]PageParm parm)
         {
-            if (!await HttpContext.IsSystem())
-            {
-                parm.CreateBy = await HttpContext.LoginUserId();
-            }
+            parm.CreateBy = await HttpContext.LoginUserId();
 
             var res = await shopService.GetPagesAsync(parm);
 

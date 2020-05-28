@@ -10,6 +10,7 @@
     var admin_guid = await HttpContext.LoginUserId();
     var admin = await adminservice.GetModelAsync(p => p.Guid == admin_guid);
     var ms_list = (await ms.GetListAsync(p => (isSys || p.admin_guid == admin_guid || p.admin_guid == admin.data.CreateBy) && p.status, p => p.id, Common.DbOrderEnum.Asc)).data;
+    var def_date = DateTime.Now.AddDays(-1).ToString("yyyy-MM-dd");
 }
 @section styles{
     <style>
@@ -40,18 +41,12 @@
                 </div>
                 <div style="margin:10px 0 0;">
                     <span class="layui-inline">交易日期：</span>
-                    <div class="layui-inline width-130" style="margin-right:0px;">
-                        <input type="text" id="_start_date" name="_start_date" value="@DateTime.Now.ToString("yyyy-MM-dd")" autocomplete="off" class="layui-input">
-                    </div>
-                    <div class="layui-inline width-130">
-                        <input type="text" id="_start_time" name="_start_time" value="00:00:00" autocomplete="off" class="layui-input">
+                    <div class="layui-inline">
+                        <input type="text" id="start_time" name="start_time" value="@def_date" autocomplete="off" class="layui-input">
                     </div>
                     <span class="layui-inline"> - </span>
-                    <div class="layui-inline width-130" style="margin-right:0px;">
-                        <input type="text" id="_end_date" name="_end_date" value="@DateTime.Now.ToString("yyyy-MM-dd")" autocomplete="off" class="layui-input">
-                    </div>
-                    <div class="layui-inline width-130">
-                        <input type="text" id="_end_time" name="_end_time" value="23:59:59" autocomplete="off" class="layui-input">
+                    <div class="layui-inline" style="margin-right:15px;">
+                        <input type="text" id="end_time" name="end_time" value="@def_date" autocomplete="off" class="layui-input">
                     </div>
                     <div class="layui-inline">
                         <button type="submit" class="layui-btn layui-btn-sm"><i class="layui-icon layui-icon-search"></i> 搜索</button>
@@ -143,10 +138,8 @@
                     page: true,
                     id: 'tables'
                 });
-                dt.render({ elem: '#_start_date', type: 'date' });
-                dt.render({ elem: '#_start_time', type: 'time' });
-                dt.render({ elem: '#_end_date', type: 'date' });
-                dt.render({ elem: '#_end_time', type: 'time' });
+                dt.render({ elem: '#start_time', type: 'date', max: '@def_date' });
+                dt.render({ elem: '#end_time', type: 'date', max: '@def_date' });
                 $('#searchform').on('submit', () => {
                     table.reload('tables',
                         {
@@ -163,8 +156,16 @@
                 function data() {
                     var _data = $('#searchform').serializeArray().js();
                     _data['sub_pay_platforms'] = pp.getValue('value');
-                    _data["start_time"] = $.trim($("#_start_date").val() + " " + $("#_start_time").val());
-                    _data["end_time"] = $.trim($("#_end_date").val() + " " + $("#_end_time").val());
+
+                    if ($.trim(_data['start_time']).length == 0) {
+                        _data['start_time'] = '@def_date';
+                        $("#start_time").val('@def_date');
+                    }
+                    if ($.trim(_data['end_time']).length == 0) {
+                        _data['end_time'] = '@def_date';
+                        $("#end_time").val('@def_date');
+                    }
+
                     return _data;
                 }
             });

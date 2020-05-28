@@ -429,7 +429,7 @@ namespace FytSoa.Service.Implements
                 await Db.Insertable(parm.shopList.Select(t => new AdminShopRel
                 {
                     admin_guid = parm.admin_guid,
-                    out_shop_id = t.shop_id,
+                    out_shop_id = t.out_shop_id,
                     out_mch_id = t.out_mch_id,
                     out_sub_mch_id = t.out_sub_mch_id
                 }).ToList()).ExecuteCommandAsync();

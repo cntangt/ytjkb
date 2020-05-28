@@ -61,13 +61,13 @@ namespace FytSoa.Service.Implements
 
             if (res.data.Items.Count > 0)
             {
-                var ids1 = res.data.Items.Select(p => p.admin_guid);
-                var ids2 = res.data.Items.Select(p => p.agent_admin_guid);
+                var ids1 = res.data.Items.Select(p => p.admin_guid).ToArray();
+                var ids2 = res.data.Items.Select(p => p.agent_admin_guid).ToArray();
 
-                var ids = ids1.Concat(ids2).ToArray();
+                var admins = await Db.Queryable<SysAdmin>().In(p => p.Guid, ids1).ToListAsync();
+                var agents = await Db.Queryable<CmsAgent>().In(p => p.Admin_Guid, ids2).ToListAsync();
 
-                var admins = await Db.Queryable<SysAdmin>().In(p => p.Guid, ids).ToListAsync();
-                if (admins.Count > 0)
+                if (admins.Count > 0 || agents.Count > 0)
                 {
                     res.data.Items.ForEach(p =>
                     {
@@ -77,10 +77,10 @@ namespace FytSoa.Service.Implements
                             p.admin_name = admin.LoginName;
                         }
 
-                        var agent = admins.FirstOrDefault(a => a.Guid == p.agent_admin_guid);
+                        var agent = agents.FirstOrDefault(a => a.Admin_Guid == p.agent_admin_guid);
                         if (agent != null)
                         {
-                            p.agent_admin_name = agent.TrueName;
+                            p.agent_admin_name = agent.Name;
                         }
                     });
                 }
