@@ -40,7 +40,7 @@
             </div>
         </div>
         <div class="layui-form-item">
-            <label class="layui-form-label">接收子商户</label>
+            <label class="layui-form-label">接收商户</label>
             <div class="layui-input-block">
                 <div class="input-tags sub-merchant">
                     <span class="layui-badge layui-bg-gray tags"
@@ -157,7 +157,7 @@
                         });
                         $('.sub-merchant').click(function () {
                             var frameId = window.frameElement && window.frameElement.id || '';
-                            os.Open('子商户', '/fytadmin/sys/noticemodifytomerchant?frameid=' + frameId + '&merchant=' + escape(JSON.stringify(vm.m.merchantList)), '600px', '500px');
+                            os.Open('商户', '/fytadmin/sys/noticemodifytomerchant?frameid=' + frameId + '&merchant=' + escape(JSON.stringify(vm.m.merchantList)), '600px', '500px');
                         });
                     },
                     saveAgent(list) {
