@@ -259,26 +259,41 @@ namespace FytSoa.Service.Implements
         {
             var res = new ApiResult<Page<CmsDailySettlement>>();
 
-            var query = Db.Queryable<CmsDailySettlement>()
-                .WhereIF(!string.IsNullOrEmpty(parm.out_sub_mch_id), t => t.out_sub_mch_id == parm.out_sub_mch_id)
-                .WhereIF(!string.IsNullOrEmpty(parm.out_shop_id), t => t.out_shop_id == parm.out_shop_id)
-                .WhereIF(parm.sub_pay_platforms.Length > 0, t => parm.sub_pay_platforms.Contains(t.sub_pay_platform))
-                .WhereIF(parm.start_time != null, t => t.business_date >= parm.start_time)
-                .WhereIF(parm.end_time != null, t => t.business_date <= parm.end_time);
+            var role_info = await roleService.GetRoleByAdminGuid(parm.createby);
 
-            var data = await query.Select(t => new CmsDailySettlement
+            var query = Db.Queryable<CmsDailySettlement, AdminShopRel>((ds, rel) => new object[] { JoinType.Left, ds.out_shop_id == rel.out_shop_id });
+
+            if (role_info.isSystem || role_info.isAgent || role_info.isSubAdmin)
             {
-                business_date = t.business_date,
-                out_shop_id = t.out_shop_id,
-                count_trade = SqlFunc.AggregateSum(t.count_trade),
-                total_trade_fee = SqlFunc.AggregateSum(t.total_trade_fee),
-                count_refund = SqlFunc.AggregateSum(t.count_refund),
-                total_refund_fee = SqlFunc.AggregateSum(t.total_refund_fee),
-                receivable_fee = SqlFunc.AggregateSum(t.receivable_fee),
-                discount_fee = SqlFunc.AggregateSum(t.discount_fee),
-                poundage_fee = SqlFunc.AggregateSum(t.poundage_fee),
-                settlement_fee = SqlFunc.AggregateSum(t.settlement_fee)
-            }).GroupBy(t => new { t.business_date, t.out_shop_id }).ToPageAsync(parm.page_num, parm.page_size);
+                //管理员不需要过滤
+                //代理商没有该权限
+                //商户管理员不过滤
+            }
+            else // 门店普通员工
+            {
+                query.Where((ds, rel) => rel.admin_guid == parm.createby);
+            }
+
+            
+            query.WhereIF(!string.IsNullOrEmpty(parm.out_sub_mch_id), (ds,rel) => ds.out_sub_mch_id == parm.out_sub_mch_id)
+                .WhereIF(!string.IsNullOrEmpty(parm.out_shop_id), (ds, rel) => ds.out_shop_id == parm.out_shop_id)
+                .WhereIF(parm.sub_pay_platforms.Length > 0, (ds, rel) => parm.sub_pay_platforms.Contains(ds.sub_pay_platform))
+                .WhereIF(parm.start_time != null, (ds, rel) => ds.business_date >= parm.start_time)
+                .WhereIF(parm.end_time != null, (ds, rel) => ds.business_date <= parm.end_time);
+
+            var data = await query.Select((ds,rel) => new CmsDailySettlement
+            {
+                business_date = ds.business_date,
+                out_shop_id = ds.out_shop_id,
+                count_trade = SqlFunc.AggregateSum(ds.count_trade),
+                total_trade_fee = SqlFunc.AggregateSum(ds.total_trade_fee),
+                count_refund = SqlFunc.AggregateSum(ds.count_refund),
+                total_refund_fee = SqlFunc.AggregateSum(ds.total_refund_fee),
+                receivable_fee = SqlFunc.AggregateSum(ds.receivable_fee),
+                discount_fee = SqlFunc.AggregateSum(ds.discount_fee),
+                poundage_fee = SqlFunc.AggregateSum(ds.poundage_fee),
+                settlement_fee = SqlFunc.AggregateSum(ds.settlement_fee)
+            }).GroupBy(ds => new { ds.business_date, ds.out_shop_id }).ToPageAsync(parm.page_num, parm.page_size);
 
             if (data.Items.Count > 0)
             {
