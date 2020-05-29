@@ -207,7 +207,7 @@
                     clickClose: true,
                     filterable: true,
                     remoteSearch: true,
-                    //remoteMethod: (val, cb, show) => os.ajax('api/shop/getstaffbyshop', { key: val, out_sub_mch_id: pp.getValue('valueStr'), out_shop_id: sp.getValue('valueStr') }, (res) => cb(res)),
+                    remoteMethod: (val, cb, show) => os.ajax('api/shop/getstaffbyshop', { key: val, out_sub_mch_id: mp.getValue('valueStr'), out_shop_id: sp.getValue('valueStr') }, (res) => cb(res)),
                 });
                 xmSelect.render({
                     el: '#trade_type',
