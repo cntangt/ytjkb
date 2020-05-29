@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Security.Claims;
 using System.Threading.Tasks;
+using BotDetect.Web;
 using FytSoa.Common;
 using FytSoa.Core.Model.Cms;
 using FytSoa.Core.Model.Sys;
@@ -142,16 +143,15 @@ namespace FytSoa.Api.Controllers
         [AllowAnonymous]
         public async Task<IActionResult> Login([FromBody]SysAdminLogin parm)
         {
-            var apiRes = new ApiResult<string>() { statusCode = (int)ApiEnum.HttpRequestError };
-            var token = "";
+            var res = new ApiResult<string>() { statusCode = (int)ApiEnum.HttpRequestError };
             try
             {
                 //获得公钥私钥，解密
                 var rsaKey = await _cache.GetAsync<List<string>>("LOGINKEY");
                 if (rsaKey == null)
                 {
-                    apiRes.message = "登录失败，请刷新浏览器再次登录";
-                    return Ok(apiRes);
+                    res.message = "登录失败，请刷新浏览器再次登录";
+                    return Ok(res);
                 }
                 //Ras解密密码
                 var ras = new RSACrypt(rsaKey[0], rsaKey[1]);
@@ -166,8 +166,8 @@ namespace FytSoa.Api.Controllers
                     //说明存在过期时间，需要判断
                     if (DateTime.Now <= loginConfig.DelayMinute)
                     {
-                        apiRes.message = "您的登录以超过设定次数，请稍后再次登录~";
-                        return Ok(apiRes);
+                        res.message = "您的登录以超过设定次数，请稍后再次登录~";
+                        return Ok(res);
                     }
                     else
                     {
@@ -176,6 +176,19 @@ namespace FytSoa.Api.Controllers
                         loginConfig.DelayMinute = null;
                     }
                 }
+
+                #region 验证码
+
+                var captcha = new SimpleCaptcha();
+                if (!captcha.Validate(parm.code, parm.cid))
+                {
+                    res.message = "验证码错误";
+                    res.statusCode = (int)ApiEnum.ParameterError;
+                    return Ok(res);
+                }
+
+                #endregion
+
                 //查询登录结果
                 var dbres = await _adminService.LoginAsync(parm);
                 if (dbres.statusCode != 200)
@@ -188,14 +201,14 @@ namespace FytSoa.Api.Controllers
                         var configDelayMinute = Convert.ToInt32(_config[KeyHelper.LOGINDELAYMINUTE]);
                         //记录过期时间
                         loginConfig.DelayMinute = DateTime.Now.AddMinutes(configDelayMinute);
-                        apiRes.message = "登录次数超过" + configLoginCount + "次，请" + configDelayMinute + "分钟后再次登录";
-                        return Ok(apiRes);
+                        res.message = "登录次数超过" + configLoginCount + "次，请" + configDelayMinute + "分钟后再次登录";
+                        return Ok(res);
                     }
                     //记录登录次数，保存到session
                     await _cache.SetAsync(KeyHelper.LOGINCOUNT, loginConfig);
                     //提示用户错误和登录次数信息
-                    apiRes.message = dbres.message + "　　您还剩余" + (configLoginCount - loginConfig.Count) + "登录次数";
-                    return Ok(apiRes);
+                    res.message = dbres.message + "　　您还剩余" + (configLoginCount - loginConfig.Count) + "登录次数";
+                    return Ok(res);
                 }
 
                 var user = dbres.data.admin;
@@ -237,7 +250,7 @@ namespace FytSoa.Api.Controllers
                 //把权限存到缓存里
                 await _cache.SetAsync(KeyHelper.ADMINMENU + "_" + dbres.data.admin.Guid, dbres.data.menu);
 
-                token = JwtHelper.IssueJWT(new TokenModel()
+                res.data = JwtHelper.IssueJWT(new TokenModel()
                 {
                     Uid = user.Guid,
                     UserName = user.LoginName,
@@ -266,8 +279,8 @@ namespace FytSoa.Api.Controllers
             }
             catch (Exception ex)
             {
-                apiRes.message = ex.Message;
-                apiRes.statusCode = (int)ApiEnum.Error;
+                res.message = ex.Message;
+                res.statusCode = (int)ApiEnum.Error;
 
                 #region 保存日志
                 var agent = HttpContext.Request.Headers["User-Agent"];
@@ -287,9 +300,10 @@ namespace FytSoa.Api.Controllers
                 await _logService.AddAsync(log);
                 #endregion
             }
-            apiRes.statusCode = (int)ApiEnum.Status;
-            apiRes.data = token;
-            return Ok(apiRes);
+
+            res.statusCode = (int)ApiEnum.Status;
+
+            return Ok(res);
         }
 
         /// <summary>

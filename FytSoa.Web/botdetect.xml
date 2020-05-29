@@ -9,7 +9,11 @@
       <name>LoginCaptchaStyle</name>
       <userInputID>code</userInputID>
       <soundEnabled>false</soundEnabled>
+      <reloadEnabled>false</reloadEnabled>
       <helpLinkMode>IMAGE</helpLinkMode>
+      <imageWidth>120</imageWidth>
+      <imageHeight>40</imageHeight>
+      <codeLength>4</codeLength>
     </captchaStyle>
   </captchaStyles>
 </botdetect>
