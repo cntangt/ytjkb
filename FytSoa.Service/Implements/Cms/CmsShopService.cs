@@ -63,6 +63,7 @@ namespace FytSoa.Service.Implements
 
             var query = Db.Queryable<ShopInfo, CmsMerchant, AdminShopRel>((shop, mch, rel) =>
                 new JoinQueryInfos(JoinType.Left, shop.out_sub_mch_id == mch.out_sub_mch_id, JoinType.Left, shop.out_shop_id == rel.out_shop_id));
+
             if (role_info.isSystem)
             {
                 //管理员不需要过滤

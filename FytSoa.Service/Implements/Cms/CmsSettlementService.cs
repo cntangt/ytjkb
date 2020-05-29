@@ -309,20 +309,23 @@ namespace FytSoa.Service.Implements
         {
             var res = new ApiResult<Page<CmsDailySettlement>>();
 
-            var query = Db.Queryable<CmsDailySettlement>()
-            .WhereIF(!string.IsNullOrEmpty(parm.out_sub_mch_id), t => t.out_sub_mch_id == parm.out_sub_mch_id)
-            .WhereIF(parm.sub_pay_platforms.Length > 0, t => parm.sub_pay_platforms.Contains(t.sub_pay_platform))
-            .WhereIF(parm.start_time != null, t => t.business_date >= parm.start_time)
-            .WhereIF(parm.end_time != null, t => t.business_date <= parm.end_time);
+            var query = Db.Queryable<CmsDailySettlement, CmsMerchant>((ds, mch) =>
+                new object[] { JoinType.Left, ds.out_sub_mch_id == mch.out_sub_mch_id });
 
-            var data = await query.Select(t => new CmsDailySettlement
+            query.WhereIF(!string.IsNullOrEmpty(parm.createby), (ds, mch) => mch.agent_admin_guid == parm.createby)
+                .WhereIF(!string.IsNullOrEmpty(parm.out_sub_mch_id), (ds, mch) => ds.out_sub_mch_id == parm.out_sub_mch_id)
+                .WhereIF(parm.sub_pay_platforms.Length > 0, (ds, mch) => parm.sub_pay_platforms.Contains(ds.sub_pay_platform))
+                .WhereIF(parm.start_time != null, (ds, mch) => ds.business_date >= parm.start_time)
+                .WhereIF(parm.end_time != null, (ds, mch) => ds.business_date <= parm.end_time);
+
+            var data = await query.Select((ds, mch) => new CmsDailySettlement
             {
-                out_sub_mch_id = t.out_sub_mch_id,
-                count_trade = SqlFunc.AggregateSum(t.count_trade),
-                total_trade_fee = SqlFunc.AggregateSum(t.total_trade_fee),
-                count_refund = SqlFunc.AggregateSum(t.count_refund),
-                total_refund_fee = SqlFunc.AggregateSum(t.total_refund_fee),
-            }).GroupBy(t => new { t.out_sub_mch_id }).ToPageAsync(parm.page_num, parm.page_size);
+                out_sub_mch_id = ds.out_sub_mch_id,
+                count_trade = SqlFunc.AggregateSum(ds.count_trade),
+                total_trade_fee = SqlFunc.AggregateSum(ds.total_trade_fee),
+                count_refund = SqlFunc.AggregateSum(ds.count_refund),
+                total_refund_fee = SqlFunc.AggregateSum(ds.total_refund_fee),
+            }).GroupBy(ds => ds.out_sub_mch_id).ToPageAsync(parm.page_num, parm.page_size);
 
             if (data.Items.Count > 0)
             {

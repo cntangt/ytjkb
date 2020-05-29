@@ -18,5 +18,6 @@ namespace FytSoa.Service.DtoModel.Wx
         public string out_shop_id { get; set; }
         public TradeType? trade_type { get; set; }
         public PayStatus? status { get; set; }
+        public string createby { get; set; }
     }
 }
