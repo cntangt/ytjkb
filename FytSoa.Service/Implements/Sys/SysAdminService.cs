@@ -400,7 +400,7 @@ namespace FytSoa.Service.Implements
             try
             {
                 res.data = await Db.Queryable<ShopInfo, AdminShopRel>((a, b) => new object[] {
-                    JoinType.Inner,a.shop_id == b.out_shop_id })
+                    JoinType.Inner,a.out_shop_id == b.out_shop_id })
                         .Where((a, b) => b.admin_guid == admin_guid)
                             .Select((a, b) => a).ToListAsync();
             }

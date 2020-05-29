@@ -368,6 +368,11 @@ namespace FytSoa.Api.Controllers
         [HttpPost]
         public async Task<IActionResult> TradeSummary(QueryOrderListRequest req)
         {
+            if (!await HttpContext.IsSystem())
+            {
+                req.createby = await HttpContext.LoginUserId();
+            }
+
             var res = await cmsDaily.GetAgentTradeSummary(req);
             return Ok(new { code = 0, msg = "success", count = res.data.TotalItems, data = res.data.Items });
         }
@@ -377,6 +382,11 @@ namespace FytSoa.Api.Controllers
             var req = JsonConvert.DeserializeObject<QueryOrderListRequest>(q);
 
             req.page_size = int.MaxValue;
+
+            if (!await HttpContext.IsSystem())
+            {
+                req.createby = await HttpContext.LoginUserId();
+            }
 
             var res = await cmsDaily.GetAgentTradeSummary(req);
 
