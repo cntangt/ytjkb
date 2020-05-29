@@ -11,10 +11,12 @@
         .layui-col-220 { width: 280px; }
         .right-col-body { left: 280px; }
         .site-list ul li { cursor: pointer; padding: 15px 0 15px 35px; position: relative; border-bottom: 1px solid #e6e6e6; color: #76838f; }
-            .site-list ul li .tool { display: none; position: absolute; right: 10px; top: 9px; z-index: 1000; }
-                .site-list ul li .tool a { display: inline-block; padding: 5px 10px; font-size: 20px; margin-left: 10px; color: #96a5aa; }
-            .site-list ul li:hover, .site-list ul li.active { background-color: #f3f8ff; }
-                .site-list ul li:hover .tool { display: block; }
+        .site-list ul li .tool { display: none; position: absolute; right: 10px; top: 9px; z-index: 1000; }
+        .site-list ul li .tool a { display: inline-block; padding: 5px 10px; font-size: 20px; margin-left: 10px; color: #96a5aa; }
+        .site-list ul li:hover, .site-list ul li.active { background-color: #f3f8ff; }
+        .site-list ul li:hover .tool { display: block; }
+        .layui-form-label { width: 100px; }
+        .layui-input-block { margin-left: 140px; }
     </style>
     <div id="app">
         <div class="layui-col-220 site-list">
@@ -42,6 +44,12 @@
                                 <label class="layui-form-label">站点域名</label>
                                 <div class="layui-input-block">
                                     <input type="text" name="SiteUrl" v-model="m.siteUrl" lay-verify="required" lay-verType="tips" autocomplete="off" placeholder="请输入站点域名" class="layui-input">
+                                </div>
+                            </div>
+                            <div class="layui-form-item">
+                                <label class="layui-form-label">云支付服务商号</label>
+                                <div class="layui-input-block">
+                                    <input type="text" name="out_mch_id" v-model="m.out_mch_id" lay-verify="required" lay-verType="tips" autocomplete="off" placeholder="请输入云支付服务商号" class="layui-input">
                                 </div>
                             </div>
                             <fieldset class="layui-elem-field layui-field-title" style="margin-top: 20px;">
@@ -113,7 +121,7 @@
                     </div>
                 </div>
                 <div class="layui-form-item">
-                    <div class="layui-input-block">
+                    <div class="layui-input-block" style="margin-left:150px;">
                         <button class="layui-btn" lay-submit="" lay-filter="submit">　　保　存　　</button>
                     </div>
                 </div>

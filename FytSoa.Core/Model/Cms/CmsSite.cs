@@ -160,5 +160,10 @@ namespace FytSoa.Core.Model.Cms
         /// </summary>
         public DateTime AddTime { get; set; } = DateTime.Now;
 
+        /// <summary>
+        /// 云支付服务商号
+        /// </summary>
+        public string out_mch_id { get; set; }
+
     }
 }
