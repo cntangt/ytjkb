@@ -1,7 +1,7 @@
 ﻿@page
 @model MerchantModel
 @{
-    ViewData["Title"] = "子商户管理";
+    ViewData["Title"] = "商户管理";
 }
 <div id="container">
     <div class="list-wall">
@@ -10,7 +10,7 @@
             <button type="button" class="layui-btn layui-btn-sm" data-type="toolDel"><i class="layui-icon"></i> 删除</button>
             <form autocomplete="off" id="searchform" style="float:right">
                 <div class="layui-inline">
-                    <input class="layui-input" name="key" placeholder="输入商户名/电话/子商户号">
+                    <input class="layui-input" name="key" placeholder="输入商户名/电话/商户号">
                 </div>
                 <button type="submit" class="layui-btn layui-btn-sm" data-type="toolSearch"><i class="layui-icon layui-icon-search"></i> 搜索</button>
             </form>
@@ -71,7 +71,7 @@
                         return false;
                     },
                     toolAdd: function () {
-                        os.Open('添加子商户信息', '/fytadmin/cms/merchantmodify', '700px', '580px', active.reload);
+                        os.Open('添加商户信息', '/fytadmin/cms/merchantmodify', '700px', '580px', active.reload);
                     },
                     toolDel: function () {
                         var checkStatus = table.checkStatus('tables')
@@ -107,10 +107,10 @@
                     var id = obj.data.id;
                     switch (obj.event) {
                         case 'edit':
-                            os.Open('修改子商户信息', '/fytadmin/cms/merchantmodify/?id=' + id, '700px', '580px', active.reload);
+                            os.Open('修改商户信息', '/fytadmin/cms/merchantmodify/?id=' + id, '700px', '580px', active.reload);
                             break;
                         case 'detail':
-                            os.Open('查看子商户详情', '/fytadmin/cms/merchantdetail/?id=' + id, '700px', '580px');
+                            os.Open('查看商户详情', '/fytadmin/cms/merchantdetail/?id=' + id, '700px', '580px');
                             break;
                         case 'sync':
                             layer.confirm('确定要同步门店信息', ['确定', '取消'], (i) => {

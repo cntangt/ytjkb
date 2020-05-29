@@ -281,7 +281,7 @@ namespace FytSoa.Api.Controllers
             if (mch == null || mch.data == null || mch.data.id == 0)
             {
                 res.statusCode = (int)ApiEnum.Error;
-                res.message = "请选择子商户查询";
+                res.message = "请选择商户查询";
                 return res;
             }
             var req = new RefundRequest
