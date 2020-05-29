@@ -33,6 +33,8 @@ namespace FytSoa.Service.DtoModel
         /// 登录密码
         /// </summary>
         public string password { get; set; }
+        public string code { get; set; }
+        public string cid { get; set; }
     }
 
     /// <summary>
