@@ -36,13 +36,16 @@ layui.use(['jquery', 'form', 'common'], function () {
                 }, 1000);
             } else {
                 $(".login-tip span").html(res.message);
-                $("#password").val('');
+                if (res.statusCode===406) {
+                    $("#password").val('');
+                }
                 $(".login-tip").animate({ 'height': '30px' });
                 setTimeout(function () {
                     $(".login-tip").animate({ 'height': 0 });
                     $(".login-tip span").html('');
                     if (res.statusCode === 400) {
                         captcha.reloadImage();
+                        $('#code').val('');
                     }
                 }, 2500);
             }
