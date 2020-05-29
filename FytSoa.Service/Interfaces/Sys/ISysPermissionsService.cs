@@ -45,6 +45,6 @@ namespace FytSoa.Service.Interfaces
         /// 权限管理-保存角色和授权菜单以及功能
         /// </summary>
         /// <returns></returns>
-        ApiResult<string> SaveAuthorization(List<SysMenuDto> list,string roleGuid);
+        Task<ApiResult<string>> SaveAuthorization(List<SysMenuDto> list,string roleGuid);
     }
 }

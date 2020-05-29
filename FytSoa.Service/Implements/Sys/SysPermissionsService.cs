@@ -261,7 +261,7 @@ namespace FytSoa.Service.Implements
         /// 权限管理-保存角色和授权菜单以及功能
         /// </summary>
         /// <returns></returns>
-        public ApiResult<string> SaveAuthorization(List<SysMenuDto> list, string roleGuid)
+        public async Task<ApiResult<string>> SaveAuthorization(List<SysMenuDto> list, string roleGuid)
         {
             var res = new ApiResult<string>() { statusCode = (int)ApiEnum.Error };
             try
@@ -308,21 +308,16 @@ namespace FytSoa.Service.Implements
                     });
                 }
 
-                var result = Db.Ado.UseTran(async () =>
-                {
-                    //根据角色删除已有的，添加新的
-                    await Db.Deleteable<SysPermissions>().Where(m => m.RoleGuid == roleGuid && m.Types == 1).ExecuteCommandAsync();
-                    //增加新的
-                    await Db.Insertable(dbList).ExecuteCommandAsync();
-                });
-                if (!result.IsSuccess)
-                {
-                    res.message = result.ErrorMessage;
-                }
-                else
-                {
-                    res.statusCode = (int)ApiEnum.Status;
-                }
+                using var tran = new System.Transactions.TransactionScope();
+
+                //根据角色删除已有的，添加新的
+                var count_delete = await Db.Deleteable<SysPermissions>().Where(m => m.RoleGuid == roleGuid && m.Types == 1).ExecuteCommandAsync();
+                //增加新的
+                var count_insert = await Db.Insertable(dbList).ExecuteCommandAsync();
+
+                tran.Complete();
+
+                res.statusCode = (int)ApiEnum.Status;
             }
             catch (Exception ex)
             {

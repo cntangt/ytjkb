@@ -46,9 +46,9 @@ namespace FytSoa.Api.Controllers
         /// </summary>
         /// <returns></returns>
         [HttpPost("add/authorization"), ApiAuthorize(Modules = "Role", Methods = "Authorize", LogType = LogEnum.AUTHORIZE)]
-        public IActionResult SaveAuthorization([FromBody]SysMenuAuthorization parm)
+        public async Task<IActionResult> SaveAuthorization([FromBody]SysMenuAuthorization parm)
         {
-            return Ok(_roleMenu.SaveAuthorization(parm.list, parm.roleGuid));
+            return Ok(await _roleMenu.SaveAuthorization(parm.list, parm.roleGuid));
         }
 
         /// <summary>
