@@ -35,6 +35,7 @@ namespace FytSoa.Service.DtoModel
         public string password { get; set; }
         public string code { get; set; }
         public string cid { get; set; }
+        public string lid { get; set; }
     }
 
     /// <summary>

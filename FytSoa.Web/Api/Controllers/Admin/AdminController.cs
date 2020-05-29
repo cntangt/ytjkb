@@ -147,7 +147,7 @@ namespace FytSoa.Api.Controllers
             try
             {
                 //获得公钥私钥，解密
-                var rsaKey = await _cache.GetAsync<List<string>>("LOGINKEY");
+                var rsaKey = await _cache.GetAsync<List<string>>($"LOGINKEY:{parm.lid}");
                 if (rsaKey == null)
                 {
                     res.message = "登录失败，请刷新浏览器再次登录";
@@ -257,7 +257,7 @@ namespace FytSoa.Api.Controllers
                     Role = "Admin",
                     TokenType = "Web"
                 });
-                await _cache.RemoveAsync("LOGINKEY");
+                await _cache.RemoveAsync($"LOGINKEY:{parm.lid}");
                 await _cache.RemoveAsync(KeyHelper.LOGINCOUNT);
 
                 #region 保存日志
@@ -291,7 +291,7 @@ namespace FytSoa.Api.Controllers
                     Logger = LogEnum.LOGIN.GetEnumText(),
                     Level = "Error",
                     Message = "登录失败！" + ex.Message,
-                    Exception = ex.Message,
+                    Exception = ex.ToString(),
                     Callsite = "/fytadmin/login",
                     IP = HttpContext.GetIP(),
                     User = parm.loginname,
@@ -299,6 +299,8 @@ namespace FytSoa.Api.Controllers
                 };
                 await _logService.AddAsync(log);
                 #endregion
+
+                return Ok(res);
             }
 
             res.statusCode = (int)ApiEnum.Status;
