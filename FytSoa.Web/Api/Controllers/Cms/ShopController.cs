@@ -53,7 +53,7 @@ namespace FytSoa.Api.Controllers.Cms
         [HttpPost("getshopbymch")]
         public async Task<IActionResult> GetShopByMerchant([FromBody]GetShopByMerchantRequest req)
         {
-            var res = await shopService.GetByAdminGuidAsync(await HttpContext.LoginUserId(), req.out_sub_mch_id, req.key, 10);
+            var res = await shopService.GetByAdminGuidAsync(await HttpContext.LoginUserId(), req.out_sub_mch_id, req.key, int.MaxValue);
 
             return Ok(res.Select(p => new { name = p.shop_name, value = p.out_shop_id }));
         }

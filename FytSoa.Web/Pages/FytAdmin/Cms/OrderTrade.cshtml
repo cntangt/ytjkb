@@ -213,6 +213,10 @@
                     name: 'sub_pay_platforms',
                     data: $('#pay_platform').data('json'),
                 });
+                var mp_data = $('#out_sub_mch_id').data('json');
+                if (mp_data.length) {
+                    mp_data[0].selected = true;
+                }
                 var mp = xmSelect.render({
                     el: '#out_sub_mch_id',
                     name: 'out_sub_mch_id',
