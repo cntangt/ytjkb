@@ -207,7 +207,7 @@
                     clickClose: true,
                     filterable: true,
                     remoteSearch: true,
-                    //remoteMethod: (val, cb, show) => os.ajax('api/shop/getstaffbyshop', { key: val, out_sub_mch_id: pp.getValue('valueStr'), out_shop_id: sp.getValue('valueStr') }, (res) => cb(res)),
+                    remoteMethod: (val, cb, show) => os.ajax('api/shop/getstaffbyshop', { key: val, out_sub_mch_id: mp.getValue('valueStr'), out_shop_id: sp.getValue('valueStr') }, (res) => cb(res)),
                 });
                 xmSelect.render({
                     el: '#trade_type',
@@ -269,7 +269,7 @@
                     return false;
                 });
                 $('#export').on('click', () => {
-                    l.open({ title: '退款数据导出', area: ['720px', '480px'], content: '/api/sync/refundexport/?q=' + encodeURI(JSON.stringify(data())), type: 2 });
+                    l.open({ title: '退款数据导出', area: ['550px', '300px'], content: '/api/sync/refundexport/?q=' + encodeURI(JSON.stringify(data())), type: 2 });
                 });
                 table.on('tool(tool)', function (obj) {
                     tpl(details.innerHTML).render(obj.data, (html) => l.open({ title: '退款单详情', area: ['720px', '480px'], content: html }));

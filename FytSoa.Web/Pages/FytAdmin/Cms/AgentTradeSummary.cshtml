@@ -118,7 +118,7 @@
                     return false;
                 });
                 $('#export').on('click', () => {
-                    l.open({ title: '订单数据导出', area: ['720px', '480px'], content: '/api/sync/tradesummaryexport/?q=' + encodeURI(JSON.stringify(data())), type: 2 });
+                    l.open({ title: '交易统计数据导出', area: ['550px', '300px'], content: '/api/sync/tradesummaryexport/?q=' + encodeURI(JSON.stringify(data())), type: 2 });
                 });
                 function data() {
                     var _data = $('#searchform').serializeArray().js();

@@ -121,7 +121,7 @@
                     url: '/api/sync/dailyreport',
                     cols: [
                         [
-                            { align: 'business_date', title: '日期', width: 105, align: 'center', templet: (d) => layui.util.toDateString(d.time_end, 'yyyy-MM-dd') },
+                            { align: 'business_date', title: '日期', width: 105, align: 'center', templet: (d) => layui.util.toDateString(d.business_date, 'yyyy-MM-dd') },
                             { field: 'shop_name', title: '门店名称', width: 200 },
                             { field: 'erp_org', title: 'ERP机构', width: 85, align: 'center' },
                             { field: 'count_trade', title: '交易笔数', width: 85, align: 'right' },
@@ -131,7 +131,7 @@
                             { title: '应收金额', templet: (d) => d.receivable_fee.tc(), width: 110, align: 'right' },
                             { title: '优惠金额', templet: (d) => d.discount_fee.tc(), width: 110, align: 'right' },
                             { title: '手续费', templet: (d) => d.poundage_fee.tc(), width: 110, align: 'right' },
-                            { title: '结算金额', templet: (d) => d.settlement_fee.tc(), width: 110, align: 'right' },
+                            { title: '入账金额', templet: (d) => d.settlement_fee.tc(), width: 110, align: 'right' },
                         ]
                     ],
                     where: data(),
@@ -151,7 +151,7 @@
                     return false;
                 });
                 $('#export').on('click', () => {
-                    l.open({ title: '订单数据导出', area: ['720px', '480px'], content: '/api/sync/dailyreportexport/?q=' + encodeURI(JSON.stringify(data())), type: 2 });
+                    l.open({ title: '门店数据导出', area: ['550px', '300px'], content: '/api/sync/dailyreportexport/?q=' + encodeURI(JSON.stringify(data())), type: 2 });
                 });
                 function data() {
                     var _data = $('#searchform').serializeArray().js();
