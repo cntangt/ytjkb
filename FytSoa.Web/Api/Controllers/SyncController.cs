@@ -370,6 +370,12 @@ namespace FytSoa.Api.Controllers
         {
             var req = JsonConvert.DeserializeObject<QueryOrderListRequest>(q);
 
+            var mch = await merchantService.GetModelAsync(p => p.out_sub_mch_id == req.out_sub_mch_id);
+            if (mch == null || mch.data == null || mch.data.id == 0)
+            {
+                return Content("请选择导出商户");
+            }
+
             req.createby = await HttpContext.LoginUserId();
             req.page_size = int.MaxValue;
 
