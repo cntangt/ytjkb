@@ -10,13 +10,17 @@ layui.use(['jquery', 'form', 'common'], function () {
     });
     //清空token
     os.SessionRemove('FYTADMIN_ACCESS_TOKEN');
+    var pw = $('#password');
     var captcha = $('#botdetect-captcha').captcha({ captchaEndpoint: '/captcha.ashx' });
+    var enc = '';
     form.on('submit(loginsub)', function (data) {
-        var crypt = new JSEncrypt();
-        crypt.setPrivateKey(data.field.privateKey);
-        var enc = crypt.encrypt(data.field.password);
-        $("#password").val(enc);
-        data.field.password = enc;
+        if (enc !== data.field.password) {
+            var crypt = new JSEncrypt();
+            crypt.setPrivateKey(data.field.privateKey);
+            enc = crypt.encrypt(data.field.password);
+            pw.val(enc);
+            data.field.password = enc;
+        }
         data.field.code = $('#code').val();
         data.field.cid = captcha.getCaptchaId();
         var btns = $(".layui-btn-normal");
@@ -35,18 +39,16 @@ layui.use(['jquery', 'form', 'common'], function () {
                     }
                 }, 1000);
             } else {
-                $(".login-tip span").html(res.message);
-                if (res.statusCode===406) {
-                    $("#password").val('');
+                $('#code').val('');
+                if (res.statusCode === 406) {
+                    pw.val('').focus();
                 }
+                $(".login-tip span").html(res.message);
                 $(".login-tip").animate({ 'height': '30px' });
                 setTimeout(function () {
                     $(".login-tip").animate({ 'height': 0 });
                     $(".login-tip span").html('');
-                    if (res.statusCode === 400) {
-                        captcha.reloadImage();
-                        $('#code').val('');
-                    }
+                    captcha.reloadImage();
                 }, 2500);
             }
             btns.attr('disabled', false);

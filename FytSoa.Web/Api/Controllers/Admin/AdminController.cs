@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Security.Claims;
+using System.Security.Cryptography;
 using System.Threading.Tasks;
 using BotDetect.Web;
 using FytSoa.Common;
@@ -276,6 +277,12 @@ namespace FytSoa.Api.Controllers
                 };
                 await _logService.AddAsync(log);
                 #endregion
+            }
+            catch (CryptographicException)
+            {
+                res.message = "登录失败，请刷新浏览器重试";
+                res.statusCode = (int)ApiEnum.Error;
+                return Ok(res);
             }
             catch (Exception ex)
             {
