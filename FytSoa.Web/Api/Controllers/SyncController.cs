@@ -1,4 +1,5 @@
 ﻿using FytSoa.Common;
+using FytSoa.Core.Model.Cms;
 using FytSoa.Core.Model.Wx;
 using FytSoa.Extensions;
 using FytSoa.Service.DtoModel;
@@ -326,12 +327,43 @@ namespace FytSoa.Api.Controllers
         public Task<ApiResult<string>> MonthlyJob() => cmsDaily.MonthlyJobAsync(DateTime.Now);
 
         [HttpPost]
-        public async Task<IActionResult> DailyReport(QueryOrderListRequest req)
+        public async Task<PageResult<IEnumerable<CmsDailySettlement>>> DailyReport(QueryOrderListRequest req)
         {
+            var res = new PageResult<IEnumerable<CmsDailySettlement>>();
+
+            var mch = await merchantService.GetModelAsync(p => p.out_sub_mch_id == req.out_sub_mch_id);
+            if (mch == null || mch.data == null || mch.data.id == 0)
+            {
+                res.Code = ApiEnum.Error;
+                res.Msg = "请选择商户查询";
+                return res;
+            }
+
             req.createby = await HttpContext.LoginUserId();
 
-            var res = await cmsDaily.GetShopDailyReport(req);
-            return Ok(new { code = 0, msg = "success", count = res.data.TotalItems, data = res.data.Items });
+            var data = await cmsDaily.GetShopDailyReport(req);
+
+            if (data.statusCode != 200)
+            {
+                res.Msg = data.message;
+                res.Code = ApiEnum.Error;
+
+                return res;
+            }
+
+            if (data.data.Items == null)
+            {
+                res.Msg = "查询结果为空";
+                res.Code = ApiEnum.Error;
+
+                return res;
+            }
+
+            res.Msg = "success";
+            res.Count = data.data.TotalItems;
+            res.Data = data.data.Items;
+
+            return res;
         }
 
         public async Task<IActionResult> DailyReportExport(string q)
