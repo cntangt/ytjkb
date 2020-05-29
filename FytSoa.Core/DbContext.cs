@@ -3,6 +3,8 @@ using FytSoa.Core.Model.Sys;
 using FytSoa.Core.Model.Wx;
 using Microsoft.Extensions.Configuration;
 using SqlSugar;
+using System.Diagnostics;
+using System.Linq;
 
 namespace FytSoa.Core
 {
@@ -24,10 +26,10 @@ namespace FytSoa.Core
             //调式代码 用来打印SQL 
             Db.Aop.OnLogExecuting = (sql, pars) =>
             {
-                string s = sql;
-                //Console.WriteLine(sql + "\r\n" +
-                //    Db.Utilities.SerializeObject(pars.ToDictionary(it => it.ParameterName, it => it.Value)));
-                //Console.WriteLine();
+#if DEBUG
+                Debug.WriteLine(sql);
+                Debug.WriteLine(Db.Utilities.SerializeObject(pars.ToDictionary(it => it.ParameterName, it => it.Value)));
+#endif
             };
 
         }
