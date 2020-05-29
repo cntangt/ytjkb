@@ -160,6 +160,11 @@ namespace FytSoa.Service.Implements
                     res.message = $"用户名【{parm.LoginName}】已经存在";
                     return res;
                 }
+                if (parm.RoleList == null || parm.RoleList.Count == 0)
+                {
+                    res.message = $"请至少选择一个用户";
+                    return res;
+                }
 
                 parm.LoginPwd = DES3Encrypt.EncryptString(parm.LoginPwd);
 
@@ -169,7 +174,21 @@ namespace FytSoa.Service.Implements
                 }
                 parm.AddDate = DateTime.Now;
 
+                using var tran = new TransactionScope();
+
                 var succ = SysAdminDb.Insert(parm);
+
+                var authorityList = parm.RoleList
+                    .Select(p => new SysPermissions
+                    {
+                        RoleGuid = p.guid,
+                        AdminGuid = parm.Guid,
+                        Types = 2
+                    }).ToList();
+
+                await Db.Insertable(authorityList).ExecuteCommandAsync();
+
+                tran.Complete();
 
                 //var rel = await Db.Queryable<CmsAdminMerchantRel>().Where(p => p.Admin_Guid == parm.CreateBy).FirstAsync();
                 //if (rel != null)
