@@ -94,7 +94,7 @@
                                                     elem: id,
                                                     cols: [
                                                         [
-                                                            { field: 'name', width: 120, title: '任务名称', fixed: 'left' },
+                                                            { field: 'name', width: 120, title: '任务名称' },
                                                             {
                                                                 field: 'displayState',
                                                                 title: '状态',
@@ -109,9 +109,9 @@
                                                                 }
                                                             },
                                                             { field: 'requestUrl', width: 120, title: 'Url' },
-                                                            { field: 'beginTime', width: 150, title: '开始时间' },
-                                                            { field: 'previousFireTime', title: '上次执行时间' },
-                                                            { field: 'nextFireTime', title: '下次执行时间' },
+                                                            { field: 'beginTime', width: 150, title: '开始时间', templet: (d) => layui.util.toDateString(d.beginTime, 'yyyy-MM-dd HH:mm:ss') },
+                                                            { field: 'previousFireTime', title: '上次执行时间', templet: (d) => layui.util.toDateString(d.previousFireTime, 'yyyy-MM-dd HH:mm:ss') },
+                                                            { field: 'nextFireTime', title: '下次执行时间', templet: (d) => layui.util.toDateString(d.nextFireTime, 'yyyy-MM-dd HH:mm:ss') },
                                                             { field: 'interval', title: '执行计划' },
                                                             { field: 'description', width: 100, title: '描述' },
                                                             {

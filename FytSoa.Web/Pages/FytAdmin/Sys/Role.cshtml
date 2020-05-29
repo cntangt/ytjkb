@@ -31,8 +31,8 @@
                     url: '/api/role/getpages',
                     cols: [
                         [
-                            { type: 'checkbox', fixed: 'left' },
-                            { field: 'name', title: '角色名称', sort: true, fixed: 'left' },
+                            { type: 'checkbox' },
+                            { field: 'name', title: '角色名称', sort: true },
                             {
                                 field: 'isSystem', title: '是否系统管理员', templet: function (d) {
                                     if (d.isSystem) {

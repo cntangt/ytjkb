@@ -67,13 +67,13 @@
                     url: '/api/admin/getpages',
                     cols: [
                         [
-                            { type: 'checkbox', fixed: 'left' },
-                            { field: 'loginName', title: '登录账号', sort: true, fixed: 'left' },
+                            { type: 'checkbox' },
+                            { field: 'loginName', title: '登录账号', sort: true },
                             { field: 'trueName', title: '真是姓名' },
-                            { field: 'sex', width: 60, title: '性别' },
+                            { field: 'sex', width: 60, title: '性别' ,align:'center' },
                             { title: '管理员', templet: (d) => tostatus(d.isSystem), align: 'center' },
                             { title: '状态', templet: tostatus, align: 'center' },
-                            { field: 'loginDate', width: 180, title: '最后登录时间' },
+                            { field: 'loginDate', width: 180, align:'center',title: '最后登录时间', templet: (d) => layui.util.toDateString(d.loginDate, 'yyyy-MM-dd HH:mm:ss') },
                             { width: 200, title: '操作', templet: '#tool', align: 'center' }
                         ]
                     ],
