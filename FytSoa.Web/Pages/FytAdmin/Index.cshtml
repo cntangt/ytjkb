@@ -12,15 +12,6 @@
 }
 <div id="container">
     <div class="list-wall">
-        <div class="layui-form list-search" style="float:right; width:100px">
-            <div class="layui-inline">
-                <select id="day" lay-filter="day">
-                    <option value="7">7日</option>
-                    <option value="15">15日</option>
-                    <option value="30">30日</option>
-                </select>
-            </div>
-        </div>
         <div class="layui-row layui-col-space15">
             <div class="layui-col-md12 layui-col-lg12">
                 <div class="layui-row layui-col-space15">
@@ -75,74 +66,70 @@
     <script>
         layui.config({
             base: '/themes/js/modules/'
-        }).use(['table', 'jquery', 'common', 'laytpl', 'util', 'form'], function () {
-            var os = layui.common, l = layui.laytpl, $ = layui.jquery, u = layui.util, f = layui.form;
-            f.on('select(day)', load);
-            load();
-            function load() {
-                os.ajax('api/chart?day=' + $('#day').val(), null, function (res) {
-                    l(platforminfo.innerHTML).render(res, (html) => $('#platforminfo_c').html(html));
+        }).use(['table', 'jquery', 'common', 'laytpl', 'util'], function () {
+            var os = layui.common, l = layui.laytpl, $ = layui.jquery, u = layui.util;
+            os.ajax('api/chart', null, function (res) {
+                l(platforminfo.innerHTML).render(res, (html) => $('#platforminfo_c').html(html));
 
-                    var legends = [];
-                    var lds = [];
-                    $(res.platformInfos).each((i, obj) => {
-                        legends.push(obj.name);
-                        lds.push({ value: obj.number, name: obj.name });
-                    });
-                    echarts.init(document.getElementById('platforminfo_chart')).setOption({
-                        legend: { orient: 'vertical', left: 'left', data: legends },
-                        tooltip: { trigger: 'item', formatter: '{a} <br/>{b} : {c}单 ({d}%)' },
-                        series: [{ name: '支付占比', type: 'pie', radius: '55%', center: ['60%', '50%'], data: lds }]
-                    });
+                var legends = [];
+                var lds = [];
+                $(res.platformInfos).each((i, obj) => {
+                    legends.push(obj.name);
+                    lds.push({ value: obj.number, name: obj.name });
+                });
+                echarts.init(document.getElementById('platforminfo_chart')).setOption({
+                    legend: { orient: 'vertical', left: 'left', data: legends },
+                    tooltip: { trigger: 'item', formatter: '{a} <br/>{b} : {c}单 ({d}%)' },
+                    series: [{ name: '支付占比', type: 'pie', radius: '55%', center: ['60%', '50%'], data: lds }]
+                });
 
-                    var days = [], t1 = [], t2 = [], r1 = [], r2 = [];
-                    $(res.trends).each((i, obj) => {
-                        days.push(obj.day);
-                        t1.push(obj.totalTrade / 100);
-                        t2.push(obj.countTrade);
-                        r1.push(obj.totalRefund / 100);
-                        r2.push(obj.countRefund);
-                    });
-                    var o2 = {
-                        tooltip: {
-                            trigger: 'axis',
-                            axisPointer: {
-                                type: 'cross',
-                                crossStyle: {
-                                    color: '#999'
-                                },
-                                label: {
-                                    formatter: (val) => {
-                                        switch (val.axisDimension) {
-                                            case 'x': return u.toDateString(val.value, 'yyyy-MM-dd');
-                                            case 'y':
-                                                if (val.axisIndex === 0) {
-                                                    return val.value.ntc();
-                                                }
-                                                else {
-                                                    return parseInt(val.value) + '单';
-                                                }
-                                        }
+                var days = [], t1 = [], t2 = [], r1 = [], r2 = [];
+                $(res.trends).each((i, obj) => {
+                    days.push(obj.day);
+                    t1.push(obj.totalTrade / 100);
+                    t2.push(obj.countTrade);
+                    r1.push(obj.totalRefund / 100);
+                    r2.push(obj.countRefund);
+                });
+                var o2 = {
+                    tooltip: {
+                        trigger: 'axis',
+                        axisPointer: {
+                            type: 'cross',
+                            crossStyle: {
+                                color: '#999'
+                            },
+                            label: {
+                                formatter: (val) => {
+                                    switch (val.axisDimension) {
+                                        case 'x': return u.toDateString(val.value, 'yyyy-MM-dd');
+                                        case 'y':
+                                            if (val.axisIndex === 0) {
+                                                return val.value.ntc();
+                                            }
+                                            else {
+                                                return parseInt(val.value) + '单';
+                                            }
                                     }
                                 }
                             }
-                        },
-                        legend: { data: ['交易金额', '退款金额', '交易数量', '退款数量'] },
-                        xAxis: [{ type: 'category', data: days, axisLabel: { formatter: (val, idx) => u.toDateString(val, 'MM/dd') } }],
-                        yAxis: [
-                            { type: 'value', name: '金额', axisLabel: { formatter: '￥{value}' } },
-                            { type: 'value', name: '单量', axisLabel: { formatter: '{value}单' } }
-                        ],
-                        series: [
-                            { name: '交易金额', type: 'bar', data: t1, label: { show: true, position: 'top', formatter: (val) => val.value.ntc() } },
-                            { name: '退款金额', type: 'bar', data: r1, label: { show: true, position: 'top', formatter: (val) => val.value.ntc() } },
-                            { name: '交易数量', type: 'line', yAxisIndex: 1, data: t2 },
-                            { name: '退款数量', type: 'line', yAxisIndex: 1, data: r2 }
-                        ]
-                    };
-                    echarts.init(document.getElementById('trend_chart')).setOption(o2);
-                });
-            }
+                        }
+                    },
+                    legend: { data: ['交易金额', '退款金额', '交易数量', '退款数量'] },
+                    xAxis: [{ type: 'category', data: days, axisLabel: { formatter: (val, idx) => u.toDateString(val, 'MM/dd') } }],
+                    yAxis: [
+                        { type: 'value', name: '金额', axisLabel: { formatter: '￥{value}' } },
+                        { type: 'value', name: '单量', axisLabel: { formatter: '{value}单' } }
+                    ],
+                    series: [
+                        { name: '交易金额', type: 'bar', data: t1, label: { show: true, position: 'top', formatter: (val) => val.value.ntc() } },
+                        { name: '退款金额', type: 'bar', data: r1, label: { show: true, position: 'top', formatter: (val) => val.value.ntc() } },
+                        { name: '交易数量', type: 'line', yAxisIndex: 1, data: t2 },
+                        { name: '退款数量', type: 'line', yAxisIndex: 1, data: r2 }
+                    ]
+                };
+                echarts.init(document.getElementById('trend_chart')).setOption(o2);
+            });
         });
     </script>
 }
