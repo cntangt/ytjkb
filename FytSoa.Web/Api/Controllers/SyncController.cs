@@ -328,6 +328,8 @@ namespace FytSoa.Api.Controllers
         [HttpPost]
         public async Task<IActionResult> DailyReport(QueryOrderListRequest req)
         {
+            req.createby = await HttpContext.LoginUserId();
+
             var res = await cmsDaily.GetShopDailyReport(req);
             return Ok(new { code = 0, msg = "success", count = res.data.TotalItems, data = res.data.Items });
         }
@@ -336,6 +338,7 @@ namespace FytSoa.Api.Controllers
         {
             var req = JsonConvert.DeserializeObject<QueryOrderListRequest>(q);
 
+            req.createby = await HttpContext.LoginUserId();
             req.page_size = int.MaxValue;
 
             var res = await cmsDaily.GetShopDailyReport(req);
