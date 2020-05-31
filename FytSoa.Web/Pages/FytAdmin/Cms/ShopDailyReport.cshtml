@@ -129,10 +129,10 @@
                             { title: '交易金额', templet: (d) => d.total_trade_fee.tc(), width: 110, align: 'right' },
                             { field: 'count_refund', title: '退款笔数', width: 85, align: 'right' },
                             { title: '退款金额', templet: (d) => d.total_refund_fee.tc(), width: 110, align: 'right' },
-                            { title: '应收金额', templet: (d) => d.receivable_fee.tc(), width: 110, align: 'right' },
+                            { title: '应收金额', templet: (d) => d.settlement_fee.tc(), width: 110, align: 'right' },
                             { title: '优惠金额', templet: (d) => d.discount_fee.tc(), width: 110, align: 'right' },
                             { title: '手续费', templet: (d) => d.poundage_fee.tc(), width: 110, align: 'right' },
-                            { title: '入账金额', templet: (d) => d.settlement_fee.tc(), width: 110, align: 'right' },
+                            { title: '入账金额', templet: (d) => d.receivable_fee.tc(), width: 110, align: 'right' },
                         ]
                     ],
                     where: data(),
