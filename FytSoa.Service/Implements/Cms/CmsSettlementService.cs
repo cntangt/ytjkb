@@ -289,7 +289,6 @@ namespace FytSoa.Service.Implements
                 total_trade_fee = SqlFunc.AggregateSum(ds.total_trade_fee),
                 count_refund = SqlFunc.AggregateSum(ds.count_refund),
                 total_refund_fee = SqlFunc.AggregateSum(ds.total_refund_fee),
-                receivable_fee = SqlFunc.AggregateSum(ds.receivable_fee),
                 discount_fee = SqlFunc.AggregateSum(ds.discount_fee),
                 poundage_fee = SqlFunc.AggregateSum(ds.poundage_fee),
                 settlement_fee = SqlFunc.AggregateSum(ds.settlement_fee)
@@ -300,18 +299,19 @@ namespace FytSoa.Service.Implements
                 var ids = data.Items.Select(p => p.out_shop_id).ToArray();
 
                 var shopInfos = await Db.Queryable<ShopInfo>().In(p => p.out_shop_id, ids).ToListAsync();
-                if (shopInfos.Count > 0)
+
+                data.Items.ForEach(shop =>
                 {
-                    data.Items.ForEach(shop =>
+                    var shopInfo = shopInfos.FirstOrDefault(m => shop.out_shop_id == m.out_shop_id);
+                    if (shopInfo != null)
                     {
-                        var shopInfo = shopInfos.FirstOrDefault(m => shop.out_shop_id == m.out_shop_id);
-                        if (shopInfo != null)
-                        {
-                            shop.shop_name = shopInfo.shop_name;
-                            shop.erp_org = shopInfo.erp_org;
-                        }
-                    });
-                }
+                        shop.shop_name = shopInfo.shop_name;
+                        shop.erp_org = shopInfo.erp_org;
+                    }
+
+                    //入账金额
+                    shop.receivable_fee = shop.total_trade_fee - shop.total_refund_fee - shop.poundage_fee;
+                });
             }
 
             res.data = data;
