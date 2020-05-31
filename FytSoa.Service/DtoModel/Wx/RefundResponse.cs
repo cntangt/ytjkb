@@ -3,7 +3,7 @@
     public class RefundResponse
     {
         public Pay_Mch_Key pay_mch_key { get; set; }
-        public Refund_Order_Content[] refund_order_content { get; set; }
+        public Refund_Order_Content refund_order_content { get; set; }
         public string nonce_str { get; set; }
         public Order_Client[] order_client { get; set; }
 
