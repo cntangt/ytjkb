@@ -51,20 +51,7 @@ namespace FytSoa.Service.Implements.Wx
                 request_content = req_content
             };
 
-            HttpClient client;
-
-            if (req.Cert == null || req.Cert.Length == 0)
-            {
-                client = factory.CreateClient();
-            }
-            else
-            {
-                var handler = new HttpClientHandler();
-                var cert = new X509Certificate2(req.Cert, req.Password);
-                handler.ClientCertificates.Add(cert);
-                client = new HttpClient(handler);
-            }
-
+            var client = factory.CreateClient();
             var data = new StringContent(JsonConvert.SerializeObject(req_data, jss), Encoding.UTF8, "application/json");
             var msg = await client.PostAsync($"{domain}{req.ApiName}", data);
             var json = await msg.Content.ReadAsStringAsync();

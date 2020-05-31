@@ -12,8 +12,8 @@ using Microsoft.Extensions.Configuration;
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
-using System.IO;
 using System.Linq;
+using System.Net.Http;
 using System.Threading.Tasks;
 
 namespace FytSoa.Api.Controllers
@@ -26,13 +26,15 @@ namespace FytSoa.Api.Controllers
         readonly ICmsMerchantService merchantService;
         readonly ICmsSettlementService cmsDaily;
         readonly IConfiguration config;
+        readonly IHttpClientFactory factory;
 
-        public SyncController(IWxCloudService wx, ICmsMerchantService merchantService, ICmsSettlementService cmsDaily, IConfiguration config)
+        public SyncController(IWxCloudService wx, ICmsMerchantService merchantService, ICmsSettlementService cmsDaily, IConfiguration config, IHttpClientFactory factory)
         {
             this.wx = wx;
             this.merchantService = merchantService;
             this.cmsDaily = cmsDaily;
             this.config = config;
+            this.factory = factory;
         }
 
         public async Task<IActionResult> TradeExport(string q)
@@ -285,6 +287,7 @@ namespace FytSoa.Api.Controllers
                 res.message = "请选择商户查询";
                 return res;
             }
+
             var req = new RefundRequest
             {
                 refund_content = new Refund_Content
@@ -294,13 +297,13 @@ namespace FytSoa.Api.Controllers
                     refund_fee = (int)(req_data.refund_fee * 100),
                     refund_fee_type = req_data.refund_fee_type,
                     refund_reason = req_data.refund_reason,
-                    total_fee = (int)(req_data.total_fee * 100)
+                    total_fee = (int)(req_data.total_fee)
                 },
                 order_client = new Order_Client
                 {
                     terminal_type = TerminalType.Windows,
                     sdk_version = "1.0",
-                    spbill_create_ip = HttpContext.GetIP()
+                    spbill_create_ip = await this.ServerIP() //HttpContext.GetIP()
                 },
                 pay_mch_key = new Pay_Mch_Key
                 {
@@ -449,6 +452,22 @@ namespace FytSoa.Api.Controllers
                 "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
                 "代理商交易统计.xlsx"
             );
+        }
+
+        private async Task<string> ServerIP()
+        {
+            var ip = string.Empty;
+
+            ip = config.GetValue("ServerIP", ip);
+
+            if (string.IsNullOrEmpty(ip))
+            {
+                var http = factory.CreateClient();
+                var msg = await http.GetAsync("http://whatismyip.akamai.com/");
+                ip = await msg.Content.ReadAsStringAsync();
+            }
+
+            return ip;
         }
     }
 }
