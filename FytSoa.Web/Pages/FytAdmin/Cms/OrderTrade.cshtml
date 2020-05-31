@@ -221,6 +221,7 @@
                     el: '#out_sub_mch_id',
                     name: 'out_sub_mch_id',
                     radio: true,
+                    disabled: '@isSys' === "False" ? true : false,
                     clickClose: true,
                     size: 'small',
                     layVerify: 'required',
