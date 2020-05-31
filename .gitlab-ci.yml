@@ -1,8 +1,17 @@
 stages:
     - build
+    - push
 build:
     stage: build
     only:
         - tags
     script:
-        - docker build -t ytjbk -t ytjbk:$CI_COMMIT_REF_NAME -f FytSoa.Web/Dockerfile .
+        - docker build -t d.thcen.com/ytjkb -t d.thcen.com/ytjkb:$CI_COMMIT_REF_NAME -f FytSoa.Web/Dockerfile .
+push:
+    stage: push
+    only:
+        - tags
+    dependencies: 
+        - build
+    script:
+        - docker push d.thcen.com/ytjkb
