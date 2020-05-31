@@ -5,15 +5,18 @@
 }
 <div id="container">
     <div class="list-wall">
-        <div class="layui-form list-search">
-            <form autocomplete="off" id="searchform" style="float:right">
-                <div class="layui-inline">
-                    @Html.DropDownList("key", ViewData["merchants"] as IEnumerable<SelectListItem>, "全部商户", new { lay_search = "" })
-                </div>
-                <button type="submit" class="layui-btn layui-btn-sm" data-type="toolSearch"><i class="layui-icon layui-icon-search"></i> 搜索</button>
-            </form>
-            <div style="clear:both"></div>
-        </div>
+        @if (Model.Display)
+        {
+            <div class="layui-form list-search">
+                <form autocomplete="off" id="searchform" style="float:right">
+                    <div class="layui-inline">
+                        @Html.DropDownList("key", ViewData["merchants"] as IEnumerable<SelectListItem>, "全部商户", new { lay_search = "" })
+                    </div>
+                    <button type="submit" class="layui-btn layui-btn-sm" data-type="toolSearch"><i class="layui-icon layui-icon-search"></i> 搜索</button>
+                </form>
+                <div style="clear:both"></div>
+            </div>
+        }
         <table class="layui-hide" id="tablist" lay-filter="tool"></table>
     </div>
     <script type="text/html" id="tool">

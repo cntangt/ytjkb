@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using FytSoa.Extensions;
 using System.Linq;
 using Microsoft.AspNetCore.Mvc.Rendering;
+using FytSoa.Service.Interfaces;
 
 namespace FytSoa.Web.Pages.FytAdmin.Cms
 {
@@ -13,11 +14,15 @@ namespace FytSoa.Web.Pages.FytAdmin.Cms
     public class ShopModel : PageModel
     {
         ICmsMerchantService merchantService;
+        ISysRoleService roleService;
 
-        public ShopModel(ICmsMerchantService merchantService)
+        public ShopModel(ICmsMerchantService merchantService, ISysRoleService roleService)
         {
             this.merchantService = merchantService;
+            this.roleService = roleService;
         }
+
+        public bool Display = false;
 
         public async Task OnGetAsync()
         {
@@ -41,6 +46,13 @@ namespace FytSoa.Web.Pages.FytAdmin.Cms
                     Text = p.name,
                     Value = p.out_sub_mch_id
                 }).ToList();
+            }
+
+            var role_info = await roleService.GetRoleByAdminGuid(await HttpContext.LoginUserId());
+
+            if (role_info.isSystem || role_info.isAgent)
+            {
+                Display = true;
             }
         }
     }
