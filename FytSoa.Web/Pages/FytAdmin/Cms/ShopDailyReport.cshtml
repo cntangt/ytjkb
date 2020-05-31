@@ -122,12 +122,12 @@
                     url: '/api/sync/dailyreport',
                     cols: [
                         [
-                            { align: 'business_date', title: '日期', width: 105, align: 'center', templet: (d) => layui.util.toDateString(d.business_date, 'yyyy-MM-dd') },
+                            { align: 'business_date', title: '日期', width: 105, align: 'center', templet: (d) => layui.util.toDateString(d.business_date, 'yyyy-MM-dd'), totalRowText: '合计' },
                             { field: 'shop_name', title: '门店名称', width: 200 },
                             { field: 'erp_org', title: 'ERP机构', width: 85, align: 'center' },
-                            { field: 'count_trade', title: '交易笔数', width: 85, align: 'right' },
+                            { field: 'count_trade', title: '交易笔数', width: 85, align: 'right', totalRow: true },
                             { title: '交易金额', templet: (d) => d.total_trade_fee.tc(), width: 110, align: 'right' },
-                            { field: 'count_refund', title: '退款笔数', width: 85, align: 'right' },
+                            { field: 'count_refund', title: '退款笔数', width: 85, align: 'right', totalRow: true },
                             { title: '退款金额', templet: (d) => d.total_refund_fee.tc(), width: 110, align: 'right' },
                             { title: '应收金额', templet: (d) => d.settlement_fee.tc(), width: 110, align: 'right' },
                             { title: '优惠金额', templet: (d) => d.discount_fee.tc(), width: 110, align: 'right' },
@@ -137,6 +137,7 @@
                     ],
                     where: data(),
                     page: true,
+                    totalRow: true,
                     id: 'tables'
                 });
                 dt.render({ elem: '#start_time', type: 'date', max: '@def_date' });
