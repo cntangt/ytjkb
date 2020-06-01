@@ -286,10 +286,6 @@ namespace FytSoa.Api.Controllers
             }
             catch (Exception ex)
             {
-                res.message = ex.Message;
-                res.statusCode = (int)ApiEnum.Error;
-
-                #region 保存日志
                 var agent = HttpContext.Request.Headers["User-Agent"];
                 var log = new SysLog()
                 {
@@ -305,8 +301,9 @@ namespace FytSoa.Api.Controllers
                     Browser = agent.ToString()
                 };
                 await _logService.AddAsync(log);
-                #endregion
 
+                res.message = "登录失败，请刷新浏览器重试";
+                res.statusCode = (int)ApiEnum.Error;
                 return Ok(res);
             }
 
