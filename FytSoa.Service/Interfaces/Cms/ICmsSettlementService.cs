@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace FytSoa.Service.Interfaces
 {
-    public interface ICmsSettlementService : IBaseService<CmsDailySettlement>
+    public interface ICmsSettlementService : IBaseService<CmsOrderOverview>
     {
         Task<ApiResult<string>> DailyJobAsync(DateTime day);
         Task<ApiResult<string>> MonthlyJobAsync(DateTime day);

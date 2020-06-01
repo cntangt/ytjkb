@@ -15,8 +15,8 @@ namespace FytSoa.Core.Model.Cms
         public SubPayPlatform sub_pay_platform { get; set; }
         public string shop_name { get; set; }
         public string erp_org { get; set; }
-        public int count_trade { get; set; }
-        public int count_refund { get; set; }
+        public long count_trade { get; set; }
+        public long count_refund { get; set; }
         public long total_trade_fee { get; set; }
         public long total_refund_fee { get; set; }
         public long receivable_fee { get; set; }

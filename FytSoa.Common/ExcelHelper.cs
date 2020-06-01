@@ -59,6 +59,7 @@ namespace FytSoa.Common
             await Task.Run(() =>
             {
                 var r = 2;
+                var sums = new List<int>();
                 foreach (var item in source)
                 {
                     var c = 1;
@@ -68,6 +69,11 @@ namespace FytSoa.Common
 
                         if (r == 2)
                         {
+                            if (ec.Sum)
+                            {
+                                sums.Add(c);
+                            }
+
                             sheet.SetValue(r - 1, c, ec.Header);
                             if (!string.IsNullOrEmpty(ec.Formatter))
                             {
@@ -81,6 +87,18 @@ namespace FytSoa.Common
                     }
 
                     r++;
+                }
+                if (sums.Count > 0)
+                {
+                    sheet.SetValue(r, 1, "合计");
+                    foreach (var c in sums)
+                    {
+                        sheet.Cells[r, c].Formula = $"=sum({sheet.Cells[2, c].Address}:{sheet.Cells[r - 1, c].Address})";
+                    }
+                    //for (int i = 1; i <= columns.Length; i++)
+                    //{
+                    //    sheet.Cells[r, i].Style.Fill.BackgroundColor= 
+                    //}
                 }
                 for (int i = 1; i <= columns.Length; i++)
                 {
@@ -97,19 +115,15 @@ namespace FytSoa.Common
 
     public class EC
     {
-        public EC(string header, object val)
-        {
-            this.Header = header;
-            this.Value = val;
-        }
-
-        public EC(string header, object val, string formatter)
+        public EC(string header, object val, string formatter = null, bool sum = false)
         {
             this.Header = header;
             this.Value = val;
             this.Formatter = formatter;
+            this.Sum = sum;
         }
 
+        public bool Sum { get; set; }
         public string Header { get; set; }
         public object Value { get; set; }
         public string Formatter { get; set; }

@@ -296,21 +296,22 @@
                     url: '/api/sync/trade',
                     cols: [
                         [
-                            { field: 'sub_pay_platform', title: '支付渠道', width: 120 },
+                            { field: 'sub_pay_platform', title: '支付渠道', width: 120, totalRowText: '合计' },
                             { field: 'out_trade_no', title: '流水单号', width: 260 },
                             { field: 'shop_name', title: '门店名称', width: 200 },
-                            { field: 'total_fee', title: '订单金额', templet: os.tc, width: 110, align: 'right' },
+                            { field: 'total_fee', title: '订单金额', templet: os.tc, width: 110, align: 'right', totalRow: true },
                             { field: 'trade_type', title: '支付类型', width: 120 },
                             { field: 'trade_state', title: '支付状态', width: 120 },
                             { align: 'center', title: '创建时间', width: 160, templet: (d) => layui.util.toDateString(d.time_end, 'yyyy-MM-dd HH:mm:ss') },
                             { field: 'device_id', title: '设备号', width: 90, aigen: 'center' },
                             { field: 'staff_name', title: '店员名', width: 120 },
-                            { field: 'poundage', title: '手续费', templet: os.tc, width: 100, align: 'right' },
+                            { field: 'poundage', title: '手续费', templet: os.tc, width: 100, align: 'right', totalRow: true },
                             { title: '操作', align: 'center', templet: '#tool', width: 180 }
                         ]
                     ],
                     where: data(),
                     page: true,
+                    totalRow: true,
                     id: 'tables'
                 });
                 dt.render({ elem: '#_start_date', type: 'date', max: '@def_date' });

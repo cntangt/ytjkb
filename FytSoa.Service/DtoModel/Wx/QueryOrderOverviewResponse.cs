@@ -1,11 +1,10 @@
-﻿using System;
+﻿using FytSoa.Core.Model.Cms;
 using System.Collections.Generic;
-using System.Text;
 
 namespace FytSoa.Service.DtoModel.Wx
 {
     public class QueryOrderOverviewResponse
     {
-
+        public List<CmsOrderOverview> overviews { get; set; }
     }
 }
