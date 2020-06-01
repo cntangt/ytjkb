@@ -231,7 +231,7 @@ namespace FytSoa.Service.Implements
                 order_refunded_amount = SqlFunc.AggregateSum(ds.order_refunded_amount),//订单已退金额
                 discount_amount = SqlFunc.AggregateSum(ds.discount_amount),//优惠金额
                 poundage = SqlFunc.AggregateSum(ds.poundage),//手续费
-                refund_settle_amount = SqlFunc.AggregateSum(ds.refund_settle_amount),//应收金额
+                refund_settle_amount = SqlFunc.AggregateSum(ds.pay_settle_amount),//应收金额
                 income_amount = SqlFunc.AggregateSum(ds.income_amount)//入账金额
             }).GroupBy(ds => new { ds.business_date, ds.out_shop_id }).ToPageAsync(parm.page_num, parm.page_size);
 
