@@ -43,7 +43,7 @@ namespace FytSoa.Api.Controllers
             }
 
             var admin_guid = await HttpContext.LoginUserId();
-            var start = DateTime.Now.AddDays(-day - 1).Date;
+            var start = DateTime.Now.AddDays(-day).Date;
             var end = DateTime.Now.Date;
 
             return new IndexModel
