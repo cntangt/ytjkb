@@ -132,7 +132,7 @@ namespace FytSoa.Service.Implements
                     name = daily.sub_pay_platform,
                     trade_num = SqlFunc.AggregateSum(daily.success_count),
                     trade_total = SqlFunc.AggregateSum(daily.success_amount),
-                    refund_total = SqlFunc.AggregateSum(daily.order_refunded_amount)
+                    refund_total = SqlFunc.AggregateSum(daily.refund_create_amount)
                 }).ToListAsync();
 
             return typeof(SubPayPlatform).ToDropdown().Select(p =>
@@ -161,7 +161,7 @@ namespace FytSoa.Service.Implements
                     CountTrade = SqlFunc.AggregateSum(daily.success_count),
                     TotalTrade = SqlFunc.AggregateSum(daily.success_amount),
                     CountRefund = SqlFunc.AggregateSum(daily.refund_create_count),
-                    TotalRefund = SqlFunc.AggregateSum(daily.order_refunded_amount)
+                    TotalRefund = SqlFunc.AggregateSum(daily.refund_create_amount)
                 }).ToListAsync();
 
             return data;
@@ -228,7 +228,7 @@ namespace FytSoa.Service.Implements
                 success_count = SqlFunc.AggregateSum(ds.success_count),//交易笔数
                 success_amount = SqlFunc.AggregateSum(ds.success_amount),//交易金额
                 refund_create_count = SqlFunc.AggregateSum(ds.refund_create_count),//退货笔数
-                order_refunded_amount = SqlFunc.AggregateSum(ds.order_refunded_amount),//订单已退金额
+                refund_create_amount = SqlFunc.AggregateSum(ds.refund_create_amount),//订单已退金额
                 discount_amount = SqlFunc.AggregateSum(ds.discount_amount),//优惠金额
                 poundage = SqlFunc.AggregateSum(ds.poundage),//手续费
                 income_amount = SqlFunc.AggregateSum(ds.income_amount)//入账金额
@@ -250,7 +250,7 @@ namespace FytSoa.Service.Implements
                     }
 
                     //应收金额
-                    shop.pay_settle_amount = shop.success_amount - shop.order_refunded_amount;
+                    shop.pay_settle_amount = shop.success_amount - shop.refund_create_amount;
                 });
             }
 
@@ -279,7 +279,7 @@ namespace FytSoa.Service.Implements
                 success_count = SqlFunc.AggregateSum(ds.success_count),//交易笔数
                 success_amount = SqlFunc.AggregateSum(ds.success_amount),//交易金额
                 refund_create_count = SqlFunc.AggregateSum(ds.refund_create_count),//退货笔数
-                order_refunded_amount = SqlFunc.AggregateSum(ds.order_refunded_amount),//退货金额
+                refund_create_amount = SqlFunc.AggregateSum(ds.refund_create_amount),//退货金额
             }).GroupBy(ds => ds.out_sub_mch_id).ToPageAsync(parm.page_num, parm.page_size);
 
             if (data.Items.Count > 0)
@@ -297,7 +297,7 @@ namespace FytSoa.Service.Implements
                     }
 
                     //交易净额(同应收金额计算方式一样)
-                    shop.pay_settle_amount = shop.success_amount - shop.order_refunded_amount;
+                    shop.pay_settle_amount = shop.success_amount - shop.refund_create_amount;
                 });
             }
 
