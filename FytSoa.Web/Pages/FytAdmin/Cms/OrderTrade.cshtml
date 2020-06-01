@@ -126,11 +126,11 @@
                 <div class="layui-form-item">
                     <label class="layui-form-label">订单金额</label>
                     <div class="layui-input-block">
-                        <input type="text" value="{{ d.total_fee.tc() }}" disabled class="layui-input">
+                        <input type="text" value="{{ os.tc(d.total_fee) }}" disabled class="layui-input">
                     </div>
                     <label class="layui-form-label">手续费</label>
                     <div class="layui-input-block">
-                        <input type="text" value="{{ d.poundage.tc() }}" disabled class="layui-input">
+                        <input type="text" value="{{ os.tc(d.poundage) }}" disabled class="layui-input">
                     </div>
                 </div>
             </form>
@@ -161,17 +161,17 @@
                 <div class="layui-form-item">
                     <label class="layui-form-label">订单金额</label>
                     <div class="layui-input-block">
-                        <input type="text" value="{{ d.total_fee.tc() }}" disabled class="layui-input">
+                        <input type="text" value="{{ os.tc(d.total_fee) }}" disabled class="layui-input">
                     </div>
                     <label class="layui-form-label">手续费</label>
                     <div class="layui-input-block">
-                        <input type="text" value="{{ d.poundage.tc() }}" disabled class="layui-input">
+                        <input type="text" value="{{ os.tc(d.poundage) }}" disabled class="layui-input">
                     </div>
                 </div>
                 <div class="layui-form-item">
                     <label class="layui-form-label">可退金额</label>
                     <div class="layui-input-block">
-                        <input type="text" value="{{ (d.total_fee - d.refunded_fee).tc() }}" disabled class="layui-input">
+                        <input type="text" value="{{ os.tc(d.total_fee - d.refunded_fee) }}" disabled class="layui-input">
                     </div>
                     <label class="layui-form-label">退款金额</label>
                     <div class="layui-input-block">
@@ -299,13 +299,13 @@
                             { field: 'sub_pay_platform', title: '支付渠道', width: 120 },
                             { field: 'out_trade_no', title: '流水单号', width: 260 },
                             { field: 'shop_name', title: '门店名称', width: 200 },
-                            { title: '订单金额', templet: (d) => d.total_fee.tc(), width: 110, align: 'right' },
+                            { field: 'total_fee', title: '订单金额', templet: os.tc, width: 110, align: 'right' },
                             { field: 'trade_type', title: '支付类型', width: 120 },
                             { field: 'trade_state', title: '支付状态', width: 120 },
                             { align: 'center', title: '创建时间', width: 160, templet: (d) => layui.util.toDateString(d.time_end, 'yyyy-MM-dd HH:mm:ss') },
                             { field: 'device_id', title: '设备号', width: 90, aigen: 'center' },
                             { field: 'staff_name', title: '店员名', width: 120 },
-                            { title: '手续费', templet: (d) => d.poundage.tc(), width: 100, align: 'right' },
+                            { field: 'poundage', title: '手续费', templet: os.tc, width: 100, align: 'right' },
                             { title: '操作', align: 'center', templet: '#tool', width: 180 }
                         ]
                     ],
@@ -342,7 +342,7 @@
                                 content: html,
                                 btn: ['退款', '取消'],
                                 yes: (i, l) => {
-                                    os.ajax('api/sync/dorefund', $(l).find('form').serializeArray().js(), (res) => {
+                                    os.ajax('api/sync/dorefund', os.js($(l).find('form')), (res) => {
                                         if (res.statusCode) {
                                             os.error(res.message);
                                         }
@@ -357,7 +357,7 @@
                     }
                 });
                 function data() {
-                    var _data = $('#searchform').serializeArray().js();
+                    var _data = os.js($('#searchform'));
                     _data['sub_pay_platforms'] = pp.getValue('value');
 
                     if ($.trim($("#_start_date").val()).length == 0) {

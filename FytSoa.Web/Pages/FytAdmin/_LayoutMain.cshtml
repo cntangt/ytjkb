@@ -10,13 +10,8 @@
     <link rel="stylesheet" href="~/themes/layui/css/layui.css" asp-append-version="true" />
     <link rel="stylesheet" href="~/build/admin/css/site.min.css" asp-append-version="true">
     @RenderSection("styles", false)
-    <style type="text/css">
-        .unreadquantity { position: absolute; text-align: center; top: 10px; left: 45px; width: 20px; height: 20px; line-height: 20px; background: red; border-radius: 50% / 50%; color: #fff; }
-        .cr { background: none repeat scroll 0 0 #fff; border-top: 1px solid #e7eaec; overflow: hidden; padding: 10px 20px; text-align: right; position: relative; z-index: 999; }
-            .cr a { color: #337ab7 !important; }
-    </style>
     <script src="~/themes/js/modules/vue.js" asp-append-version="true"></script>
-    <script src="~/themes/layui/layui.js" asp-append-version="true"></script>
+    <script src="~/themes/layui/layui.all.js" asp-append-version="true"></script>
     <title>@ViewBag.Title - @ViewBag.SiteName</title>
 </head>
 <body>
@@ -72,10 +67,8 @@
             <div class="loader">Loading...</div>
         </div>
     </div>
-    <script type="text/javascript" src="~/themes/js/echarts.min.js"></script>
-    <script type="text/javascript" src="~/themes/js/macarons.js"></script>
-    <script type="text/javascript" src="~/themes/js/nprogress.js"></script>
-    <script type="text/javascript" src="~/themes/js/layout/main.js"></script>
+    
+    <script src="~/build/admin/js/site.min.js" asp-append-version="true"></script>
     @RenderSection("Scripts", required: false)
 </body>
 </html>

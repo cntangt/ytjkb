@@ -14,11 +14,27 @@
 }
 @section styles{
     <style>
-        .layui-form-label { width: 100px; }
-        .layui-form-item { margin-bottom: 8px; }
-        .layui-input-block { margin-left: 0px; width: 200px; float: left; }
-        .layui-layer-btn { padding: 0 35px 65px !important; }
-        .width-130 {width:130px;}
+        .layui-form-label {
+            width: 100px;
+        }
+
+        .layui-form-item {
+            margin-bottom: 8px;
+        }
+
+        .layui-input-block {
+            margin-left: 0px;
+            width: 200px;
+            float: left;
+        }
+
+        .layui-layer-btn {
+            padding: 0 35px 65px !important;
+        }
+
+        .width-130 {
+            width: 130px;
+        }
     </style>
 }
 <div id="container">
@@ -56,9 +72,6 @@
             </form>
         </div>
         <table class="layui-hide" id="tablist" lay-filter="tool"></table>
-        <script type="text/html" id="fee">
-            <div>{{d.receivable_fee.tc()}}</div>
-        </script>
     </div>
 </div>
 @section scripts{
@@ -128,14 +141,14 @@
                             { align: 'business_date', title: '日期', width: 105, align: 'center', templet: (d) => layui.util.toDateString(d.business_date, 'yyyy-MM-dd'), totalRowText: '合计' },
                             { field: 'shop_name', title: '门店名称', width: 200 },
                             { field: 'erp_org', title: 'ERP机构', width: 85, align: 'center' },
-                            { field: 'count_trade', title: '交易笔数', width: 85, align: 'right', totalRow: true },
-                            { title: '交易金额', templet: '#fee', width: 110, align: 'right' },
-                            { field: 'count_refund', title: '退款笔数', width: 85, align: 'right', totalRow: true },
-                            { title: '退款金额', templet: '#fee', width: 110, align: 'right' },
-                            { title: '应收金额', templet: '#fee', width: 110, align: 'right' },
-                            { title: '优惠金额', templet: '#fee', width: 110, align: 'right' },
-                            { title: '手续费', templet: '#fee', width: 110, align: 'right' },
-                            { title: '入账金额', templet: '#fee', width: 110, align: 'right' },
+                            { field: 'count_trade', title: '交易笔数', width: 85, align: 'right', totalRow: true, templet: os.tn },
+                            { field: 'total_trade_fee', title: '交易金额', templet: os.tc, width: 110, align: 'right' },
+                            { field: 'count_refund', title: '退款笔数', width: 85, align: 'right', totalRow: true, templet: os.tn },
+                            { field: 'total_refund_fee', title: '退款金额', templet: os.tc, width: 110, align: 'right' },
+                            { field: 'settlement_fee', title: '应收金额', templet: os.tc, width: 110, align: 'right' },
+                            { field: 'discount_fee', title: '优惠金额', templet: os.tc, width: 110, align: 'right' },
+                            { field: 'poundage_fee', title: '手续费', templet: os.tc, width: 110, align: 'right' },
+                            { field: 'receivable_fee', title: '入账金额', templet: os.tc, width: 110, align: 'right' },
                         ]
                     ],
                     where: data(),
@@ -159,7 +172,7 @@
                     l.open({ title: '门店数据导出', area: ['550px', '300px'], content: '/api/sync/dailyreportexport/?q=' + encodeURI(JSON.stringify(data())), type: 2 });
                 });
                 function data() {
-                    var _data = $('#searchform').serializeArray().js();
+                    var _data = os.js($('#searchform'));
                     _data['sub_pay_platforms'] = pp.getValue('value');
 
                     if ($.trim(_data['start_time']).length == 0) {

@@ -8,6 +8,29 @@
         "positionClass": "toast-top-right",
         "timeOut": "1500"
     };
+
+    function to_num(number, decimals) {
+        var n = !isFinite(+number) ? 0 : +number,
+            prec = !isFinite(+decimals) ? 0 : Math.abs(decimals),
+            s = '',
+            toFixedFix = function (n, prec) {
+                var k = Math.pow(10, prec);
+                return '' + Math.ceil(n * k) / k;
+            };
+
+        s = (prec ? toFixedFix(n, prec) : '' + Math.round(n)).split('.');
+        var re = /(-?\d+)(\d{3})/;
+        while (re.test(s[0])) {
+            s[0] = s[0].replace(re, "$1,$2");
+        }
+
+        if ((s[1] || '').length < prec) {
+            s[1] = s[1] || '';
+            s[1] += new Array(prec - s[1].length + 1).join('0');
+        }
+        return s.join('.');
+    }
+
     var tmls, tool = {
         error: function (msg) {
             toastr.error(msg);
@@ -185,8 +208,37 @@
                     return true;
             }
             return false;
+        },
+        tc: function (data, field) { // 货币格式化
+            var val = isNaN(data) ? data[field] : data;
+            return '￥' + to_num(val / 100, 2);
+        },
+        ntc: function (data, field) { // 货币格式化
+            var val = isNaN(data) ? data[field] : data;
+            return '￥' + to_num(val, 2);
+        },
+        tn: function (data, field) { // 数字格式化
+            var val = isNaN(data) ? data[field] : data;
+            return to_num(val, 0);
+        },
+        js: function (jqueryForm) {
+            var data = {};
+            jqueryForm.serializeArray().forEach((i) => {
+                data[i.name] = i.value;
+            });
+            return data;
+        },
+        ts: function (data, field) {
+            if (field === undefined) {
+                field = 'status';
+            }
+            return '<span class="layui-badge-dot layui-bg-' + (data[field] ? 'blue' : 'gray') + '"></span>';
+        },
+        tp: function (data, field) {
+            return (data[field] * 100).toFixed(2) + '%';
         }
     };
     exports('common', tool);
 });
+
 

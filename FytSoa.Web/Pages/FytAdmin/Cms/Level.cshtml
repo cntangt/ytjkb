@@ -31,10 +31,10 @@
                         [
                             { type: 'checkbox' },
                             { field: 'name', title: '等级名称' },
-                            { title: '微信渠道成本', templet: '<s>{{ toper(d.wxpay) }}</s>' },
-                            { title: '支付宝渠道成本', templet: '<s>{{ toper(d.alipay) }}</s>' },
-                            { title: '其它渠道成本', templet: '<s>{{ toper(d.otherpay) }}</s>' },
-                            { title: '状态', templet: tostatus, width: 60, align: 'center' },
+                            { field: 'wxpay', title: '微信渠道成本', templet: os.tp },
+                            { field: 'alipay', title: '支付宝渠道成本', templet: os.tp },
+                            { field: 'otherpay', title: '其它渠道成本', templet: os.tp },
+                            { title: '状态', templet: os.ts, width: 60, align: 'center' },
                             { width: 100, title: '操作', templet: '#tool' }
                         ]
                     ],

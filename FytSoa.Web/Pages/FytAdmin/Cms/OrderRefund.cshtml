@@ -125,11 +125,11 @@
                 <div class="layui-form-item">
                     <label class="layui-form-label">订单金额</label>
                     <div class="layui-input-block">
-                        <input type="text" value="{{ d.total_fee.tc() }}" disabled class="layui-input">
+                        <input type="text" value="{{ os.tc(d.total_fee) }}" disabled class="layui-input">
                     </div>
                     <label class="layui-form-label">退款金额</label>
                     <div class="layui-input-block">
-                        <input type="text" value="{{ d.refund_fee.tc() }}" disabled class="layui-input">
+                        <input type="text" value="{{ os.tc(d.refund_fee) }}" disabled class="layui-input">
                     </div>
                 </div>
             </form>
@@ -242,8 +242,8 @@
                             { field: 'out_trade_no', title: '交易单号', width: 260 },
                             { field: 'out_refund_no', title: '退款单号', width: 260 },
                             { field: 'shop_name', title: '门店名称', width: 200 },
-                            { title: '订单金额', templet: (d) => d.total_fee.tc(), width: 110, align: 'right' },
-                            { title: '退款金额', templet: (d) => d.refund_fee.tc(), width: 110, align: 'right' },
+                            { field: 'total_fee', title: '订单金额', templet: os.tc, width: 110, align: 'right' },
+                            { field: 'refund_fee', title: '退款金额', templet: os.tc, width: 110, align: 'right' },
                             { field: 'refund_state', title: '退款状态', width: 110, align: 'left' },
                             { align: 'center', title: '退款时间', width: 155, templet: (d) => layui.util.toDateString(d.last_update_time, 'yyyy-MM-dd HH:mm:ss') },
                             { field: 'device_id', title: '设备号', width: 90, align: 'center' },
@@ -276,7 +276,7 @@
                     tpl(details.innerHTML).render(obj.data, (html) => l.open({ title: '退款单详情', area: ['720px', '480px'], content: html }));
                 });
                 function data() {
-                    var _data = $('#searchform').serializeArray().js();
+                    var _data = os.js($('#searchform'));
                     _data['sub_pay_platforms'] = pp.getValue('value');
 
                     if ($.trim($("#_start_date").val()).length == 0) {

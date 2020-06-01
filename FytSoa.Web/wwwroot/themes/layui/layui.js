@@ -7,7 +7,7 @@ function toper(val) {
 
 function tostatus(d) {
     var status = null;
-    if (d.status == undefined) {
+    if (d.status === undefined) {
         status = d;
     }
     else {

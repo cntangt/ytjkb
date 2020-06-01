@@ -20,3 +20,30 @@
 .layui-input-block input:disabled {
     background-color: #eee;
 }
+
+.unreadquantity {
+    position: absolute;
+    text-align: center;
+    top: 10px;
+    left: 45px;
+    width: 20px;
+    height: 20px;
+    line-height: 20px;
+    background: red;
+    border-radius: 50% / 50%;
+    color: #fff;
+}
+
+.cr {
+    background: none repeat scroll 0 0 #fff;
+    border-top: 1px solid #e7eaec;
+    overflow: hidden;
+    padding: 10px 20px;
+    text-align: right;
+    position: relative;
+    z-index: 999;
+}
+
+.cr a {
+    color: #337ab7 !important;
+}

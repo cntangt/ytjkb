@@ -46,11 +46,11 @@
                             { field: 'tel', title: '联系电话', width: 115, align: 'center' },
                             { field: 'agent_admin_name', title: '代理商', width: 120 },
                             { field: 'out_sub_mch_id', title: '商户子账号', width: 180 },
-                            { title: '微信', templet: '<s>{{ toper(d.wxpay) }}</s>', align: 'center', width: 80 },
-                            { title: '支付宝', templet: '<s>{{ toper(d.alipay) }}</s>', align: 'center', width: 80 },
-                            { title: '微(代)', templet: '<s>{{ toper(d.agent_wxpay) }}</s>', align: 'center', width: 80 },
-                            { title: '支(代)', templet: '<s>{{ toper(d.agent_alipay) }}</s>', align: 'center', width: 80 },
-                            { title: '状态', templet: tostatus, align: 'center', width: 60 },
+                            { field: 'wxpay', title: '微信', templet: os.tp, align: 'center', width: 80 },
+                            { field: 'alipay', title: '支付宝', templet: os.tp, align: 'center', width: 80 },
+                            { field: 'agent_wxpay', title: '微(代)', templet: os.tp, align: 'center', width: 80 },
+                            { field: 'agent_alipay', title: '支(代)', templet: os.tp, align: 'center', width: 80 },
+                            { title: '状态', templet: os.ts, align: 'center', width: 60 },
                             { align: 'center', title: '创建时间', width: 100, templet: (d) => layui.util.toDateString(d.create_time, 'yyyy-MM-dd') },
                             { width: 240, title: '操作', templet: '#tool', align: 'center' }
                         ]
@@ -66,7 +66,7 @@
                             page: {
                                 curr: 1
                             },
-                            where: $('#searchform').serializeArray().js()
+                            where: os.js($('#searchform'))
                         });
                         return false;
                     },

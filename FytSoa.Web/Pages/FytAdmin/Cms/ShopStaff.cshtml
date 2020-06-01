@@ -21,8 +21,8 @@
                             { field: 'out_shop_id', title: '店铺编号', width: 200 },
                             { field: 'staff_id', title: '店员编号', width: 200 },
                             { field: 'staff_name', title: '店员名称', width: 150 },
-                            { title: '店长', templet: (d)=>tostatus(d.shop_manager), align: 'center', width: 60 },
-                            { title: '消息', templet: (d)=>tostatus(d.receive_one_code_pay_notify), align: 'center', width: 60 },
+                            { field: 'shop_manager', title: '店长', templet: os.ts, align: 'center', width: 60 },
+                            { field: 'receive_one_code_pay_notify', title: '消息', templet: os.ts, align: 'center', width: 60 },
                             { field: 'remark', title: '备注信息' }
                         ]
                     ],

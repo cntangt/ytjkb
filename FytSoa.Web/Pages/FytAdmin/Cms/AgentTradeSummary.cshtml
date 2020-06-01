@@ -95,10 +95,10 @@
                         [
                             { field: 'shop_name', title: '商户名称', width: 220 },
                             { field: 'count_trade', title: '交易笔数', width: 100, align: 'right' },
-                            { title: '交易金额', templet: (d) => d.total_trade_fee.tc(), width: 120, align: 'right' },
+                            { field: 'total_trade_fee', title: '交易金额', templet: os.tc, width: 120, align: 'right' },
                             { field: 'count_refund', title: '退款笔数', width: 100, align: 'right' },
-                            { title: '退款金额', templet: (d) => d.total_refund_fee.tc(), width: 120, align: 'right' },
-                            { title: '交易净额', templet: (d) => d.receivable_fee.tc(), width: 120, align: 'right' },
+                            { field: 'total_refund_fee', title: '退款金额', templet: os.tc, width: 120, align: 'right' },
+                            { field: 'receivable_fee', title: '交易净额', templet: os.tc, width: 120, align: 'right' },
                         ]
                     ],
                     where: data(),
@@ -121,7 +121,7 @@
                     l.open({ title: '交易统计数据导出', area: ['550px', '300px'], content: '/api/sync/tradesummaryexport/?q=' + encodeURI(JSON.stringify(data())), type: 2 });
                 });
                 function data() {
-                    var _data = $('#searchform').serializeArray().js();
+                    var _data = os.js($('#searchform'));
                     _data['sub_pay_platforms'] = pp.getValue('value');
 
                     if ($.trim(_data['start_time']).length == 0) {
