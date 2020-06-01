@@ -42,7 +42,7 @@
                             { field: 'tel', title: '电话', align: 'center', width: 115 },
                             {
                                 field: 'wxpay', title: '支付渠道成本', width: 260, templet: function (d) {
-                                    return "微信:" + d.wxpay + ",支付宝:" + d.alipay + ",其他:" + d.otherpay + "";
+                                    return "微信:" + os.tp(d.wxpay) + ",支付宝:" + os.tp(d.alipay) + ",其他:" + os.tp(d.otherpay);
                                 }
                             },
                             { field: 'settle_Name', title: '结算方式', width: 110 },

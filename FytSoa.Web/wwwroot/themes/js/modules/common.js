@@ -235,7 +235,8 @@
             return '<span class="layui-badge-dot layui-bg-' + (data[field] ? 'blue' : 'gray') + '"></span>';
         },
         tp: function (data, field) {
-            return (data[field] * 100).toFixed(2) + '%';
+            var val = isNaN(data) ? data[field] : data;
+            return (val * 100).toFixed(2) + '%';
         }
     };
     exports('common', tool);
