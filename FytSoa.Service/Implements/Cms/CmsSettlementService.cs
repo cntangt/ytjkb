@@ -196,9 +196,9 @@ namespace FytSoa.Service.Implements
             return query.Where(daily => daily.business_date >= start && daily.business_date <= end);
         }
 
-        public async Task<ApiResult<Page<CmsDailySettlement>>> GetShopDailyReport(QueryOrderListRequest parm)
+        public async Task<ApiResult<Page<CmsOrderOverview>>> GetShopDailyReport(QueryOrderListRequest parm)
         {
-            var res = new ApiResult<Page<CmsDailySettlement>>();
+            var res = new ApiResult<Page<CmsOrderOverview>>();
 
             var role_info = await roleService.GetRoleByAdminGuid(parm.createby);
 
@@ -215,24 +215,24 @@ namespace FytSoa.Service.Implements
                 query.Where((ds, rel) => rel.admin_guid == parm.createby);
             }
 
-
             query.WhereIF(!string.IsNullOrEmpty(parm.out_sub_mch_id), (ds, rel) => ds.out_sub_mch_id == parm.out_sub_mch_id)
                 .WhereIF(!string.IsNullOrEmpty(parm.out_shop_id), (ds, rel) => ds.out_shop_id == parm.out_shop_id)
                 .WhereIF(parm.sub_pay_platforms.Length > 0, (ds, rel) => parm.sub_pay_platforms.Contains(ds.sub_pay_platform))
                 .WhereIF(parm.start_time != null, (ds, rel) => ds.business_date >= parm.start_time)
                 .WhereIF(parm.end_time != null, (ds, rel) => ds.business_date <= parm.end_time);
 
-            var data = await query.Select((ds, rel) => new CmsDailySettlement
+            var data = await query.Select((ds, rel) => new CmsOrderOverview
             {
                 business_date = ds.business_date,
                 out_shop_id = ds.out_shop_id,
-                count_trade = SqlFunc.AggregateSum(ds.success_count),
-                total_trade_fee = SqlFunc.AggregateSum(ds.success_amount),
-                count_refund = SqlFunc.AggregateSum(ds.refund_create_count),
-                total_refund_fee = SqlFunc.AggregateSum(ds.refund_settle_amount),
-                discount_fee = SqlFunc.AggregateSum(ds.discount_amount),
-                poundage_fee = SqlFunc.AggregateSum(ds.poundage),
-                settlement_fee = SqlFunc.AggregateSum(ds.settle_amount)
+                success_count = SqlFunc.AggregateSum(ds.success_count),//交易笔数
+                success_amount = SqlFunc.AggregateSum(ds.success_amount),//交易金额
+                refund_create_count = SqlFunc.AggregateSum(ds.refund_create_count),//退货笔数
+                order_refunded_amount = SqlFunc.AggregateSum(ds.order_refunded_amount),//订单已退金额
+                discount_amount = SqlFunc.AggregateSum(ds.discount_amount),//优惠金额
+                poundage = SqlFunc.AggregateSum(ds.poundage),//手续费
+                refund_settle_amount = SqlFunc.AggregateSum(ds.refund_settle_amount),//应收金额
+                income_amount = SqlFunc.AggregateSum(ds.income_amount)//入账金额
             }).GroupBy(ds => new { ds.business_date, ds.out_shop_id }).ToPageAsync(parm.page_num, parm.page_size);
 
             if (data.Items.Count > 0)
@@ -241,18 +241,18 @@ namespace FytSoa.Service.Implements
 
                 var shopInfos = await Db.Queryable<ShopInfo>().In(p => p.out_shop_id, ids).ToListAsync();
 
-                data.Items.ForEach(shop =>
+                if (shopInfos.Count > 0)
                 {
-                    var shopInfo = shopInfos.FirstOrDefault(m => shop.out_shop_id == m.out_shop_id);
-                    if (shopInfo != null)
+                    data.Items.ForEach(shop =>
                     {
-                        shop.shop_name = shopInfo.shop_name;
-                        shop.erp_org = shopInfo.erp_org;
-                    }
-
-                    //入账金额
-                    shop.receivable_fee = shop.total_trade_fee - shop.total_refund_fee - shop.poundage_fee;
-                });
+                        var shopInfo = shopInfos.FirstOrDefault(m => shop.out_shop_id == m.out_shop_id);
+                        if (shopInfo != null)
+                        {
+                            shop.shop_name = shopInfo.shop_name;
+                            shop.erp_org = shopInfo.erp_org;
+                        }
+                    });
+                }
             }
 
             res.data = data;
@@ -261,9 +261,9 @@ namespace FytSoa.Service.Implements
             return res;
         }
 
-        public async Task<ApiResult<Page<CmsDailySettlement>>> GetAgentTradeSummary(QueryOrderListRequest parm)
+        public async Task<ApiResult<Page<CmsOrderOverview>>> GetAgentTradeSummary(QueryOrderListRequest parm)
         {
-            var res = new ApiResult<Page<CmsDailySettlement>>();
+            var res = new ApiResult<Page<CmsOrderOverview>>();
 
             var query = Db.Queryable<CmsOrderOverview, CmsMerchant>((ds, mch) =>
                 new object[] { JoinType.Left, ds.out_sub_mch_id == mch.out_sub_mch_id });
@@ -274,13 +274,14 @@ namespace FytSoa.Service.Implements
                 .WhereIF(parm.start_time != null, (ds, mch) => ds.business_date >= parm.start_time)
                 .WhereIF(parm.end_time != null, (ds, mch) => ds.business_date <= parm.end_time);
 
-            var data = await query.Select((ds, mch) => new CmsDailySettlement
+            var data = await query.Select((ds, mch) => new CmsOrderOverview
             {
                 out_sub_mch_id = ds.out_sub_mch_id,
-                count_trade = SqlFunc.AggregateSum(ds.success_count),
-                total_trade_fee = SqlFunc.AggregateSum(ds.success_amount),
-                count_refund = SqlFunc.AggregateSum(ds.refund_create_count),
-                total_refund_fee = SqlFunc.AggregateSum(ds.refund_settle_amount),
+                success_count = SqlFunc.AggregateSum(ds.success_count),//交易笔数
+                success_amount = SqlFunc.AggregateSum(ds.success_amount),//交易金额
+                refund_create_count = SqlFunc.AggregateSum(ds.refund_create_count),//退货笔数
+                order_refunded_amount = SqlFunc.AggregateSum(ds.order_refunded_amount),//退货金额
+                refund_settle_amount = SqlFunc.AggregateSum(ds.refund_settle_amount),//交易净额
             }).GroupBy(ds => ds.out_sub_mch_id).ToPageAsync(parm.page_num, parm.page_size);
 
             if (data.Items.Count > 0)
@@ -289,17 +290,17 @@ namespace FytSoa.Service.Implements
 
                 var shopInfos = await Db.Queryable<CmsMerchant>().In(p => p.out_sub_mch_id, ids).ToListAsync();
 
-                data.Items.ForEach(shop =>
+                if (shopInfos.Count > 0)
                 {
-                    var shopInfo = shopInfos.FirstOrDefault(m => shop.out_sub_mch_id == m.out_sub_mch_id);
-                    if (shopInfo != null)
+                    data.Items.ForEach(shop =>
                     {
-                        shop.shop_name = shopInfo.name;
-                    }
-
-                    //交易净额
-                    shop.receivable_fee = shop.total_trade_fee - shop.total_refund_fee;
-                });
+                        var shopInfo = shopInfos.FirstOrDefault(m => shop.out_sub_mch_id == m.out_sub_mch_id);
+                        if (shopInfo != null)
+                        {
+                            shop.shop_name = shopInfo.name;
+                        }
+                    });
+                }
             }
 
             res.data = data;

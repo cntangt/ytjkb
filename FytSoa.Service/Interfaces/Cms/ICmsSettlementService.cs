@@ -14,7 +14,7 @@ namespace FytSoa.Service.Interfaces
         Task<ApiResult<string>> MonthlyJobAsync(DateTime day);
         Task<IEnumerable<PlatformInfo>> GetPlatformInfoAsync(string admin_guid, DateTime start, DateTime end);
         Task<IEnumerable<TrendInfo>> GetTrendAsync(string admin_guid, DateTime start, DateTime end);
-        Task<ApiResult<Page<CmsDailySettlement>>> GetShopDailyReport(QueryOrderListRequest parm);
-        Task<ApiResult<Page<CmsDailySettlement>>> GetAgentTradeSummary(QueryOrderListRequest parm);
+        Task<ApiResult<Page<CmsOrderOverview>>> GetShopDailyReport(QueryOrderListRequest parm);
+        Task<ApiResult<Page<CmsOrderOverview>>> GetAgentTradeSummary(QueryOrderListRequest parm);
     }
 }

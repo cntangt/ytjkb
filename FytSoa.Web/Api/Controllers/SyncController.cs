@@ -330,9 +330,9 @@ namespace FytSoa.Api.Controllers
         public Task<ApiResult<string>> MonthlyJob() => cmsDaily.MonthlyJobAsync(DateTime.Now);
 
         [HttpPost]
-        public async Task<PageResult<IEnumerable<CmsDailySettlement>>> DailyReport(QueryOrderListRequest req)
+        public async Task<PageResult<IEnumerable<CmsOrderOverview>>> DailyReport(QueryOrderListRequest req)
         {
-            var res = new PageResult<IEnumerable<CmsDailySettlement>>();
+            var res = new PageResult<IEnumerable<CmsOrderOverview>>();
 
             var mch = await merchantService.GetModelAsync(p => p.out_sub_mch_id == req.out_sub_mch_id);
             if (mch == null || mch.data == null || mch.data.id == 0)
@@ -390,17 +390,16 @@ namespace FytSoa.Api.Controllers
             }
 
             var data = await res.data.Items.Write("门店日报表",
-                p => new EC("退款时间", p.business_date.ToLocalTime(), "yyyy年MM月dd日 HH:mm:ss"),
                 p => new EC("门店名称", p.shop_name),
                 p => new EC("ERP机构", p.erp_org),
-                p => new EC("交易笔数", p.count_trade, sum: true),
-                p => new EC("交易金额", p.total_trade_fee / 100M, "¥#,##0.00", sum: true),
-                p => new EC("退款笔数", p.count_refund, sum: true),
-                p => new EC("退款金额", p.total_refund_fee / 100M, "¥#,##0.00", sum: true),
-                p => new EC("应收金额", p.receivable_fee / 100M, "¥#,##0.00", sum: true),
-                p => new EC("优惠金额", p.discount_fee / 100M, "¥#,##0.00", sum: true),
-                p => new EC("手续费", p.poundage_fee / 100M, "¥#,##0.00", sum: true),
-                p => new EC("结算金额", p.settlement_fee / 100M, "¥#,##0.00", sum: true));
+                p => new EC("交易笔数", p.success_count, sum: true),
+                p => new EC("交易金额", p.success_amount / 100M, "¥#,##0.00", sum: true),
+                p => new EC("退款笔数", p.refund_create_count, sum: true),
+                p => new EC("退款金额", p.order_refunded_amount / 100M, "¥#,##0.00", sum: true),
+                p => new EC("应收金额", p.refund_settle_amount / 100M, "¥#,##0.00", sum: true),
+                p => new EC("优惠金额", p.discount_amount / 100M, "¥#,##0.00", sum: true),
+                p => new EC("手续费", p.poundage / 100M, "¥#,##0.00", sum: true),
+                p => new EC("入账金额", p.income_amount / 100M, "¥#,##0.00", sum: true));
 
             return File(
                 data,
@@ -418,6 +417,7 @@ namespace FytSoa.Api.Controllers
             }
 
             var res = await cmsDaily.GetAgentTradeSummary(req);
+
             return Ok(new { code = 0, msg = "success", count = res.data.TotalItems, data = res.data.Items });
         }
 
@@ -441,11 +441,11 @@ namespace FytSoa.Api.Controllers
 
             var data = await res.data.Items.Write("代理商交易统计",
                 p => new EC("商户名称", p.shop_name),
-                p => new EC("交易笔数", p.count_trade, sum: true),
-                p => new EC("交易金额", p.total_trade_fee / 100M, "¥#,##0.00", sum: true),
-                p => new EC("退款笔数", p.count_refund, sum: true),
-                p => new EC("退款金额", p.total_refund_fee / 100M, "¥#,##0.00", sum: true),
-                p => new EC("交易净额", p.receivable_fee / 100M, "¥#,##0.00", sum: true));
+                p => new EC("交易笔数", p.success_count, sum: true),
+                p => new EC("交易金额", p.success_amount / 100M, "¥#,##0.00", sum: true),
+                p => new EC("退款笔数", p.refund_create_count, sum: true),
+                p => new EC("退款金额", p.order_refunded_amount / 100M, "¥#,##0.00", sum: true),
+                p => new EC("交易净额", p.refund_settle_amount / 100M, "¥#,##0.00", sum: true));
 
             return File(
                 data,

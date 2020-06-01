@@ -45,5 +45,11 @@ namespace FytSoa.Core.Model.Cms
         public long direct_unfreeze_amount { get; set; }
         public long consumed_unfreeze_amount { get; set; }
         public long auto_unfreeze_amount { get; set; }
+
+        [SqlSugar.SugarColumn(IsIgnore = true)]
+        public string shop_name { get; set; }
+
+        [SqlSugar.SugarColumn(IsIgnore = true)]
+        public string erp_org { get; set; }
     }
 }
