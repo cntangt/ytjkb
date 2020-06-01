@@ -18,7 +18,7 @@
         .layui-form-item { margin-bottom: 8px; }
         .layui-input-block { margin-left: 0px; width: 200px; float: left; }
         .layui-layer-btn { padding: 0 35px 65px !important; }
-        .width-130 { width: 130px; }
+        .width-130 {width:130px;}
     </style>
 }
 <div id="container">
@@ -125,12 +125,12 @@
                     url: '/api/sync/dailyreport',
                     cols: [
                         [
-                            { align: 'business_date', title: '日期', width: 105, align: 'center', templet: (d) => layui.util.toDateString(d.business_date, 'yyyy-MM-dd'),  },
+                            { align: 'business_date', title: '日期', width: 105, align: 'center', templet: (d) => layui.util.toDateString(d.business_date, 'yyyy-MM-dd'), totalRowText: '合计' },
                             { field: 'shop_name', title: '门店名称', width: 200 },
                             { field: 'erp_org', title: 'ERP机构', width: 85, align: 'center' },
-                            { field: 'count_trade', title: '交易笔数', width: 85, align: 'right' },
+                            { field: 'count_trade', title: '交易笔数', width: 85, align: 'right', totalRow: true },
                             { title: '交易金额', templet: '#fee', width: 110, align: 'right' },
-                            { field: 'count_refund', title: '退款笔数', width: 85, align: 'right' },
+                            { field: 'count_refund', title: '退款笔数', width: 85, align: 'right', totalRow: true },
                             { title: '退款金额', templet: '#fee', width: 110, align: 'right' },
                             { title: '应收金额', templet: '#fee', width: 110, align: 'right' },
                             { title: '优惠金额', templet: '#fee', width: 110, align: 'right' },
@@ -140,6 +140,7 @@
                     ],
                     where: data(),
                     page: true,
+                    totalRow: true,
                     id: 'tables'
                 });
                 dt.render({ elem: '#start_time', type: 'date', max: '@def_date' });
