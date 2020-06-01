@@ -396,7 +396,7 @@ namespace FytSoa.Api.Controllers
                 p => new EC("交易金额", p.success_amount / 100M, "¥#,##0.00", sum: true),
                 p => new EC("退款笔数", p.refund_create_count, sum: true),
                 p => new EC("退款金额", p.order_refunded_amount / 100M, "¥#,##0.00", sum: true),
-                p => new EC("应收金额", p.refund_settle_amount / 100M, "¥#,##0.00", sum: true),
+                p => new EC("应收金额", p.pay_settle_amount / 100M, "¥#,##0.00", sum: true),
                 p => new EC("优惠金额", p.discount_amount / 100M, "¥#,##0.00", sum: true),
                 p => new EC("手续费", p.poundage / 100M, "¥#,##0.00", sum: true),
                 p => new EC("入账金额", p.income_amount / 100M, "¥#,##0.00", sum: true));
@@ -445,7 +445,7 @@ namespace FytSoa.Api.Controllers
                 p => new EC("交易金额", p.success_amount / 100M, "¥#,##0.00", sum: true),
                 p => new EC("退款笔数", p.refund_create_count, sum: true),
                 p => new EC("退款金额", p.order_refunded_amount / 100M, "¥#,##0.00", sum: true),
-                p => new EC("交易净额", p.refund_settle_amount / 100M, "¥#,##0.00", sum: true));
+                p => new EC("交易净额", p.pay_settle_amount / 100M, "¥#,##0.00", sum: true));
 
             return File(
                 data,

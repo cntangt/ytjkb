@@ -231,7 +231,6 @@ namespace FytSoa.Service.Implements
                 order_refunded_amount = SqlFunc.AggregateSum(ds.order_refunded_amount),//订单已退金额
                 discount_amount = SqlFunc.AggregateSum(ds.discount_amount),//优惠金额
                 poundage = SqlFunc.AggregateSum(ds.poundage),//手续费
-                refund_settle_amount = SqlFunc.AggregateSum(ds.pay_settle_amount),//应收金额
                 income_amount = SqlFunc.AggregateSum(ds.income_amount)//入账金额
             }).GroupBy(ds => new { ds.business_date, ds.out_shop_id }).ToPageAsync(parm.page_num, parm.page_size);
 
@@ -241,18 +240,18 @@ namespace FytSoa.Service.Implements
 
                 var shopInfos = await Db.Queryable<ShopInfo>().In(p => p.out_shop_id, ids).ToListAsync();
 
-                if (shopInfos.Count > 0)
+                data.Items.ForEach(shop =>
                 {
-                    data.Items.ForEach(shop =>
+                    var shopInfo = shopInfos.FirstOrDefault(m => shop.out_shop_id == m.out_shop_id);
+                    if (shopInfo != null)
                     {
-                        var shopInfo = shopInfos.FirstOrDefault(m => shop.out_shop_id == m.out_shop_id);
-                        if (shopInfo != null)
-                        {
-                            shop.shop_name = shopInfo.shop_name;
-                            shop.erp_org = shopInfo.erp_org;
-                        }
-                    });
-                }
+                        shop.shop_name = shopInfo.shop_name;
+                        shop.erp_org = shopInfo.erp_org;
+                    }
+
+                    //应收金额
+                    shop.pay_settle_amount = shop.success_amount - shop.order_refunded_amount;
+                });
             }
 
             res.data = data;
@@ -290,17 +289,17 @@ namespace FytSoa.Service.Implements
 
                 var shopInfos = await Db.Queryable<CmsMerchant>().In(p => p.out_sub_mch_id, ids).ToListAsync();
 
-                if (shopInfos.Count > 0)
+                data.Items.ForEach(shop =>
                 {
-                    data.Items.ForEach(shop =>
+                    var shopInfo = shopInfos.FirstOrDefault(m => shop.out_sub_mch_id == m.out_sub_mch_id);
+                    if (shopInfo != null)
                     {
-                        var shopInfo = shopInfos.FirstOrDefault(m => shop.out_sub_mch_id == m.out_sub_mch_id);
-                        if (shopInfo != null)
-                        {
-                            shop.shop_name = shopInfo.name;
-                        }
-                    });
-                }
+                        shop.shop_name = shopInfo.name;
+                    }
+
+                    //交易净额(同应收金额计算方式一样)
+                    shop.pay_settle_amount = shop.success_amount - shop.order_refunded_amount;
+                });
             }
 
             res.data = data;
