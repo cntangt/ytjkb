@@ -132,7 +132,7 @@ namespace FytSoa.Service.Implements
                     name = daily.sub_pay_platform,
                     trade_num = SqlFunc.AggregateSum(daily.success_count),
                     trade_total = SqlFunc.AggregateSum(daily.success_amount),
-                    refund_total = SqlFunc.AggregateSum(daily.refund_settle_amount)
+                    refund_total = SqlFunc.AggregateSum(daily.order_refunded_amount)
                 }).ToListAsync();
 
             return typeof(SubPayPlatform).ToDropdown().Select(p =>
@@ -161,7 +161,7 @@ namespace FytSoa.Service.Implements
                     CountTrade = SqlFunc.AggregateSum(daily.success_count),
                     TotalTrade = SqlFunc.AggregateSum(daily.success_amount),
                     CountRefund = SqlFunc.AggregateSum(daily.refund_create_count),
-                    TotalRefund = SqlFunc.AggregateSum(daily.refund_settle_amount)
+                    TotalRefund = SqlFunc.AggregateSum(daily.order_refunded_amount)
                 }).ToListAsync();
 
             return data;
@@ -280,7 +280,6 @@ namespace FytSoa.Service.Implements
                 success_amount = SqlFunc.AggregateSum(ds.success_amount),//交易金额
                 refund_create_count = SqlFunc.AggregateSum(ds.refund_create_count),//退货笔数
                 order_refunded_amount = SqlFunc.AggregateSum(ds.order_refunded_amount),//退货金额
-                refund_settle_amount = SqlFunc.AggregateSum(ds.refund_settle_amount),//交易净额
             }).GroupBy(ds => ds.out_sub_mch_id).ToPageAsync(parm.page_num, parm.page_size);
 
             if (data.Items.Count > 0)
