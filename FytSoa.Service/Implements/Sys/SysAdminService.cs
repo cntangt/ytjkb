@@ -162,7 +162,7 @@ namespace FytSoa.Service.Implements
                 }
                 if (parm.RoleList == null || parm.RoleList.Count == 0)
                 {
-                    res.message = $"请至少选择一个用户";
+                    res.message = $"请至少选择一个角色";
                     return res;
                 }
 

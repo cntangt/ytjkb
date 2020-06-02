@@ -172,7 +172,6 @@
                     function (data) {
                         vm.m.status = data.elem.checked;
                     });
-                os.cloudFile();
                 oc = {
                     init() {
                         //查询角色信息
@@ -193,9 +192,9 @@
                                 }
                             });
                         $('.input-tags').click(function () {
-                        var frameId = window.frameElement && window.frameElement.id || '';
-                        os.Open('关联角色', '/fytadmin/sys/adminmodifytorole?frameid=' + frameId + '&role=' + escape(JSON.stringify(vm.m.roleList)), '600px', '500px');
-                    });
+                            var frameId = window.frameElement && window.frameElement.id || '';
+                            os.Open('关联角色', '/fytadmin/sys/adminmodifytorole?frameid=' + frameId + '&role=' + escape(JSON.stringify(vm.m.roleList)), '600px', '500px');
+                        });
                     },
                     fileSave(v) {
                         $(".select-newimg").addClass('layui-hide');

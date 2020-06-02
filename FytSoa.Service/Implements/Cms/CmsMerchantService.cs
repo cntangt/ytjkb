@@ -6,6 +6,7 @@ using FytSoa.Service.Extensions;
 using FytSoa.Service.Interfaces;
 using FytSoa.Service.Interfaces.Cms;
 using Microsoft.Extensions.Configuration;
+using Newtonsoft.Json;
 using System;
 using System.Linq;
 using System.Linq.Expressions;
@@ -109,6 +110,15 @@ namespace FytSoa.Service.Implements
 
                 var admin_guid = Guid.NewGuid().ToString();
 
+                var roles = await Db.Queryable<SysRole>()
+                    .Where(p => p.Guid == "8dc9b479-216d-415a-9fba-85caedd6c4df")
+                    .Select(p => new AdminToRoleList
+                    {
+                        guid = p.Guid,
+                        name = p.Name
+                    })
+                    .ToListAsync();
+
                 using var tran = new TransactionScope();
 
                 var adminRes = await sysAdmin.AddAsync(new SysAdmin
@@ -128,12 +138,12 @@ namespace FytSoa.Service.Implements
                     LoginSum = 0,
                     Mobile = parm.tel,
                     Number = null,
-                    RoleGuid = null,
+                    RoleGuid = JsonConvert.SerializeObject(roles),
                     Sex = "-",
                     Status = true,
                     Summary = null,
                     TrueName = parm.name,
-                    UpLoginDate = null
+                    UpLoginDate = null,
                 });
 
                 if (adminRes.statusCode != (int)ApiEnum.Status)

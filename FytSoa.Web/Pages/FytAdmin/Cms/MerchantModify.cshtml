@@ -5,10 +5,23 @@
 }
 @section styles{
     <style>
-        .layui-form-label { width: 100px; }
-        .layui-form-item { margin-bottom: 8px; }
-        .layui-input-block { margin-left: 0px; width: 200px; float: left; }
-        .form-cus { padding: 15px 15px 0 0; }
+        .layui-form-label {
+            width: 100px;
+        }
+
+        .layui-form-item {
+            margin-bottom: 8px;
+        }
+
+        .layui-input-block {
+            margin-left: 0px;
+            width: 200px;
+            float: left;
+        }
+
+        .form-cus {
+            padding: 15px 15px 0 0;
+        }
     </style>
 }
 <form class="layui-form form-cus" autocomplete="off">
@@ -102,7 +115,6 @@
     </div>
     <input type="hidden" name="Id" id="Id" value="@Model.Merchant.id" />
 </form>
-<link rel="stylesheet" href="~/themes/ztree/css/metroStyle/metroStyle.css" type="text/css">
 @section Scripts{
     <script>
         layui.config({
@@ -132,6 +144,7 @@
             $(".btn-open-close").on('click', function () {
                 parent.layer.close(index);
             });
+            form.render();
         });
     </script>
 }

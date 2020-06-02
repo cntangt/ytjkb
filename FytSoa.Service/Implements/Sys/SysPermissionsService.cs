@@ -52,7 +52,7 @@ namespace FytSoa.Service.Implements
                             guid = parm.RoleGuid,
                             name = roleModel.Name
                         });
-                        var adminRole = JsonConvert.SerializeObject(adminRoleList);
+                        var adminRole = JsonConvert.SerializeObject(adminRoleList.CurDistinct(p => p.guid));
                         //更新用户信息
                         await Db.Updateable<SysAdmin>().SetColumns(m => new SysAdmin()
                         {
