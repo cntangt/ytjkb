@@ -47,6 +47,12 @@ namespace FytSoa.Api.Controllers.Tasks
                     //实例数组
                     redisTask = new List<ScheduleEntity>();
                 }
+
+                entity.BeginTime = DateTime.Now.AddYears(-1);
+                entity.EndTime = DateTime.Now.AddYears(30);
+                entity.TriggerType = TriggerTypeEnum.Cron;
+                entity.RequestType = RequestTypeEnum.Get;
+
                 redisTask.Add(entity);
 
                 await _cache.SetAsync(KeyHelper.TaskSchedulerList, redisTask);
@@ -138,6 +144,12 @@ namespace FytSoa.Api.Controllers.Tasks
         [HttpPost]
         public async Task<ApiResult<string>> ModifyJob([FromBody]ScheduleEntity entity)
         {
+
+            entity.BeginTime = DateTime.Now.AddYears(-1);
+            entity.EndTime = DateTime.Now.AddYears(30);
+            entity.TriggerType = TriggerTypeEnum.Cron;
+            entity.RequestType = RequestTypeEnum.Get;
+
             await _scheduler.StopOrDelScheduleJobAsync(entity.JobGroup, entity.JobName, true);
             //删除Redis里面的任务
             var redisTask = await _cache.GetAsync<List<ScheduleEntity>>(KeyHelper.TaskSchedulerList);

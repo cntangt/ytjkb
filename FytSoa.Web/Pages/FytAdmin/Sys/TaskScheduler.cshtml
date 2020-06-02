@@ -9,33 +9,39 @@
             border-radius: 4px !important;
             font-size: 12px;
         }
+
         .text-red {
             color: red !important;
         }
-        .bg-lan{
-            background-color:#68b0fa !important;
-            color:#fff !important;
-            border-color:#68b0fa !important;
+
+        .bg-lan {
+            background-color: #68b0fa !important;
+            color: #fff !important;
+            border-color: #68b0fa !important;
         }
-        .bg-orange{
-            background-color:#FFB800 !important;
-            color:#fff !important;
-            border-color:#FFB800 !important;
+
+        .bg-orange {
+            background-color: #FFB800 !important;
+            color: #fff !important;
+            border-color: #FFB800 !important;
         }
-        .bg-red{
-            background-color:#FF5722 !important;
-            color:#fff !important;
-            border-color:#FF5722 !important;
+
+        .bg-red {
+            background-color: #FF5722 !important;
+            color: #fff !important;
+            border-color: #FF5722 !important;
         }
-        .bg-cyan{
-            background-color:#2F4056 !important;
-            color:#fff !important;
-            border-color:#2F4056 !important;
+
+        .bg-cyan {
+            background-color: #2F4056 !important;
+            color: #fff !important;
+            border-color: #2F4056 !important;
         }
+
         .bg-resume {
-            background-color:#5FB878 !important;
-            color:#fff !important;
-            border-color:#5FB878 !important;
+            background-color: #5FB878 !important;
+            color: #fff !important;
+            border-color: #5FB878 !important;
         }
     </style>
     <div class="list-wall" id="app">
@@ -71,8 +77,6 @@
                     $ = layui.jquery,
                     os = layui.common,
                     element = layui.element;
-                
-
 
                 var guid = '',
                     active = {
@@ -98,25 +102,24 @@
                                                             {
                                                                 field: 'displayState',
                                                                 title: '状态',
+                                                                width: 70, align: 'center',
                                                                 templet: function (d) {
                                                                     if (d.displayState == '正常') {
                                                                         return '<span class="layui-badge layui-bg-blue">正常</span>';
                                                                     } else {
-                                                                        return '<span class="layui-badge">' +
-                                                                            d.displayState +
-                                                                            '</span>';
+                                                                        return '<span class="layui-badge">' + d.displayState + '</span>';
                                                                     }
                                                                 }
                                                             },
-                                                            { field: 'requestUrl', width: 120, title: 'Url' },
-                                                            { field: 'beginTime', width: 150, title: '开始时间', templet: (d) => layui.util.toDateString(d.beginTime, 'yyyy-MM-dd HH:mm:ss') },
-                                                            { field: 'previousFireTime', title: '上次执行时间', templet: (d) => layui.util.toDateString(d.previousFireTime, 'yyyy-MM-dd HH:mm:ss') },
-                                                            { field: 'nextFireTime', title: '下次执行时间', templet: (d) => layui.util.toDateString(d.nextFireTime, 'yyyy-MM-dd HH:mm:ss') },
-                                                            { field: 'interval', title: '执行计划' },
-                                                            { field: 'description', width: 100, title: '描述' },
+                                                            { field: 'requestUrl', title: 'Url' },
+                                                            { field: 'previousFireTime', width: 160, align: 'center', title: '上次执行时间', templet: (d) => layui.util.toDateString(d.previousFireTime, 'yyyy-MM-dd HH:mm:ss') },
+                                                            { field: 'nextFireTime', width: 160, align: 'center', title: '下次执行时间', templet: (d) => layui.util.toDateString(d.nextFireTime, 'yyyy-MM-dd HH:mm:ss') },
+                                                            { field: 'interval', width: 140, align: 'center',title: '执行计划' },
+                                                            { field: 'description', width: 200, title: '描述' },
                                                             {
                                                                 width: 300,
                                                                 title: '操作',
+                                                                align: 'center',
                                                                 templet: function (d) {
                                                                     var str = '<a class="layui-btn layui-btn-primary layui-btn-xs bg-cyan" lay-event="execute">执行</a>';
                                                                     str +=
@@ -175,12 +178,10 @@
                         var data = obj.data;
                         if (obj.event === 'edit') {
                             os.Open('修改任务调度信息',
-                                '/fytadmin/sys/taskschedulermodify/?group=' + escape(data.group) + '&name=' +escape(data.name),
+                                '/fytadmin/sys/taskschedulermodify/?group=' + escape(data.group) + '&name=' + escape(data.name),
                                 '650px',
                                 '660px',
-                                function () {
-                                    active.reload();
-                                });
+                                active.init);
                             return;
                         }
                         if (obj.event === 'logs') {
@@ -190,7 +191,7 @@
                                 '560px');
                             return;
                         }
-                        var tips = '',action='';
+                        var tips = '', action = '';
                         if (obj.event === 'execute') {
                             //执行
                             tips = '执行';
@@ -211,7 +212,7 @@
                             tips = '删除';
                             action = 'removejob';
                         }
-                        layer.confirm('确定要执行'+tips+'吗？',
+                        layer.confirm('确定要执行' + tips + '吗？',
                             function (index) {
                                 layer.close(index);
                                 var loadindex = layer.load(1,
