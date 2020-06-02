@@ -30,21 +30,18 @@ namespace FytSoa.Api.Controllers
     {
         private readonly ISysAdminService _adminService;
         private readonly ISysLogService _logService;
-        private readonly ICmsSiteService _siteService;
         private readonly IConfiguration _config;
         private readonly IDistributedCache _cache;
         private readonly ICmsShopService _shop;
         public AdminController(
             ISysAdminService adminService,
             ISysLogService logService,
-            ICmsSiteService siteService,
             IConfiguration config,
             IDistributedCache cache,
             ICmsShopService shop) : base(cache)
         {
             _adminService = adminService;
             _logService = logService;
-            _siteService = siteService;
             _config = config;
             _cache = cache;
             _shop = shop;
@@ -243,10 +240,6 @@ namespace FytSoa.Api.Controllers
                         AllowRefresh = false
                     });
                 }
-
-                var site = await _siteService.GetListAsync(m => !m.IsDel, m => m.AddTime, DbOrderEnum.Asc);
-
-                await _cache.SetAsync(KeyHelper.NOWSITE, site.data.FirstOrDefault());
 
                 //把权限存到缓存里
                 await _cache.SetAsync(KeyHelper.ADMINMENU + "_" + dbres.data.admin.Guid, dbres.data.menu);
