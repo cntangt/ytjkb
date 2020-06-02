@@ -29,11 +29,12 @@
     <script>
         layui.config({
             base: '/themes/js/modules/'
-        }).use(['table', 'jquery', 'common'],
+        }).use(['table', 'jquery', 'common', 'form'],
             function () {
                 var table = layui.table,
                     $ = layui.jquery,
                     os = layui.common;
+                layui.form.render();
                 table.render({
                     elem: '#tablist',
                     headers: os.getToken(),
