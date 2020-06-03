@@ -161,7 +161,11 @@ namespace FytSoa.Service.Implements.Wx
 
                             return shop;
                         }).ToArray();
-                        countShop += await Db.Insertable(shops).ExecuteCommandAsync();
+
+                        if (shops.Length > 0)
+                        {
+                            countShop += await Db.Insertable(shops).ExecuteCommandAsync();
+                        }
 
                         var devices = shops.Where(p => p.device_infos != null).SelectMany(shop =>
                         {
@@ -174,7 +178,11 @@ namespace FytSoa.Service.Implements.Wx
                                 return device;
                             });
                         }).ToArray();
-                        countDevice += await Db.Insertable(devices).ExecuteCommandAsync();
+
+                        if (devices.Length > 0)
+                        {
+                            countDevice += await Db.Insertable(devices).ExecuteCommandAsync();
+                        }
 
                         var staffs = shops.Where(p => p.staff_infos != null).SelectMany(shop =>
                         {
@@ -187,7 +195,11 @@ namespace FytSoa.Service.Implements.Wx
                                 return staff;
                             });
                         }).ToArray();
-                        countStaff += await Db.Insertable(staffs).ExecuteCommandAsync();
+
+                        if (staffs.Length > 0)
+                        {
+                            countStaff += await Db.Insertable(staffs).ExecuteCommandAsync();
+                        }
                     }
                     catch (Exception ex)
                     {
