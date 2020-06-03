@@ -133,6 +133,18 @@
                         <input type="text" value="{{ os.tc(d.poundage) }}" disabled class="layui-input">
                     </div>
                 </div>
+                <div class="layui-form-item">
+                    <label class="layui-form-label">描述</label>
+                    <div class="layui-input-block">
+                        <input type="text" value="{{ d.body }}" disabled class="layui-input" style="width:530px">
+                    </div>
+                </div>
+                <div class="layui-form-item">
+                    <label class="layui-form-label">备注</label>
+                    <div class="layui-input-block">
+                        <input type="text" value="{{ d.remark }}" disabled class="layui-input" style="width:530px">
+                    </div>
+                </div>
             </form>
         </script>
         <script type="text/html" id="refund">
@@ -334,7 +346,7 @@
                 table.on('tool(tool)', function (obj) {
                     switch (obj.event) {
                         case 'detail':
-                            tpl(details.innerHTML).render(obj.data, (html) => l.open({ title: '交易订单详情', area: ['720px', '480px'], content: html }));
+                            tpl(details.innerHTML).render(obj.data, (html) => l.open({ title: '交易订单详情', area: ['720px', '570px'], content: html }));
                             break;
                         case 'refund':
                             tpl(refund.innerHTML).render(obj.data, (html) => l.open({
