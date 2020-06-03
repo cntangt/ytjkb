@@ -236,7 +236,7 @@
         },
         tp: function (data, field) {
             var val = isNaN(data) ? data[field] : data;
-            return (val * 100).toFixed(2) + '%';
+            return val + '%';
         }
     };
     exports('common', tool);
