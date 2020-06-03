@@ -37,11 +37,11 @@
                         [
                             { type: 'checkbox' },
                             { field: 'loginName', title: '登录账号', width: 105 },
-                            { field: 'name', title: '姓名', width: 90 },
+                            { field: 'name', title: '姓名', width: 100 },
                             { field: 'level_Name', title: '等级', align: 'center', width: 90 },
-                            { field: 'tel', title: '电话', align: 'center', width: 115 },
+                            { field: 'tel', title: '电话', align: 'left', width: 115 },
                             {
-                                field: 'wxpay', title: '支付渠道成本', width: 340, align: 'center', templet: function (d) {
+                                field: 'wxpay', title: '支付渠道成本', width: 300, align: 'left', templet: function (d) {
                                     return "微信：" + os.tp(d.wxpay) + "，支付宝：" + os.tp(d.alipay) + "，其他：" + os.tp(d.otherpay);
                                 }
                             },
