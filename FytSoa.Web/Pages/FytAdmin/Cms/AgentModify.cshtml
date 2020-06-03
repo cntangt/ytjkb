@@ -166,6 +166,7 @@
             $(".btn-open-close").on('click', function () {
                 parent.layer.close(index);
             });
+            form.render();
             //选中事件
             form.on('select(level)', function (data) {
                 if (data.value === _level) return;

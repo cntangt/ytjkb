@@ -34,6 +34,21 @@
     </div>
     <fieldset class="layui-elem-field layui-field-title" style="margin:10px 0 10px 15px;"><legend><i class="layui-icon layui-icon-component"></i></legend></fieldset>
     <div class="layui-form-item">
+        <label class="layui-form-label">代理商</label>
+        <div class="layui-input-block">
+            <select name="agent_admin_guid" lay-filter="agent_admin_guid" disabled>
+                @foreach (var item in Model.CmsAgents)
+                {
+                    <option value="@item.Admin_Guid">@item.Name</option>
+                }
+            </select>
+        </div>
+        <label class="layui-form-label">订单前缀</label>
+        <div class="layui-input-block">
+            <input type="text" value="@Model.Merchant.order_perfix" disabled class="layui-input">
+        </div>
+    </div>
+    <div class="layui-form-item">
         <label class="layui-form-label">Email</label>
         <div class="layui-input-block">
             <input type="text" value="@Model.Merchant.email" disabled class="layui-input">
@@ -51,16 +66,6 @@
         <label class="layui-form-label">授权密钥</label>
         <div class="layui-input-block">
             <input type="text" value="@Model.Merchant.authen_key" disabled class="layui-input">
-        </div>
-    </div>
-    <div class="layui-form-item">
-        <label class="layui-form-label">订单前缀</label>
-        <div class="layui-input-block">
-            <input type="text" value="@Model.Merchant.order_perfix" disabled class="layui-input">
-        </div>
-        <label class="layui-form-label">启用状态</label>
-        <div class="layui-input-block">
-            <input type="checkbox" @(Model.Merchant.status ? "checked" : null) lay-text="是|否" disabled lay-skin="switch" lay-filter="switch">
         </div>
     </div>
     <fieldset class="layui-elem-field layui-field-title" style="margin:10px 0 10px 15px;"><legend><i class="layui-icon layui-icon-component"></i></legend></fieldset>
@@ -100,7 +105,9 @@
         layui.config({
             base: '/themes/js/modules/'
         }).use(['layer', 'jquery', 'common', 'form'], function () {
-            layui.form.render();
+            var form = layui.form, $ = layui.jquery;
+            $("select[name=agent_admin_guid]").val('@Model.Merchant.agent_admin_guid');
+            form.render();
         });
     </script>
 }

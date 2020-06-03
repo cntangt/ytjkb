@@ -5,23 +5,13 @@
 }
 @section styles{
     <style>
-        .layui-form-label {
-            width: 100px;
-        }
+        .layui-form-label { width: 100px; }
 
-        .layui-form-item {
-            margin-bottom: 8px;
-        }
+        .layui-form-item { margin-bottom: 8px; }
 
-        .layui-input-block {
-            margin-left: 0px;
-            width: 200px;
-            float: left;
-        }
+        .layui-input-block { margin-left: 0px; width: 200px; float: left; }
 
-        .form-cus {
-            padding: 15px 15px 0 0;
-        }
+        .form-cus { padding: 15px 15px 0 0; }
     </style>
 }
 <form class="layui-form form-cus" autocomplete="off">
@@ -47,6 +37,21 @@
     </div>
     <fieldset class="layui-elem-field layui-field-title" style="margin:10px 0 10px 15px;"><legend><i class="layui-icon layui-icon-component"></i></legend></fieldset>
     <div class="layui-form-item">
+        <label class="layui-form-label">代理商</label>
+        <div class="layui-input-block">
+            <select name="agent_admin_guid" lay-filter="agent_admin_guid">
+                @foreach (var item in Model.CmsAgents)
+                {
+                    <option value="@item.Admin_Guid">@item.Name</option>
+                }
+            </select>
+        </div>
+        <label class="layui-form-label">订单前缀</label>
+        <div class="layui-input-block">
+            <input type="text" name="order_perfix" value="@Model.Merchant.order_perfix" maxlength="40" lay-verify="required" lay-verType="tips" class="layui-input">
+        </div>
+    </div>
+    <div class="layui-form-item">
         <label class="layui-form-label">Email</label>
         <div class="layui-input-block">
             <input type="text" name="email" value="@Model.Merchant.email" maxlength="40" lay-verify="required" lay-verType="tips" class="layui-input">
@@ -64,16 +69,6 @@
         <label class="layui-form-label">授权密钥</label>
         <div class="layui-input-block">
             <input type="text" name="authen_key" value="@Model.Merchant.authen_key" maxlength="40" lay-verify="required" lay-verType="tips" class="layui-input">
-        </div>
-    </div>
-    <div class="layui-form-item">
-        <label class="layui-form-label">订单前缀</label>
-        <div class="layui-input-block">
-            <input type="text" name="order_perfix" value="@Model.Merchant.order_perfix" maxlength="40" lay-verify="required" lay-verType="tips" class="layui-input">
-        </div>
-        <label class="layui-form-label">启用状态</label>
-        <div class="layui-input-block">
-            <input type="checkbox" name="status" @(Model.Merchant.status ? "checked" : null) lay-text="是|否" lay-skin="switch" lay-filter="switch">
         </div>
     </div>
     <fieldset class="layui-elem-field layui-field-title" style="margin:10px 0 10px 15px;"><legend><i class="layui-icon layui-icon-component"></i></legend></fieldset>
@@ -122,6 +117,7 @@
         }).use(['layer', 'jquery', 'common', 'form'], function () {
             var form = layui.form, $ = layui.jquery, os = layui.common;
             var index = parent.layer.getFrameIndex(window.name);
+            var _agent_admin_guid = '';
             //监听提交
             form.on('submit(submit)', function (data) {
                 $('#submit').attr('disabled', true).find('i').removeClass('layui-hide');
@@ -145,6 +141,29 @@
                 parent.layer.close(index);
             });
             form.render();
+            //选中事件
+            form.on('select(agent_admin_guid)', function (data) {
+                if (data.value === _agent_admin_guid) return;
+                _agent_admin_guid = data.value;
+                load_agent(_agent_admin_guid);
+            });
+            //新增时根据默认选中的等级加载对应的费率
+            if ($("#Id").val() === '0') {
+                _agent_admin_guid = $("select[name=agent_admin_guid]").val();
+                load_agent(_agent_admin_guid);
+            } else {
+                _agent_admin_guid = '@Model.Merchant.agent_admin_guid';
+                $("select[name=agent_admin_guid]").val('@Model.Merchant.agent_admin_guid');
+                form.render('select');
+            }
+            //根据等级加载费率
+            function load_agent(guid) {
+                os.ajax('api/merchant/agentbyguid', { parm: guid }, function (res) {
+                    $("input[name=agent_wxpay]").val(res.wxpay);
+                    $("input[name=agent_alipay]").val(res.alipay);
+                    $("input[name=agent_otherpay]").val(res.otherpay);
+                });
+            }
         });
     </script>
 }

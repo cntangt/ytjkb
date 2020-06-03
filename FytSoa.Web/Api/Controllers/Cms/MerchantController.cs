@@ -2,6 +2,7 @@
 using FytSoa.Core.Model.Cms;
 using FytSoa.Extensions;
 using FytSoa.Service.DtoModel;
+using FytSoa.Service.Interfaces;
 using FytSoa.Service.Interfaces.Cms;
 using Microsoft.AspNetCore.Mvc;
 using System.Threading.Tasks;
@@ -14,9 +15,11 @@ namespace FytSoa.Api.Controllers.Cms
     public class MerchantController : ControllerBase
     {
         private readonly ICmsMerchantService merchantService;
-        public MerchantController(ICmsMerchantService merchantService)
+        private readonly ICmsAgentService agentService;
+        public MerchantController(ICmsMerchantService merchantService,ICmsAgentService agentService)
         {
             this.merchantService = merchantService;
+            this.agentService = agentService;
         }
 
         [HttpGet("getpages")]
@@ -35,7 +38,7 @@ namespace FytSoa.Api.Controllers.Cms
         [HttpPost("add"), ApiAuthorize(Modules = "Merchant", Methods = "Add", LogType = LogEnum.ADD)]
         public async Task<IActionResult> Add([FromBody]CmsMerchant parm)
         {
-            parm.agent_admin_guid = await HttpContext.LoginUserId();
+            //parm.agent_admin_guid = await HttpContext.LoginUserId();
 
             return Ok(await merchantService.AddAsync(parm));
         }
@@ -51,6 +54,13 @@ namespace FytSoa.Api.Controllers.Cms
         public async Task<IActionResult> Edit([FromBody]CmsMerchant parm)
         {
             return Ok(await merchantService.UpdateAsync(parm));
+        }
+
+        [HttpPost("agentbyguid")]
+        public async Task<IActionResult> GetAgentbyGuid([FromBody]ParmString obj)
+        {
+            var guid = obj.parm;
+            return Ok((await agentService.GetModelAsync(t => t.Admin_Guid == guid)).data);
         }
     }
 }

@@ -115,7 +115,7 @@
             var form = layui.form, $ = layui.jquery;
             $("select[name=Level_Id]").val('@Model.Agent.Level_Id');
             $("select[name=Settle_Type]").val('@Convert.ToInt32(Model.Agent.Settle_Type)');
-            form.render('select');
+            form.render();
         });
     </script>
 }
