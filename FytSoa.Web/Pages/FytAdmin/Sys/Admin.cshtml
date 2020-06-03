@@ -1,7 +1,9 @@
 ﻿@page
+@using FytSoa.Extensions
 @model FytSoa.Web.Pages.FytAdmin.Sys.AdminModel
 @{
     ViewData["Title"] = "管理员管理";
+    var isSys = await HttpContext.IsSystem();
 }
 <div id="container">
     <style>
@@ -9,14 +11,14 @@
 
         .layui-btn-group .layui-btn { background: #e7eaef !important; border-color: #e7eaef !important; color: #333; }
 
-            .layui-btn-group .layui-btn.active { background-color: #409eff !important; border-color: #409eff !important; color: #fff; }
+        .layui-btn-group .layui-btn.active { background-color: #409eff !important; border-color: #409eff !important; color: #fff; }
 
         .layui-icon-export,
         .layui-icon-friends { margin-right: 5px; color: #aee4fa; }
 
         .role-item { padding: 6px 0px 6px 50px; cursor: pointer }
 
-            .role-item.active { background-color: #dbedf5; }
+        .role-item.active { background-color: #dbedf5; }
 
         .layui-colla-content { padding: 0px; border-color: transparent; }
 
@@ -38,6 +40,7 @@
         <table class="layui-hide" id="tablist" lay-filter="tool"></table>
     </div>
     <script>
+        var isSys = '@isSys';
         var active, vm = new Vue({
             data: {
                 list: {},
@@ -173,18 +176,25 @@
                             })
                             break;
                         case "power":
+                            if (isSys === "True") {
+                                return;
+                            }
                             os.Open('门店授权', '/fytadmin/sys/admintoshop/?guid=' + data.guid, '600px', '500px', function() {
                                 active.reload();
                             })
                             break;
                     }
                 });
-            });</script>
+            });
+    </script>
     <script type="text/html" id="tool">
         {{#  if(!d.isSystem){ }}
         <a class="layui-btn layui-btn-primary layui-btn-xs" lay-event="edit"><i class="layui-icon"></i> 修改</a>
+        {{# if(isSys === "True"){ }}
+        <a class="layui-btn layui-btn-primary layui-btn-xs layui-btn-disabled" lay-event="power"><i class="layui-icon">&#xe672;</i> 门店授权</a>
+        {{# }else{ }}
         <a class="layui-btn layui-btn-primary layui-btn-xs" lay-event="power"><i class="layui-icon">&#xe672;</i> 门店授权</a>
+        {{# } }}
         {{#  } }}
     </script>
-
 </div>
