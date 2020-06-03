@@ -21,6 +21,11 @@
         <a class="layui-btn layui-btn-primary layui-btn-xs" lay-event="detail"><i class="layui-icon">&#xe702;</i> 详情</a>
         <a class="layui-btn layui-btn-primary layui-btn-xs" lay-event="edit"><i class="layui-icon"></i> 修改</a>
         <a class="layui-btn layui-btn-primary layui-btn-xs" lay-event="sync"><i class="layui-icon">&#xe669;</i> 同步</a>
+        {{#  if(d.status){ }}
+        <a class="layui-btn layui-btn-primary layui-btn-xs" lay-event="disable"><i class="layui-icon">&#xe63f;</i> 禁用</a>
+        {{#  }else{ }}
+        <a class="layui-btn layui-btn-primary layui-btn-xs" lay-event="enable"><i class="layui-icon">&#xe643;</i> 启用</a>
+        {{# } }}
     </script>
 </div>
 @section scripts{
@@ -52,7 +57,7 @@
                             { field: 'agent_alipay', title: '支(代)', templet: os.tp, align: 'center', width: 80 },
                             { title: '状态', templet: os.ts, align: 'center', width: 60 },
                             { align: 'center', title: '创建时间', width: 100, templet: (d) => layui.util.toDateString(d.create_time, 'yyyy-MM-dd') },
-                            { width: 240, title: '操作', templet: '#tool', align: 'center' }
+                            { width: 310, title: '操作', templet: '#tool', align: 'center', fixed: 'right' }
                         ]
                     ],
                     page: true,
@@ -117,6 +122,28 @@
                                 os.Open('同步商户门店信息', '/api/sync/shopinfo/?id=' + id, '700px', '580px');
                                 layer.close(i);
                             }, null);
+                            break;
+                        case 'disable':
+                            var parm = { Id: id, Status: false };
+                            os.ajax('api/merchant/updatestatus', parm, function (res) {
+                                if (res.statusCode == 200) {
+                                    active.reload();
+                                }
+                                else {
+                                    os.error(res.message);
+                                }
+                            });
+                            break;
+                        case 'enable':
+                            var parm = { Id: id, Status: true };
+                            os.ajax('api/merchant/updatestatus', parm, function (res) {
+                                if (res.statusCode == 200) {
+                                    active.reload();
+                                }
+                                else {
+                                    os.error(res.message);
+                                }
+                            });
                             break;
                     }
                 });

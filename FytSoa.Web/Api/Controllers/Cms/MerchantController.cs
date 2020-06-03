@@ -49,10 +49,16 @@ namespace FytSoa.Api.Controllers.Cms
             return Ok(await merchantService.DeleteAsync(p => list.Contains(p.id)));
         }
 
-        [HttpPost("edit"), ApiAuthorize(Modules = "Merchant", Methods = "Update", LogType = LogEnum.ADD)]
+        [HttpPost("edit"), ApiAuthorize(Modules = "Merchant", Methods = "Update", LogType = LogEnum.UPDATE)]
         public async Task<IActionResult> Edit([FromBody]CmsMerchant parm)
         {
             return Ok(await merchantService.UpdateAsync(parm));
+        }
+
+        [HttpPost("updatestatus"), ApiAuthorize(Modules = "Merchant", Methods = "Update", LogType = LogEnum.UPDATE)]
+        public async Task<IActionResult> UpdateStatus([FromBody]CmsMerchant parm)
+        {
+            return Ok(await merchantService.UpdateStatusAsync(parm));
         }
 
         [HttpPost("agentbyguid")]

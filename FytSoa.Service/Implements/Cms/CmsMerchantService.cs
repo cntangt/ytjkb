@@ -235,5 +235,30 @@ namespace FytSoa.Service.Implements
 
             return res;
         }
+
+        public async Task<ApiResult<string>> UpdateStatusAsync(CmsMerchant parm)
+        {
+            var res = new ApiResult<string>() { statusCode = (int)ApiEnum.Error };
+
+            try
+            {
+                var count = await Db.Updateable(parm).UpdateColumns(p => new { p.status }).ExecuteCommandAsync();
+
+                if (count <= 0)
+                {
+                    throw new Exception("更新状态失败");
+                }
+            }
+            catch (Exception ex)
+            {
+                res.message = ApiEnum.Error.GetEnumText() + ex.Message;
+                Logger.Default.ProcessError((int)ApiEnum.Error, ex.Message);
+            }
+
+            res.statusCode = (int)ApiEnum.Status;
+            res.message = "更新状态成功";
+
+            return res;
+        }
     }
 }
