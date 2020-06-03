@@ -216,7 +216,7 @@ namespace FytSoa.Api.Controllers
                         new Claim(ClaimTypes.PrimarySid, user.IsSystem.ToString()),
                         new Claim(ClaimTypes.Sid, user.Guid),
                         new Claim(ClaimTypes.Role, "授权用户"),
-                        new Claim(ClaimTypes.Name, user.LoginName),
+                        new Claim(ClaimTypes.Name, user.TrueName),
                         new Claim(ClaimTypes.WindowsAccountName, user.LoginName),
                         new Claim(ClaimTypes.UserData, user.UpLoginDate.ToString())
                      }, CookieAuthenticationDefaults.AuthenticationScheme)
