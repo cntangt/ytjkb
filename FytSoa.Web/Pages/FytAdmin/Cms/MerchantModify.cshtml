@@ -120,12 +120,15 @@
             var _agent_admin_guid = '';
             //监听提交
             form.on('submit(submit)', function (data) {
+                if (data.field.agent_admin_guid === '') {
+                    os.error("请选择代理商");
+                    return false;
+                }
                 $('#submit').attr('disabled', true).find('i').removeClass('layui-hide');
                 var urls = "api/merchant/add";
                 if ($("#Id").val() !== '0') {
                     urls = "api/merchant/edit";
                 }
-                //data.field.status = data.field.status === 'on' ? 1 : 0;
                 os.ajax(urls, data.field, function (res) {
                     $('#submit').attr('disabled', false).find('i').addClass('layui-hide');
                     if (res.statusCode == 200) {
