@@ -38,8 +38,7 @@ namespace FytSoa.Api.Controllers.Cms
         [HttpPost("add"), ApiAuthorize(Modules = "Merchant", Methods = "Add", LogType = LogEnum.ADD)]
         public async Task<IActionResult> Add([FromBody]CmsMerchant parm)
         {
-            //parm.agent_admin_guid = await HttpContext.LoginUserId();
-
+            parm.status = true;
             return Ok(await merchantService.AddAsync(parm));
         }
 

@@ -216,7 +216,6 @@ namespace FytSoa.Service.Implements
                 {
                     p.create_time,
                     p.admin_guid,
-                    p.agent_admin_guid
                 }).ExecuteCommandAsync();
 
                 if (count <= 0)
