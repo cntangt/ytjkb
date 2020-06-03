@@ -3,6 +3,11 @@
 @{
     ViewData["Title"] = "店铺管理";
 }
+@section styles{
+    <style>
+        #searchform .layui-input { line-height:normal; }
+    </style>
+}
 <div id="container">
     <div class="list-wall">
         @if (Model.Display)
