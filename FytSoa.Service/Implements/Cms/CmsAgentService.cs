@@ -11,6 +11,7 @@ using FytSoa.Service.DtoModel.Wx;
 using FytSoa.Service.Extensions;
 using FytSoa.Service.Interfaces;
 using Microsoft.Extensions.Configuration;
+using Newtonsoft.Json;
 using SqlSugar;
 
 namespace FytSoa.Service.Implements
@@ -87,6 +88,15 @@ namespace FytSoa.Service.Implements
 
                 var admin_guid = Guid.NewGuid().ToString();
 
+                var roles = await Db.Queryable<SysRole>()
+                    .Where(p => p.Guid == "8dc9b479-216d-415a-9fba-85caedd6c4df")
+                    .Select(p => new AdminToRoleList
+                    {
+                        guid = p.Guid,
+                        name = p.Name
+                    })
+                    .ToListAsync();
+
                 using var tran = new TransactionScope();
 
                 var adminRes = await sysAdmin.AddAsync(new SysAdmin
@@ -106,7 +116,7 @@ namespace FytSoa.Service.Implements
                     LoginSum = 0,
                     Mobile = parm.Tel,
                     Number = null,
-                    RoleGuid = null,
+                    RoleGuid = JsonConvert.SerializeObject(roles),
                     Sex = "-",
                     Status = true,
                     Summary = null,
