@@ -45,7 +45,7 @@ namespace FytSoa.Api.Controllers.Cms
             return Ok(await agentService.DeleteAsync(p => list.Contains(p.Id)));
         }
 
-        [HttpPost("edit"), ApiAuthorize(Modules = "Agent", Methods = "Update", LogType = LogEnum.ADD)]
+        [HttpPost("edit"), ApiAuthorize(Modules = "Agent", Methods = "Update", LogType = LogEnum.UPDATE)]
         public async Task<IActionResult> Edit([FromBody]CmsAgent parm)
         {
             return Ok(await agentService.UpdateAsync(parm));
