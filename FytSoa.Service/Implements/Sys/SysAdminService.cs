@@ -260,7 +260,7 @@ namespace FytSoa.Service.Implements
                         .WhereIF(!string.IsNullOrEmpty(parm.CreateBy), p => p.CreateBy == parm.CreateBy)
                         .WhereIF(!string.IsNullOrEmpty(parm.key), m => m.DepartmentGuidList.Contains(parm.key))
                         .WhereIF(!string.IsNullOrEmpty(parm.guid), m => adminGuidList.Contains(m.Guid))
-                        .OrderBy(m => m.AddDate).ToPageAsync(parm.page, parm.limit);
+                        .OrderBy(m => m.AddDate, OrderByType.Desc).ToPageAsync(parm.page, parm.limit);
                 foreach (var item in res.data.Items)
                 {
                     foreach (var row in item.RoleList)
