@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel.Design;
-using System.Threading.Tasks;
-using System.Transactions;
-using FytSoa.Common;
+﻿using FytSoa.Common;
 using FytSoa.Core.Model.Cms;
 using FytSoa.Core.Model.Sys;
 using FytSoa.Service.DtoModel;
@@ -13,6 +8,9 @@ using FytSoa.Service.Interfaces;
 using Microsoft.Extensions.Configuration;
 using Newtonsoft.Json;
 using SqlSugar;
+using System;
+using System.Threading.Tasks;
+using System.Transactions;
 
 namespace FytSoa.Service.Implements
 {
@@ -89,7 +87,7 @@ namespace FytSoa.Service.Implements
                 var admin_guid = Guid.NewGuid().ToString();
 
                 var roles = await Db.Queryable<SysRole>()
-                    .Where(p => p.Guid == "8dc9b479-216d-415a-9fba-85caedd6c4df")
+                    .Where(p => p.Guid == "72171cf0-934d-4934-8e27-ee4f47e9985e")
                     .Select(p => new AdminToRoleList
                     {
                         guid = p.Guid,
