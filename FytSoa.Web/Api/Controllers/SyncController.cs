@@ -81,18 +81,19 @@ namespace FytSoa.Api.Controllers
                 return Content("没有数据");
             }
 
-            var data = await list.Write("交易订单",
-                p => new EC("支付渠道", p.sub_pay_platform),
-                p => new EC("流水单号", p.out_trade_no),
-                p => new EC("商户名称", mch.data.name),
-                p => new EC("门店名称", p.shop_name),
-                p => new EC("订单金额", p.total_fee / 100M, "¥#,##0.00", sum: true),
-                p => new EC("支付类型", p.trade_type),
-                p => new EC("支付状态", p.trade_state),
-                p => new EC("交易时间", p.time_end.ToLocalTime(), "yyyy年MM月dd日 HH:mm:ss"),
-                p => new EC("设备号", p.device_id),
-                p => new EC("店员名称", p.staff_name),
-                p => new EC("手续费", p.poundage / 100M, "¥#,##0.00", sum: true));
+            var data = await list.ExcelBuilder()
+                  .Col("支付渠道", p => p.sub_pay_platform)
+                  .Col("流水单号", p => p.out_trade_no)
+                  .Col("商户名称", p => mch.data.name)
+                  .Col("门店名称", p => p.shop_name)
+                  .Col("订单金额", p => p.total_fee / 100M, "¥#,##0.00", FuncType.SUM)
+                  .Col("支付类型", p => p.trade_type)
+                  .Col("支付状态", p => p.trade_state)
+                  .Col("交易时间", p => p.time_end.ToLocalTime(), "yyyy年MM月dd日 HH:mm:ss")
+                  .Col("设备号", p => p.device_id)
+                  .Col("店员名称", p => p.staff_name)
+                  .Col("手续费", p => p.poundage / 100M, "¥#,##0.00", FuncType.SUM)
+                  .Write("交易订单");
 
             return File(
                 data,

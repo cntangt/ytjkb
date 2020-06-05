@@ -61,6 +61,10 @@ namespace FytSoa.Common
 
     public class TextAttribute : Attribute
     {
+        public TextAttribute()
+        {
+        }
+
         public TextAttribute(string value)
         {
             Value = value;
