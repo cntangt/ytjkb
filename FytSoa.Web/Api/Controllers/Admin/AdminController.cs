@@ -205,7 +205,7 @@ namespace FytSoa.Api.Controllers
                     //记录登录次数，保存到session
                     await _cache.SetAsync(KeyHelper.LOGINCOUNT, loginConfig);
                     //提示用户错误和登录次数信息
-                    res.message = dbres.message + "　　您还剩余" + (configLoginCount - loginConfig.Count) + "登录次数";
+                    res.message = dbres.message;
                     return Ok(res);
                 }
 
@@ -221,25 +221,26 @@ namespace FytSoa.Api.Controllers
                         new Claim(ClaimTypes.UserData, user.UpLoginDate.ToString())
                      }, CookieAuthenticationDefaults.AuthenticationScheme)
                 );
-                //如果保存用户类型是Session，则默认设置cookie退出浏览器 清空
-                if (_config[KeyHelper.LOGINSAVEUSER] == "Session")
-                {
-                    await HttpContext.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme, identity, new AuthenticationProperties
-                    {
-                        AllowRefresh = false
-                    });
-                }
-                else
-                {
-                    //根据配置保存浏览器用户信息，小时单位
-                    var hours = int.Parse(_config[KeyHelper.LOGINCOOKIEEXPIRES]);
-                    await HttpContext.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme, identity, new AuthenticationProperties
-                    {
-                        ExpiresUtc = DateTime.UtcNow.AddHours(hours),
-                        IsPersistent = true,
-                        AllowRefresh = false
-                    });
-                }
+
+                await HttpContext.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme, identity);
+
+                ////如果保存用户类型是Session，则默认设置cookie退出浏览器 清空
+                //if (_config[KeyHelper.LOGINSAVEUSER] == "Session")
+                //{
+                //    await HttpContext.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme, identity, new AuthenticationProperties
+                //    {
+                //        AllowRefresh = false
+                //    });
+                //}
+                //else
+                //{
+                //    await HttpContext.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme, identity, new AuthenticationProperties
+                //    {
+                //        ExpiresUtc = DateTime.UtcNow.AddHours(_config.GetValue(KeyHelper.LOGINCOOKIEEXPIRES, 0.5D)),
+                //        IsPersistent = true,
+                //        AllowRefresh = false
+                //    });
+                //}
 
                 //把权限存到缓存里
                 await _cache.SetAsync(KeyHelper.ADMINMENU + "_" + dbres.data.admin.Guid, dbres.data.menu);

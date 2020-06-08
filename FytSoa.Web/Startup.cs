@@ -1,4 +1,5 @@
 using BotDetect.Web;
+using FytSoa.Common;
 using FytSoa.Extensions;
 using FytSoa.Tasks;
 using Microsoft.AspNetCore.Authentication.Cookies;
@@ -44,7 +45,12 @@ namespace FytSoa.Web
             AddAssembly(services, "FytSoa.Service");
 
             services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
-                .AddCookie(CookieAuthenticationDefaults.AuthenticationScheme, o => o.LoginPath = new PathString("/fytadmin/login"))
+                .AddCookie(CookieAuthenticationDefaults.AuthenticationScheme, o =>
+                {
+                    o.LoginPath = new PathString("/fytadmin/login");
+                    o.SlidingExpiration = true;
+                    o.ExpireTimeSpan = TimeSpan.FromHours(config.GetValue(KeyHelper.LOGINCOOKIEEXPIRES, 0.5D));
+                })
                 .AddJwtBearer(JwtAuthorizeAttribute.JwtAuthenticationScheme, o =>
                 {
                     var jwtConfig = new JwtAuthConfigModel();
