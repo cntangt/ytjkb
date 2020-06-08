@@ -56,5 +56,8 @@ namespace FytSoa.Api.Controllers.Cms
             var id = Convert.ToInt32(obj.parm);
             return Ok((await levelService.GetModelAsync(t => t.Id == id)).data);
         }
+
+        [HttpPost("updatestatus"), ApiAuthorize(Modules = "Agent", Methods = "Update", LogType = LogEnum.UPDATE)]
+        public Task<ApiResult<string>> UpdateStatus([FromBody]CmsAgent parm) => agentService.UpdateStatusAsync(parm);
     }
 }

@@ -1,6 +1,6 @@
 ﻿@using System.Security.Claims;
-<!DOCTYPE html>
 
+<!DOCTYPE html>
 <html>
 <head>
     <meta charset="UTF-8">
@@ -31,7 +31,7 @@
                 </li>
                 <li class="layui-nav-item">
                     <a href="javascript:void(0);">
-                        <span class="username">@User.Identities.First(u => u.IsAuthenticated).FindFirst(ClaimTypes.Name).Value <i class="layui-icon"></i></span>
+                        <span class="username">@User.Identities.FirstOrDefault(u => u.IsAuthenticated)?.FindFirst(ClaimTypes.Name).Value <i class="layui-icon"></i></span>
                     </a>
                     <dl class="layui-nav-child">
                         <dd><a href="javascript:void(0);" @@click="updatepwd()">修改密码</a></dd>

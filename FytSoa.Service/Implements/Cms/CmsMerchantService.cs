@@ -58,7 +58,7 @@ namespace FytSoa.Service.Implements
                 .WhereIF(!string.IsNullOrEmpty(parm.CreateBy), p => p.agent_admin_guid == parm.CreateBy)
                 .WhereIF(!string.IsNullOrEmpty(parm.key), p => p.name.Contains(parm.key) || p.tel.Contains(parm.key) || p.contact.Contains(parm.key) || p.out_sub_mch_id.Contains(parm.key));
 
-            res.data = await query.ToPageAsync(parm.page, parm.limit);
+            res.data = await query.OrderBy(p => p.create_time, SqlSugar.OrderByType.Desc).ToPageAsync(parm.page, parm.limit);
 
             if (res.data.Items.Count > 0)
             {

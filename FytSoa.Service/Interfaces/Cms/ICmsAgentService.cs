@@ -1,12 +1,11 @@
-﻿using System.Collections.Generic;
-using System.Threading.Tasks;
-using FytSoa.Common;
+﻿using FytSoa.Common;
 using FytSoa.Core.Model.Cms;
-using FytSoa.Service.DtoModel;
+using System.Threading.Tasks;
 
 namespace FytSoa.Service.Interfaces
 {
-	public interface ICmsAgentService : IBaseService<CmsAgent>
-	{
+    public interface ICmsAgentService : IBaseService<CmsAgent>
+    {
+        Task<ApiResult<string>> UpdateStatusAsync(CmsAgent agent);
     }
 }

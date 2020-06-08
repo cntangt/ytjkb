@@ -41,15 +41,16 @@
                             { field: 'level_Name', title: '等级', align: 'center', width: 90 },
                             { field: 'tel', title: '电话', align: 'left', width: 115 },
                             {
-                                field: 'wxpay', title: '支付渠道成本', width: 310, align: 'left', templet: function (d) {
+                                field: 'wxpay', title: '支付渠道成本', width: 360, align: 'left', templet: function (d) {
                                     return "微信：" + os.tp(d.wxpay) + "，支付宝：" + os.tp(d.alipay) + "，其他：" + os.tp(d.otherpay);
                                 }
                             },
                             { field: 'settle_Name', title: '结算方式', width: 110 },
                             { field: 'account_No', title: '结算账号', width: 120 },
                             { field: 'business_Area', title: '区域', width: 120 },
+                            { title: '状态', templet: os.ts, align: 'center', width: 60 },
                             { field: 'create_Time', title: '加入时间', width: 100, templet: (d) => layui.util.toDateString(d.create_Time, 'yyyy-MM-dd') },
-                            { title: '操作', templet: '#tool', align: 'center', width: 165 }
+                            { title: '操作', templet: '#tool', align: 'center', width: 240 }
                         ]
                     ],
                     page: true,
@@ -112,6 +113,17 @@
                         case 'detail':
                             os.Open('查看代理商信息', '/fytadmin/cms/agentdetail/?id=' + id, '680px', '470px');
                             break;
+                        case 'ups':
+                            var parm = { Id: id, Status: !obj.data.status };
+                            os.ajax('api/agent/updatestatus', parm, function (res) {
+                                if (res.statusCode == 200) {
+                                    active.reload();
+                                }
+                                else {
+                                    os.error(res.message);
+                                }
+                            });
+                            break;
                     }
                 });
             });
@@ -119,5 +131,10 @@
     <script type="text/html" id="tool">
         <a class="layui-btn layui-btn-primary layui-btn-xs" lay-event="detail"><i class="layui-icon">&#xe702;</i> 详情</a>
         <a class="layui-btn layui-btn-primary layui-btn-xs" lay-event="edit"><i class="layui-icon"></i> 修改</a>
+        {{#  if(d.status){ }}
+        <a class="layui-btn layui-btn-primary layui-btn-xs" lay-event="ups"><i class="layui-icon">&#xe63f;</i> 禁用</a>
+        {{#  }else{ }}                                      
+        <a class="layui-btn layui-btn-primary layui-btn-xs" lay-event="ups"><i class="layui-icon">&#xe643;</i> 启用</a>
+        {{# } }}
     </script>
 </div>
