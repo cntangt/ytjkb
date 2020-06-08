@@ -1,4 +1,5 @@
 ﻿using FytSoa.Common;
+using FytSoa.Core.Model.Cms;
 using FytSoa.Core.Model.Sys;
 using FytSoa.Core.Model.Wx;
 using FytSoa.Service.DtoModel;
@@ -17,8 +18,11 @@ namespace FytSoa.Service.Implements
 {
     public class SysAdminService : BaseService<SysAdmin>, ISysAdminService
     {
-        public SysAdminService(IConfiguration config) : base(config)
+        ISysRoleService roleService;
+
+        public SysAdminService(ISysRoleService roleService, IConfiguration config) : base(config)
         {
+            this.roleService = roleService;
         }
 
         #region  用户登录和授权菜单查询
@@ -34,8 +38,7 @@ namespace FytSoa.Service.Implements
             {
                 var adminModel = new SysAdminMenuDto();
                 parm.password = DES3Encrypt.EncryptString(parm.password);
-                var model = await Db.Queryable<SysAdmin>()
-                        .Where(m => m.LoginName == parm.loginname).FirstAsync();
+                var model = await Db.Queryable<SysAdmin>().Where(m => m.LoginName == parm.loginname).FirstAsync();
                 if (model == null)
                 {
                     res.message = "账号错误";
@@ -51,6 +54,39 @@ namespace FytSoa.Service.Implements
                     res.message = "登录账号被冻结，请联系管理员~";
                     return res;
                 }
+                var (isSystem, isAgent, isSubAdmin) = await roleService.GetRoleByAdminGuid(model.Guid);
+                if (isSystem)
+                {
+
+                }
+                else if (isAgent)
+                {
+                    var exist = await Db.Queryable<CmsAgent>().AnyAsync(p => p.Admin_Guid == model.Guid && p.Status);
+                    if (!exist)
+                    {
+                        res.message = "代理商已经被冻结，请联系管理员";
+                        return res;
+                    }
+                }
+                else if (isSubAdmin)
+                {
+                    var exist = await Db.Queryable<CmsMerchant>().AnyAsync(p => p.admin_guid == model.Guid && p.status);
+                    if (!exist)
+                    {
+                        res.message = "商户已经被冻结，请联系管理员";
+                        return res;
+                    }
+                }
+                else
+                {
+                    var exist = await Db.Queryable<CmsMerchant>().AnyAsync(p => p.admin_guid == model.CreateBy && p.status);
+                    if (!exist)
+                    {
+                        res.message = "商户已经被冻结，请联系管理员";
+                        return res;
+                    }
+                }
+
                 adminModel.menu = GetMenuByAdmin(model.Guid);
                 if (adminModel == null)
                 {
