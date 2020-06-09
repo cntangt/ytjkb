@@ -19,6 +19,7 @@
         .layui-input-block { margin-left: 0px; width: 200px; float: left; }
         .layui-layer-btn { padding: 0 35px 65px !important; }
         .width-130 { width: 130px; }
+        table thead .layui-table-cell { height: auto; line-height: 20px; padding: 0 15px; position: relative; overflow: hidden; text-overflow: ellipsis; white-space: normal; box-sizing: border-box; }
     </style>
 }
 <div id="container">
@@ -97,7 +98,9 @@
                             { field: 'success_count', title: '交易笔数', width: 100, align: 'right', totalRow: true, templet: os.tn },
                             { field: 'success_amount', title: '交易金额', width: 130, align: 'right', totalRow: true, templet: os.tc },
                             { field: 'refund_create_count', title: '退款笔数', width: 100, align: 'right', totalRow: true, templet: os.tn },
-                            { field: 'refund_create_amount', title: '退款金额', width: 130, align: 'right', totalRow: true, templet: os.tc },
+                            { field: 'refund_create_amount', title: '退款金额', width: 100, align: 'right', totalRow: true, templet: os.tc },
+                            { field: 'others_non_recharge_coupon_amount', title: '免充值<br/>优惠金额', templet: os.tc, width: 100, align: 'right', totalRow: true, templet: os.tc },
+                            { field: 'others_recharge_coupon_amount', title: '充值<br/>优惠金额', templet: os.tc, width: 100, align: 'right', totalRow: true, templet: os.tc },
                             { field: 'pay_settle_amount', title: '交易净额', width: 130, align: 'right', totalRow: true, templet: os.tc },
                         ]
                     ],

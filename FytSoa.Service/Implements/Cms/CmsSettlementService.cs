@@ -132,7 +132,13 @@ namespace FytSoa.Service.Implements
                     name = daily.sub_pay_platform,
                     trade_num = SqlFunc.AggregateSum(daily.success_count),
                     trade_total = SqlFunc.AggregateSum(daily.success_amount),
-                    refund_total = SqlFunc.AggregateSum(daily.refund_create_amount)
+                    refund_total = SqlFunc.AggregateSum(daily.refund_create_amount),
+                    sub_mch_non_recharge_coupon_amount = SqlFunc.AggregateSum(daily.sub_mch_non_recharge_coupon_amount),
+                    platform_non_recharge_coupon_amount = SqlFunc.AggregateSum(daily.platform_non_recharge_coupon_amount),
+                    others_non_recharge_coupon_amount = SqlFunc.AggregateSum(daily.others_non_recharge_coupon_amount),
+                    sub_mch_recharge_coupon_amount = SqlFunc.AggregateSum(daily.sub_mch_recharge_coupon_amount),
+                    platform_recharge_coupon_amount = SqlFunc.AggregateSum(daily.platform_recharge_coupon_amount),
+                    others_recharge_coupon_amount = SqlFunc.AggregateSum(daily.others_recharge_coupon_amount)
                 }).ToListAsync();
 
             return typeof(SubPayPlatform).ToDropdown().Select(p =>
@@ -144,8 +150,13 @@ namespace FytSoa.Service.Implements
                 };
                 if (info != null)
                 {
+                    //免充值优惠金额
+                    var val1 = info.sub_mch_non_recharge_coupon_amount + info.platform_non_recharge_coupon_amount + info.others_non_recharge_coupon_amount;
+                    //充值优惠金额
+                    var val2 = info.sub_mch_recharge_coupon_amount + info.platform_recharge_coupon_amount + info.others_recharge_coupon_amount;
+
                     d.Number = info.trade_num;
-                    d.Total = info.trade_total - info.refund_total;
+                    d.Total = info.trade_total - info.refund_total - val1 - val2;
                 }
                 return d;
             });
@@ -231,7 +242,13 @@ namespace FytSoa.Service.Implements
                 refund_create_amount = SqlFunc.AggregateSum(ds.refund_create_amount),//订单已退金额
                 discount_amount = SqlFunc.AggregateSum(ds.discount_amount),//优惠金额
                 poundage = SqlFunc.AggregateSum(ds.poundage),//手续费
-                income_amount = SqlFunc.AggregateSum(ds.income_amount)//入账金额
+                income_amount = SqlFunc.AggregateSum(ds.income_amount),//入账金额
+                sub_mch_non_recharge_coupon_amount = SqlFunc.AggregateSum(ds.sub_mch_non_recharge_coupon_amount),
+                platform_non_recharge_coupon_amount = SqlFunc.AggregateSum(ds.platform_non_recharge_coupon_amount),
+                others_non_recharge_coupon_amount = SqlFunc.AggregateSum(ds.others_non_recharge_coupon_amount),
+                sub_mch_recharge_coupon_amount = SqlFunc.AggregateSum(ds.sub_mch_recharge_coupon_amount),
+                platform_recharge_coupon_amount = SqlFunc.AggregateSum(ds.platform_recharge_coupon_amount),
+                others_recharge_coupon_amount = SqlFunc.AggregateSum(ds.others_recharge_coupon_amount)
             }).GroupBy(ds => new { ds.business_date, ds.out_shop_id }).ToPageAsync(parm.page_num, parm.page_size);
 
             if (data.Items.Count > 0)
@@ -248,7 +265,11 @@ namespace FytSoa.Service.Implements
                         shop.shop_name = shopInfo.shop_name;
                         shop.erp_org = shopInfo.erp_org;
                     }
-
+                    
+                    //免充值优惠金额
+                    shop.others_non_recharge_coupon_amount = shop.sub_mch_non_recharge_coupon_amount + shop.platform_non_recharge_coupon_amount + shop.others_non_recharge_coupon_amount;
+                    //充值优惠金额
+                    shop.others_recharge_coupon_amount = shop.sub_mch_recharge_coupon_amount + shop.platform_recharge_coupon_amount + shop.others_recharge_coupon_amount;
                     //应收金额
                     shop.pay_settle_amount = shop.success_amount - shop.refund_create_amount;
                 });
@@ -280,6 +301,12 @@ namespace FytSoa.Service.Implements
                 success_amount = SqlFunc.AggregateSum(ds.success_amount),//交易金额
                 refund_create_count = SqlFunc.AggregateSum(ds.refund_create_count),//退货笔数
                 refund_create_amount = SqlFunc.AggregateSum(ds.refund_create_amount),//退货金额
+                sub_mch_non_recharge_coupon_amount = SqlFunc.AggregateSum(ds.sub_mch_non_recharge_coupon_amount),
+                platform_non_recharge_coupon_amount = SqlFunc.AggregateSum(ds.platform_non_recharge_coupon_amount),
+                others_non_recharge_coupon_amount = SqlFunc.AggregateSum(ds.others_non_recharge_coupon_amount),
+                sub_mch_recharge_coupon_amount = SqlFunc.AggregateSum(ds.sub_mch_recharge_coupon_amount),
+                platform_recharge_coupon_amount = SqlFunc.AggregateSum(ds.platform_recharge_coupon_amount),
+                others_recharge_coupon_amount = SqlFunc.AggregateSum(ds.others_recharge_coupon_amount),
             }).GroupBy(ds => ds.out_sub_mch_id).ToPageAsync(parm.page_num, parm.page_size);
 
             if (data.Items.Count > 0)
@@ -296,8 +323,12 @@ namespace FytSoa.Service.Implements
                         shop.shop_name = shopInfo.name;
                     }
 
-                    //交易净额(同应收金额计算方式一样)
-                    shop.pay_settle_amount = shop.success_amount - shop.refund_create_amount;
+                    //免充值优惠金额
+                    shop.others_non_recharge_coupon_amount = shop.sub_mch_non_recharge_coupon_amount + shop.platform_non_recharge_coupon_amount + shop.others_non_recharge_coupon_amount;
+                    //充值优惠金额
+                    shop.others_recharge_coupon_amount = shop.sub_mch_recharge_coupon_amount + shop.platform_recharge_coupon_amount + shop.others_recharge_coupon_amount;
+                    //参与结算交易净额
+                    shop.pay_settle_amount = shop.success_amount - shop.refund_create_amount - shop.others_non_recharge_coupon_amount - shop.others_recharge_coupon_amount;
                 });
             }
 
