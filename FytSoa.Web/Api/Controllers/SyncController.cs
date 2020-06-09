@@ -20,8 +20,6 @@ namespace FytSoa.Api.Controllers
 {
     [ApiController]
     [Route("api/[controller]/[action]")]
-    [Produces("application/json")]
-    [JwtAuthorize(Roles = "Admin")]
     public class SyncController : Controller
     {
         readonly IWxCloudService wx;
