@@ -4,6 +4,7 @@
 @inject FytSoa.Service.Interfaces.Cms.ICmsMerchantService ms
 @inject FytSoa.Service.Interfaces.ISysAdminService adminservice
 @inject FytSoa.Service.Interfaces.ICmsShopService shopService
+@inject FytSoa.Service.Interfaces.ISysPermissionsService sysPermissions
 @{
     ViewBag.Title = "支付记录查询";
     var isSys = await HttpContext.IsSystem();
@@ -11,6 +12,8 @@
     var admin = await adminservice.GetModelAsync(p => p.Guid == admin_guid);
     var ms_list = (await ms.GetListAsync(p => (isSys || p.admin_guid == admin_guid || p.admin_guid == admin.data.CreateBy) && p.status, p => p.id, Common.DbOrderEnum.Asc)).data;
     var def_date = DateTime.Now.ToString("yyyy-MM-dd");
+    var update = 1;
+    if (!isSys) update = (await sysPermissions.CountAsync(t => t.MenuGuid == "923026cb-ba88-4fc2-98e4-6d554e1ae12c" && admin.data.RoleGuid.Contains(t.RoleGuid) && t.BtnFunJson.Contains("a42d0b4f-bec2-4af9-ab46-ff414dbbc118"))).data.Count;
 }
 @section styles{
     <style>
@@ -78,7 +81,10 @@
         <table class="layui-hide" id="tablist" lay-filter="tool"></table>
         <script type="text/html" id="tool">
             <a class="layui-btn layui-btn-primary layui-btn-xs" lay-event="detail"><i class="layui-icon">&#xe702;</i> 详情</a>
-            <a class="layui-btn layui-btn-primary layui-btn-xs" lay-event="refund"><i class="layui-icon">&#xe65e;</i> 退款</a>
+            @if (update > 0)
+            {
+                <a class="layui-btn layui-btn-primary layui-btn-xs" lay-event="refund"><i class="layui-icon">&#xe65e;</i> 退款</a>
+            }
         </script>
         <script type="text/html" id="details">
             <form class="layui-form form-details">
@@ -209,6 +215,7 @@
 @section scripts{
     <script src="~/themes/js/xm-select.js" asp-append-version="true"></script>
     <script>
+        var _width = parseInt('@update') > 0 ? 180 : 90;
         layui.config({
             base: '/themes/js/modules/'
         }).use(['table', 'jquery', 'common', 'laydate', 'laytpl', 'layer'],
@@ -318,7 +325,7 @@
                             { field: 'device_id', title: '设备号', width: 90, aigen: 'center' },
                             { field: 'staff_name', title: '店员名', width: 120 },
                             { field: 'poundage', title: '手续费', templet: os.tc, width: 100, align: 'right', totalRow: true },
-                            { title: '操作', align: 'center', templet: '#tool', width: 180 }
+                            { title: '操作', align: 'center', templet: '#tool', width: _width }
                         ]
                     ],
                     where: data(),

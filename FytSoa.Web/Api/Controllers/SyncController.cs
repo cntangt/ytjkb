@@ -20,6 +20,8 @@ namespace FytSoa.Api.Controllers
 {
     [ApiController]
     [Route("api/[controller]/[action]")]
+    [Produces("application/json")]
+    [JwtAuthorize(Roles = "Admin")]
     public class SyncController : Controller
     {
         readonly IWxCloudService wx;
@@ -276,7 +278,7 @@ namespace FytSoa.Api.Controllers
             return res;
         }
 
-        [HttpPost]
+        [HttpPost, ApiAuthorize(Modules = "OrderTrade", Methods = "Update", LogType = LogEnum.UPDATE)]
         public async Task<ApiResult<RefundResponse>> DoRefund(DoRefundRequest req_data)
         {
             var res = new ApiResult<RefundResponse>();
@@ -398,7 +400,8 @@ namespace FytSoa.Api.Controllers
                 p => new EC("退款笔数", p.refund_create_count, sum: true),
                 p => new EC("退款金额", p.refund_create_amount / 100M, "¥#,##0.00", sum: true),
                 p => new EC("应收金额", p.pay_settle_amount / 100M, "¥#,##0.00", sum: true),
-                p => new EC("优惠金额", p.discount_amount / 100M, "¥#,##0.00", sum: true),
+                p => new EC("免充值优惠金额", p.others_non_recharge_coupon_amount / 100M, "¥#,##0.00", sum: true),
+                p => new EC("充值优惠金额", p.others_recharge_coupon_amount / 100M, "¥#,##0.00", sum: true),
                 p => new EC("手续费", p.poundage / 100M, "¥#,##0.00", sum: true),
                 p => new EC("入账金额", p.income_amount / 100M, "¥#,##0.00", sum: true));
 
@@ -446,7 +449,9 @@ namespace FytSoa.Api.Controllers
                 p => new EC("交易金额", p.success_amount / 100M, "¥#,##0.00", sum: true),
                 p => new EC("退款笔数", p.refund_create_count, sum: true),
                 p => new EC("退款金额", p.refund_create_amount / 100M, "¥#,##0.00", sum: true),
-                p => new EC("交易净额", p.pay_settle_amount / 100M, "¥#,##0.00", sum: true));
+                p => new EC("免充值优惠金额", p.others_non_recharge_coupon_amount / 100M, "¥#,##0.00", sum: true),
+                p => new EC("充值优惠金额", p.others_recharge_coupon_amount / 100M, "¥#,##0.00", sum: true),
+                p => new EC("参与结算交易净额", p.pay_settle_amount / 100M, "¥#,##0.00", sum: true));
 
             return File(
                 data,
