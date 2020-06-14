@@ -40,5 +40,16 @@ namespace FytSoa.Api.Controllers.Cms
 
             return Ok(new { code = 0, msg = "success", count = 1, data = list });
         }
+
+        [HttpGet("getdetailpages")]
+        public async Task<IActionResult> GetDetailPages([FromQuery]PageParm parm)
+        {
+            var res = await balanceService.GetDetailPageAsync(parm);
+
+            return Ok(new { code = 0, msg = "success", count = res.data.TotalItems, data = res.data.Items });
+        }
+
+        [HttpPost("modify"), ApiAuthorize(Modules = "Balance", Methods = "Update", LogType = LogEnum.UPDATE)]
+        public Task<ApiResult<string>> Modify([FromBody]CmsBalance_Chi parm) => balanceService.ModifyAmountAsync(parm);
     }
 }

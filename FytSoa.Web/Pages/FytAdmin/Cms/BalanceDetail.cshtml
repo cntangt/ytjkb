@@ -18,15 +18,30 @@
         .layui-form-label { width: 100px; }
         .layui-form-item { margin-bottom: 8px; }
         .layui-input-block { margin-left: 0px; width: 200px; float: left; }
-        .layui-layer-btn { padding: 0 35px 65px !important; }
+        .layui-layer-btn { padding: 0 35px 10px !important; }
+        .layui-layer-content { padding-bottom: 0px !important; }
     </style>
 }
 <div id="container">
     <div class="list-wall" style="padding-top:0px;">
+        <div style="text-align:center;padding:20px 0 10px 0">
+            <button class="layui-btn" lay-filter="submit" id="submit"><i class="layui-icon layui-icon-loading layui-icon layui-anim layui-anim-rotate layui-anim-loop layui-hide"></i>确认</button>
+            <button class="layui-btn" lay-filter="export" id="export"><i class="layui-icon layui-icon-loading layui-icon layui-anim layui-anim-rotate layui-anim-loop layui-hide"></i>导出明细</button>
+        </div>
         <table class="layui-hide" id="tabtotal"></table>
         <table class="layui-hide" id="tablist" lay-filter="tool"></table>
         <script type="text/html" id="tool">
-            <a class="layui-btn layui-btn-primary layui-btn-xs" lay-event="detail"><i class="layui-icon">&#xe702;</i> 详情</a>
+            <a class="layui-btn layui-btn-primary layui-btn-xs" lay-event="detail"><i class="layui-icon">&#xe702;</i> 调整</a>
+        </script>
+        <script type="text/html" id="modify">
+            <form class="layui-form form-details">
+                <div class="layui-form-item">
+                    <input type="text" name="modify_amount" value="{{ d.modify_amount }}" class="layui-input">
+                </div>
+                <input type="hidden" name="BillID" value="{{ d.billID }}" />
+                <input type="hidden" name="out_sub_mch_id" value="{{ d.out_sub_mch_id }}" />
+                <input type="hidden" name="sub_pay_platform" value="{{ d.sub_pay_platform }}" />
+            </form>
         </script>
     </div>
 </div>
@@ -34,10 +49,13 @@
     <script>
         layui.config({
             base: '/themes/js/modules/'
-        }).use(['table', 'jquery', 'common', 'laydate'],
+        }).use(['table', 'jquery', 'common', 'laydate', 'laytpl', 'layer'],
             function () {
                 var table = layui.table,
                     os = layui.common,
+                    tpl = layui.laytpl,
+                    $ = layui.jquery,
+                    l = layui.layer,
                     billId = os.getUrlParam('billId');
                 table.render({
                     elem: '#tabtotal',
@@ -46,7 +64,7 @@
                     cols: [
                         [
                             { field: 'settle_Name', title: '支付方式', align: 'center', totalRowText: '汇总' },
-                            { field: 'balance_amount', title: '参与返佣净额',  align: 'right', totalRow: true, templet: os.tc },
+                            { field: 'balance_amount', title: '参与返佣净额', align: 'right', totalRow: true, templet: os.tc },
                             { field: 'rebate_amount', title: '应返金额', align: 'right', totalRow: true, templet: os.tc },
                             { field: 'modify_amount', title: '调整金额', align: 'right', totalRow: true, templet: os.tc },
                             { field: 'rebate_amount_rel', title: '实际返佣', align: 'right', totalRow: true, templet: os.tc },
@@ -54,7 +72,55 @@
                     ],
                     totalRow: true,
                     where: { key: billId },
+                    id: 'totals'
+                });
+                table.render({
+                    elem: '#tablist',
+                    headers: os.getToken(),
+                    url: '/api/balance/getdetailpages',
+                    cols: [
+                        [
+                            { field: 'mch_name', title: '商户名称', align: 'left' },
+                            { field: 'settle_Name', title: '支付渠道', align: 'left' },
+                            { field: 'success_amount', title: '支付金额', align: 'right', templet: os.tc },
+                            { field: 'refund_create_amount', title: '退款金额', align: 'right', templet: os.tc, width: 85 },
+                            { field: 'coupon_amount', title: '商家优惠', align: 'right', templet: os.tc, width: 85 },
+                            { field: 'balance_amount', title: '参与返佣净额', align: 'right', templet: os.tc },
+                            { field: 'rebate', title: '返佣比例', align: 'right', templet: os.tp, width: 85 },
+                            { field: 'rebate_amount', title: '应返金额', align: 'right', templet: os.tc, width: 85 },
+                            { field: 'modify_amount', title: '调整金额', align: 'right', templet: os.tc, width: 85 },
+                            { field: 'rebate_amount_rel', title: '实际返佣', align: 'right', templet: os.tc, width: 85 },
+                            { title: '操作', align: 'center', templet: '#tool', width: 90 }
+                        ]
+                    ],
+                    where: { key: billId },
+                    limits: [5, 10, 20, 30, 40, 50, 100],
+                    limit: 5,
+                    page: true,
                     id: 'tables'
+                });
+                var active = {
+                    reload_total: function () { table.reload('totals'); },
+                    reload_detail: function () { table.reload('tables'); },
+                }
+                table.on('tool(tool)', function (obj) {
+                    tpl(modify.innerHTML).render(obj.data, (html) => l.open({
+                        title: '调整金额',
+                        area: ['370px', '180px'],
+                        content: html,
+                        btn: ['提交', '取消'],
+                        yes: (i, l) => {
+                            os.ajax('api/balance/modify', os.js($(l).find('form')), (res) => {
+                                if (!res.success) {
+                                    os.error(res.message);
+                                } else {
+                                    layer.close(i);
+                                    active.reload_total();
+                                    active.reload_detail();
+                                }
+                            });
+                        }
+                    }));
                 });
             });
     </script>

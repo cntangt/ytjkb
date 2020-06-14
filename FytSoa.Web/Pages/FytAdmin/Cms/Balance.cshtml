@@ -62,10 +62,6 @@
                     elem: '#tablist',
                     headers: os.getToken(),
                     url: '/api/balance/getpages',
-                    request: {
-                        pageName: 'page_num',
-                        limitName: 'page_size'
-                    },
                     cols: [
                         [
                             { field: 'bizDt', title: '月份', width: 100, align: 'center', totalRowText: '合计' },
@@ -97,7 +93,7 @@
                 });
                 table.on('tool(tool)', function (obj) {
                     var id = obj.data.billID;
-                    os.Open('佣金结算详情', '/fytadmin/cms/BalanceDetail/?billId=' + id, '1000px', '650px');
+                    os.Open('佣金结算详情', '/fytadmin/cms/BalanceDetail/?billId=' + id, '1100px', '600px');
                 });
                 function data() {
                     if ($.trim($("#start_date").val()).length == 0) {

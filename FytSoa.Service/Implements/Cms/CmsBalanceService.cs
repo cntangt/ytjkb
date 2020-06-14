@@ -62,5 +62,62 @@ namespace FytSoa.Service.Implements
 
             return data;
         }
+
+        public async Task<ApiResult<Page<CmsBalance_Chi>>> GetDetailPageAsync(PageParm parm)
+        {
+            var res = new ApiResult<Page<CmsBalance_Chi>>();
+
+            var data = await Db.Queryable<CmsBalance_Chi>().Where(t => t.BillID == parm.key).ToPageAsync(parm.page, parm.limit);
+
+            if (data.Items.Count > 0)
+            {
+                data.Items.ForEach(p =>
+                {
+                    p.Settle_Name = Enum.GetName(typeof(SubPayPlatform), p.sub_pay_platform);
+                });
+            }
+
+            res.data = data;
+
+            return res;
+        }
+
+        public async Task<ApiResult<string>> ModifyAmountAsync(CmsBalance_Chi parm)
+        {
+            var res = new ApiResult<string>() { statusCode = (int)ApiEnum.Error };
+
+            try
+            {
+                using var tran = new TransactionScope();
+
+                var chi = await Db.Queryable<CmsBalance_Chi>().Where(t => t.BillID == parm.BillID &&
+                                                                            t.out_sub_mch_id == parm.out_sub_mch_id &&
+                                                                            t.sub_pay_platform == parm.sub_pay_platform).SingleAsync();
+
+                var fath = await Db.Queryable<CmsBalance>().Where(t => t.BillID == parm.BillID).SingleAsync();
+
+                parm.rebate_amount_rel = chi.rebate_amount_rel + parm.modify_amount;
+                await Db.Updateable(parm).UpdateColumns(p => new { p.modify_amount, p.rebate_amount_rel }).ExecuteCommandAsync();
+
+                await Db.Updateable(new CmsBalance
+                {
+                    BillID = fath.BillID,
+                    modify_amount = fath.modify_amount - chi.modify_amount + parm.modify_amount,
+                    rebate_amount_rel = fath.rebate_amount_rel - chi.modify_amount + parm.modify_amount
+                }).UpdateColumns(t => new { t.modify_amount, t.rebate_amount_rel }).ExecuteCommandAsync();
+
+                tran.Complete();
+            }
+            catch (Exception ex)
+            {
+                res.message = ApiEnum.Error.GetEnumText() + ex.Message;
+                Logger.Default.ProcessError((int)ApiEnum.Error, ex.Message);
+            }
+
+            res.statusCode = (int)ApiEnum.Status;
+            res.message = "调整金额成功";
+
+            return res;
+        }
     }
 }
