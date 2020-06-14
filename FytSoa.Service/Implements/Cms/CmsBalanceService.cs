@@ -96,7 +96,7 @@ namespace FytSoa.Service.Implements
 
                 var fath = await Db.Queryable<CmsBalance>().Where(t => t.BillID == parm.BillID).SingleAsync();
 
-                parm.rebate_amount_rel = chi.rebate_amount_rel + parm.modify_amount;
+                parm.rebate_amount_rel = chi.rebate_amount_rel - chi.modify_amount + parm.modify_amount;
                 await Db.Updateable(parm).UpdateColumns(p => new { p.modify_amount, p.rebate_amount_rel }).ExecuteCommandAsync();
 
                 await Db.Updateable(new CmsBalance
