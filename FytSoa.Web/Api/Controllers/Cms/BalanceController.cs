@@ -33,10 +33,10 @@ namespace FytSoa.Api.Controllers.Cms
             return Ok(new { code = 0, msg = "success", count = res.data.TotalItems, data = res.data.Items });
         }
 
-        [HttpPost("totalamount")]
-        public async Task<IActionResult> GetTotalAmount([FromQuery]ParmString parm)
+        [HttpGet("gettotals")]
+        public async Task<IActionResult> GetTotals([FromQuery]PageParm parm)
         {
-            var list = await balanceService.GetTotalAmountAsync(parm.parm);
+            var list = await balanceService.GetTotalAmountAsync(parm.key);
 
             return Ok(new { code = 0, msg = "success", count = 1, data = list });
         }

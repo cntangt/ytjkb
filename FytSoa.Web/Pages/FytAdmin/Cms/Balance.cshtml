@@ -47,7 +47,6 @@
     </div>
 </div>
 @section scripts{
-    <script src="~/themes/js/xm-select.js" asp-append-version="true"></script>
     <script>
         layui.config({
             base: '/themes/js/modules/'
@@ -98,7 +97,7 @@
                 });
                 table.on('tool(tool)', function (obj) {
                     var id = obj.data.billID;
-                    os.Open('佣金结算详情', '/fytadmin/cms/BalanceDetail/?id=' + id, '1000px', '650px');
+                    os.Open('佣金结算详情', '/fytadmin/cms/BalanceDetail/?billId=' + id, '1000px', '650px');
                 });
                 function data() {
                     if ($.trim($("#start_date").val()).length == 0) {

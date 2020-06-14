@@ -56,16 +56,7 @@ namespace FytSoa.Service.Implements
             {
                 data.ForEach(p =>
                 {
-                    p.Settle_Name = Enum.GetName(typeof(SettleType), p.sub_pay_platform);
-                });
-
-                data.Add(new CmsBalance_Chi
-                {
-                    Settle_Name = "汇总",
-                    balance_amount = data.Sum(t => t.balance_amount),
-                    rebate_amount = data.Sum(t => t.rebate_amount),
-                    modify_amount = data.Sum(t => t.modify_amount),
-                    rebate_amount_rel = data.Sum(t => t.rebate_amount_rel),
+                    p.Settle_Name = Enum.GetName(typeof(SubPayPlatform), p.sub_pay_platform);
                 });
             }
 
