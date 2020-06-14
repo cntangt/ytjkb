@@ -1,15 +1,8 @@
 ﻿@page
 @using FytSoa.Extensions
-@using FytSoa.Service.DtoModel.Wx
-@inject FytSoa.Service.Interfaces.Cms.ICmsMerchantService ms
-@inject FytSoa.Service.Interfaces.ISysAdminService adminservice
-@inject FytSoa.Service.Interfaces.ICmsShopService shopService
 @{
     ViewBag.Title = "佣金结算";
     var isSys = await HttpContext.IsSystem();
-    var admin_guid = await HttpContext.LoginUserId();
-    var admin = await adminservice.GetModelAsync(p => p.Guid == admin_guid);
-    var ms_list = (await ms.GetListAsync(p => (isSys || p.admin_guid == admin_guid || p.admin_guid == admin.data.CreateBy) && p.status, p => p.id, Common.DbOrderEnum.Asc)).data;
     var start_date = DateTime.Now.AddMonths(-1).ToString("yyyy-MM");
     var end_date = DateTime.Now.ToString("yyyy-MM");
 }
@@ -25,7 +18,10 @@
 <div id="container">
     <div class="list-wall" style="padding-top:0px;">
         <div style="text-align:center;padding:20px 0 10px 0">
-            <button class="layui-btn" lay-filter="submit" id="submit"><i class="layui-icon layui-icon-loading layui-icon layui-anim layui-anim-rotate layui-anim-loop layui-hide"></i>确认</button>
+            @if (isSys)
+            {
+                <button class="layui-btn" lay-filter="submit" id="submit"><i class="layui-icon layui-icon-loading layui-icon layui-anim layui-anim-rotate layui-anim-loop layui-hide"></i>确认</button>
+            }
             <button class="layui-btn" lay-filter="export" id="export"><i class="layui-icon layui-icon-loading layui-icon layui-anim layui-anim-rotate layui-anim-loop layui-hide"></i>导出明细</button>
         </div>
         <table class="layui-hide" id="tabtotal"></table>
@@ -57,6 +53,20 @@
                     $ = layui.jquery,
                     l = layui.layer,
                     billId = os.getUrlParam('billId');
+                var index = parent.layer.getFrameIndex(window.name);
+                var cols = [[
+                    { field: 'mch_name', title: '商户名称', align: 'left' },
+                    { field: 'settle_Name', title: '支付渠道', align: 'left' },
+                    { field: 'success_amount', title: '支付金额', align: 'right', templet: os.ntc },
+                    { field: 'refund_create_amount', title: '退款金额', align: 'right', templet: os.ntc, width: 85 },
+                    { field: 'coupon_amount', title: '商家优惠', align: 'right', templet: os.ntc, width: 85 },
+                    { field: 'balance_amount', title: '参与返佣净额', align: 'right', templet: os.ntc },
+                    { field: 'rebate', title: '返佣比例', align: 'right', templet: os.tp, width: 85 },
+                    { field: 'rebate_amount', title: '应返金额', align: 'right', templet: os.ntc, width: 85 },
+                    { field: 'modify_amount', title: '调整金额', align: 'right', templet: os.ntc, width: 85 },
+                    { field: 'rebate_amount_rel', title: '实际返佣', align: 'right', templet: os.ntc, width: 85 },
+                ]];
+                if ('@isSys' === 'True') cols[0].push({ title: '操作', align: 'center', templet: '#tool', width: 90 });
                 table.render({
                     elem: '#tabtotal',
                     headers: os.getToken(),
@@ -64,10 +74,10 @@
                     cols: [
                         [
                             { field: 'settle_Name', title: '支付方式', align: 'center', totalRowText: '汇总' },
-                            { field: 'balance_amount', title: '参与返佣净额', align: 'right', totalRow: true, templet: os.tc },
-                            { field: 'rebate_amount', title: '应返金额', align: 'right', totalRow: true, templet: os.tc },
-                            { field: 'modify_amount', title: '调整金额', align: 'right', totalRow: true, templet: os.tc },
-                            { field: 'rebate_amount_rel', title: '实际返佣', align: 'right', totalRow: true, templet: os.tc },
+                            { field: 'balance_amount', title: '参与返佣净额', align: 'right', totalRow: true, templet: os.ntc },
+                            { field: 'rebate_amount', title: '应返金额', align: 'right', totalRow: true, templet: os.ntc },
+                            { field: 'modify_amount', title: '调整金额', align: 'right', totalRow: true, templet: os.ntc },
+                            { field: 'rebate_amount_rel', title: '实际返佣', align: 'right', totalRow: true, templet: os.ntc },
                         ]
                     ],
                     totalRow: true,
@@ -78,21 +88,7 @@
                     elem: '#tablist',
                     headers: os.getToken(),
                     url: '/api/balance/getdetailpages',
-                    cols: [
-                        [
-                            { field: 'mch_name', title: '商户名称', align: 'left' },
-                            { field: 'settle_Name', title: '支付渠道', align: 'left' },
-                            { field: 'success_amount', title: '支付金额', align: 'right', templet: os.tc },
-                            { field: 'refund_create_amount', title: '退款金额', align: 'right', templet: os.tc, width: 85 },
-                            { field: 'coupon_amount', title: '商家优惠', align: 'right', templet: os.tc, width: 85 },
-                            { field: 'balance_amount', title: '参与返佣净额', align: 'right', templet: os.tc },
-                            { field: 'rebate', title: '返佣比例', align: 'right', templet: os.tp, width: 85 },
-                            { field: 'rebate_amount', title: '应返金额', align: 'right', templet: os.tc, width: 85 },
-                            { field: 'modify_amount', title: '调整金额', align: 'right', templet: os.tc, width: 85 },
-                            { field: 'rebate_amount_rel', title: '实际返佣', align: 'right', templet: os.tc, width: 85 },
-                            { title: '操作', align: 'center', templet: '#tool', width: 90 }
-                        ]
-                    ],
+                    cols: cols,
                     where: { key: billId },
                     limits: [5, 10, 20, 30, 40, 50, 100],
                     limit: 5,
@@ -121,6 +117,12 @@
                             });
                         }
                     }));
+                });
+                $("#submit").click(function () {
+
+                });
+                $("#export").click(function () {
+                    l.open({ title: '结算明细导出', area: ['550px', '300px'], content: '/api/sync/balanceexport/?billId=' + billId, type: 2 });
                 });
             });
     </script>

@@ -27,14 +27,16 @@ namespace FytSoa.Api.Controllers
         readonly ICmsSettlementService cmsDaily;
         readonly IConfiguration config;
         readonly IHttpClientFactory factory;
+        readonly ICmsBalanceService balanceService;
 
-        public SyncController(IWxCloudService wx, ICmsMerchantService merchantService, ICmsSettlementService cmsDaily, IConfiguration config, IHttpClientFactory factory)
+        public SyncController(IWxCloudService wx, ICmsMerchantService merchantService, ICmsSettlementService cmsDaily, IConfiguration config, IHttpClientFactory factory, ICmsBalanceService balanceService)
         {
             this.wx = wx;
             this.merchantService = merchantService;
             this.cmsDaily = cmsDaily;
             this.config = config;
             this.factory = factory;
+            this.balanceService = balanceService;
         }
 
         public async Task<IActionResult> TradeExport(string q)
@@ -472,6 +474,34 @@ namespace FytSoa.Api.Controllers
             }
 
             return ip;
+        }
+
+        public async Task<IActionResult> BalanceExport(string billId)
+        {
+            var res = await balanceService.GetDetailPageAsync(new PageParm { key = billId, page = 1, limit = int.MaxValue });
+
+            if (res.data.Items.Count == 0)
+            {
+                return Content("没有数据");
+            }
+
+            var data = await res.data.Items.Write("返佣结算明细",
+                p => new EC("商户名称", p.mch_name),
+                p => new EC("支付渠道", p.Settle_Name),
+                p => new EC("支付金额", p.success_amount, "¥#,##0.00", sum: true),
+                p => new EC("退款金额", p.refund_create_amount, "¥#,##0.00", sum: true),
+                p => new EC("商家优惠", p.coupon_amount, "¥#,##0.00", sum: true),
+                p => new EC("参与返佣净额", p.balance_amount, "¥#,##0.00", sum: true),
+                p => new EC("返佣比例", p.rebate, "0.00%"),
+                p => new EC("应返金额", p.rebate_amount, "¥#,##0.00", sum: true),
+                p => new EC("调整金额", p.modify_amount, "¥#,##0.00", sum: true),
+                p => new EC("实际返佣", p.rebate_amount_rel, "¥#,##0.00", sum: true));
+
+            return File(
+                data,
+                "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+                "返佣结算明细.xlsx"
+            );
         }
     }
 }

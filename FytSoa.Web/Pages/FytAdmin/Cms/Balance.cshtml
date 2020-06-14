@@ -1,15 +1,6 @@
 ﻿@page
-@using FytSoa.Extensions
-@using FytSoa.Service.DtoModel.Wx
-@inject FytSoa.Service.Interfaces.Cms.ICmsMerchantService ms
-@inject FytSoa.Service.Interfaces.ISysAdminService adminservice
-@inject FytSoa.Service.Interfaces.ICmsShopService shopService
 @{
     ViewBag.Title = "佣金结算";
-    var isSys = await HttpContext.IsSystem();
-    var admin_guid = await HttpContext.LoginUserId();
-    var admin = await adminservice.GetModelAsync(p => p.Guid == admin_guid);
-    var ms_list = (await ms.GetListAsync(p => (isSys || p.admin_guid == admin_guid || p.admin_guid == admin.data.CreateBy) && p.status, p => p.id, Common.DbOrderEnum.Asc)).data;
     var start_date = DateTime.Now.AddMonths(-1).ToString("yyyy-MM");
     var end_date = DateTime.Now.ToString("yyyy-MM");
 }
@@ -65,10 +56,10 @@
                     cols: [
                         [
                             { field: 'bizDt', title: '月份', width: 100, align: 'center', totalRowText: '合计' },
-                            { field: 'balance_amount', title: '参与返佣净额', width: 140, align: 'right', totalRow: true, templet: os.tc },
-                            { field: 'rebate_amount', title: '应返金额', width: 140, align: 'right', totalRow: true, templet: os.tc },
-                            { field: 'modify_amount', title: '调整金额', width: 140, align: 'right', totalRow: true, templet: os.tc },
-                            { field: 'rebate_amount_rel', title: '实际返佣', width: 140, align: 'right', totalRow: true, templet: os.tc },
+                            { field: 'balance_amount', title: '参与返佣净额', width: 140, align: 'right', totalRow: true, templet: os.ntc },
+                            { field: 'rebate_amount', title: '应返金额', width: 140, align: 'right', totalRow: true, templet: os.ntc },
+                            { field: 'modify_amount', title: '调整金额', width: 140, align: 'right', totalRow: true, templet: os.ntc },
+                            { field: 'rebate_amount_rel', title: '实际返佣', width: 140, align: 'right', totalRow: true, templet: os.ntc },
                             { field: 'statu', title: '返佣状态', width: 100, align: 'right' },
                             { field: 'moditime', title: '返佣时间', width: 150, align: 'center', templet: (d) => layui.util.toDateString(d.moditime, 'yyyy-MM-dd HH:mm:ss') },
                             { title: '操作', align: 'center', templet: '#tool', width: 100 }
