@@ -1,0 +1,78 @@
+﻿@page
+@using FytSoa.Extensions
+@using FytSoa.Service.DtoModel.Wx
+@inject FytSoa.Service.Interfaces.Cms.ICmsMerchantService ms
+@inject FytSoa.Service.Interfaces.ISysAdminService adminservice
+@inject FytSoa.Service.Interfaces.ICmsShopService shopService
+@{
+    ViewBag.Title = "佣金结算";
+    var isSys = await HttpContext.IsSystem();
+    var admin_guid = await HttpContext.LoginUserId();
+    var admin = await adminservice.GetModelAsync(p => p.Guid == admin_guid);
+    var ms_list = (await ms.GetListAsync(p => (isSys || p.admin_guid == admin_guid || p.admin_guid == admin.data.CreateBy) && p.status, p => p.id, Common.DbOrderEnum.Asc)).data;
+    var start_date = DateTime.Now.AddMonths(-1).ToString("yyyy-MM");
+    var end_date = DateTime.Now.ToString("yyyy-MM");
+}
+@section styles{
+    <style>
+        .layui-form-label { width: 100px; }
+        .layui-form-item { margin-bottom: 8px; }
+        .layui-input-block { margin-left: 0px; width: 200px; float: left; }
+        .layui-layer-btn { padding: 0 35px 65px !important; }
+    </style>
+}
+<div id="container">
+    <div class="list-wall">
+        <table>
+
+        </table>
+        <table class="layui-hide" id="tablist" lay-filter="tool"></table>
+        <script type="text/html" id="tool">
+            <a class="layui-btn layui-btn-primary layui-btn-xs" lay-event="detail"><i class="layui-icon">&#xe702;</i> 详情</a>
+        </script>
+    </div>
+</div>
+@section scripts{
+    <script src="~/themes/js/xm-select.js" asp-append-version="true"></script>
+    <script>
+        layui.config({
+            base: '/themes/js/modules/'
+        }).use(['table', 'jquery', 'common', 'laydate', 'laytpl', 'layer'],
+            function () {
+                var table = layui.table,
+                    $ = layui.jquery,
+                    dt = layui.laydate,
+                    tpl = layui.laytpl,
+                    l = layui.layer,
+                    os = layui.common;
+                table.render({
+                    elem: '#tablist',
+                    headers: os.getToken(),
+                    url: '/api/balance/getpages',
+                    request: {
+                        pageName: 'page_num',
+                        limitName: 'page_size'
+                    },
+                    cols: [
+                        [
+                            { field: 'bizDt', title: '月份', width: 100, align: 'center', totalRowText: '合计' },
+                            { field: 'balance_amount', title: '参与返佣净额', width: 140, align: 'right', totalRow: true, templet: os.tc },
+                            { field: 'rebate_amount', title: '应返金额', width: 140, align: 'right', totalRow: true, templet: os.tc },
+                            { field: 'modify_amount', title: '调整金额', width: 140, align: 'right', totalRow: true, templet: os.tc },
+                            { field: 'rebate_amount_rel', title: '实际返佣', width: 140, align: 'right', totalRow: true, templet: os.tc },
+                            { field: 'statu', title: '返佣状态', width: 100, align: 'right' },
+                            { field: 'moditime', title: '返佣时间', width: 150, align: 'center', templet: (d) => layui.util.toDateString(d.moditime, 'yyyy-MM-dd HH:mm:ss') },
+                            { title: '操作', align: 'center', templet: '#tool', width: 100 }
+                        ]
+                    ],
+                    totalRow: true,
+                    where: data(),
+                    page: true,
+                    id: 'tables'
+                });
+                table.on('tool(tool)', function (obj) {
+                    tpl(details.innerHTML).render(obj.data, (html) => l.open({ title: '结算单详情', area: ['720px', '480px'], content: html }));
+                });
+            });
+    </script>
+}

@@ -146,6 +146,9 @@ namespace FytSoa.Service.DtoModel
         /// 创建人
         /// </summary>
         public string CreateBy { get; set; }
+
+        public DateTime? start_date { get; set; }
+        public DateTime? end_date { get; set; }
     }
 
     public class AppSearchParm

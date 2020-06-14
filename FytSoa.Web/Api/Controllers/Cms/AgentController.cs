@@ -25,9 +25,9 @@ namespace FytSoa.Api.Controllers.Cms
         [HttpGet("getpages")]
         public async Task<IActionResult> GetPages([FromQuery]PageParm parm)
         {
-            var list = await agentService.GetPagesAsync(parm);
+            var res = await agentService.GetPagesAsync(parm);
 
-            return Ok(new { code = 0, msg = "success", count = 1, data = list.data.Items });
+            return Ok(new { code = 0, msg = "success", count = res.data.TotalItems, data = res.data.Items });
         }
 
         [HttpPost("add"), ApiAuthorize(Modules = "Agent", Methods = "Add", LogType = LogEnum.ADD)]
