@@ -85,6 +85,7 @@
             {
                 <a class="layui-btn layui-btn-primary layui-btn-xs" lay-event="refund"><i class="layui-icon">&#xe65e;</i> 退款</a>
             }
+            <a class="layui-btn layui-btn-primary layui-btn-xs" lay-event="goods"><i class="layui-icon">&#xe63c;</i> 商品列表</a>
         </script>
         <script type="text/html" id="details">
             <form class="layui-form form-details">
@@ -215,7 +216,7 @@
 @section scripts{
     <script src="~/themes/js/xm-select.js" asp-append-version="true"></script>
     <script>
-        var _width = parseInt('@update') > 0 ? 180 : 90;
+        var _width = parseInt('@update') > 0 ? 280 : 190;
         layui.config({
             base: '/themes/js/modules/'
         }).use(['table', 'jquery', 'common', 'laydate', 'laytpl', 'layer'],
@@ -354,6 +355,9 @@
                     switch (obj.event) {
                         case 'detail':
                             tpl(details.innerHTML).render(obj.data, (html) => l.open({ title: '交易订单详情', area: ['720px', '570px'], content: html }));
+                            break;
+                        case 'goods':
+                            os.Open('商品列表', '/fytadmin/cms/goodslist/?str=' + encodeURI(JSON.stringify(obj.data.detail)), '730px', '470px');
                             break;
                         case 'refund':
                             tpl(refund.innerHTML).render(obj.data, (html) => l.open({

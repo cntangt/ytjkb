@@ -503,5 +503,25 @@ namespace FytSoa.Api.Controllers
                 "返佣结算明细.xlsx"
             );
         }
+
+        public async Task<PageResult<IEnumerable<GoodsDetail>>> GoodsList(PageParm parm)
+        {
+            var res = new PageResult<IEnumerable<GoodsDetail>>();
+            var data = new GoodsDto();
+
+            try
+            {
+                data = JsonConvert.DeserializeObject<GoodsDto>(parm.key);
+            }
+            catch (Exception ex)
+            {
+
+            }
+
+            res.Count = data.goods_detail.Count();
+            res.Data = data.goods_detail.Skip((parm.page - 1) * parm.limit).Take(parm.limit);
+
+            return res;
+        }
     }
 }

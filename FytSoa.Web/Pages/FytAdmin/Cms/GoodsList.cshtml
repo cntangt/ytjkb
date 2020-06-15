@@ -1,0 +1,46 @@
+﻿@page
+@{
+    ViewBag.Title = "商品列表";
+}
+@section styles{
+    <style>
+    </style>
+}
+<div id="container">
+    <div class="list-wall" style="padding-top:0px;">
+        <table class="layui-hide" id="tablist" lay-filter="tool"></table>
+    </div>
+</div>
+@section scripts{
+    <script>
+        layui.config({
+            base: '/themes/js/modules/'
+        }).use(['table', 'jquery', 'common'],
+            function () {
+                var table = layui.table,
+                    os = layui.common,
+                    str = os.getUrlParam('str');
+                console.log(str);
+                table.render({
+                    elem: '#tablist',
+                    headers: os.getToken(),
+                    method: 'post',
+                    contentType: 'application/json',
+                    url: '/api/sync/goodslist',
+                    cols: [
+                        [
+                            { field: 'goods_id', title: '商品编号', align: 'left', },
+                            { field: 'goods_name', title: '商品名称', align: 'left', },
+                            { field: 'quantity', title: '数量', align: 'right', },
+                            { field: 'price', title: '单价', align: 'right', },
+                        ]
+                    ],
+                    limit: 5,
+                    limits: [5, 10, 20, 30, 40, 50, 100],
+                    where: { key: str },
+                    page: true,
+                    id: 'tables'
+                });
+            });
+    </script>
+}
