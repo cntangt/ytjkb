@@ -62,14 +62,14 @@
                             { field: 'rebate_amount_rel', title: '实际返佣', width: 140, align: 'right', totalRow: true, templet: os.ntc },
                             {
                                 field: 'statu', title: '返佣状态', width: 100, align: 'center', templet: function (d) {
-                                    if (parseInt(d.statu) === 1) {
-                                        return "<span>待审核</span>";
+                                    if (parseInt(d.statu) === 0) {
+                                        return "<span style=\"color:#fd5760;\">待审核</span>";
+                                    } else if (parseInt(d.statu) === 1) {
+                                        return "<span style=\"color:#fd5760;\">待确认</span>";
                                     } else if (parseInt(d.statu) === 2) {
-                                        return "<span>待确认</span>";
+                                        return "<span style=\"color:#fd5760;\">待结算</span>";
                                     } else if (parseInt(d.statu) === 3) {
-                                        return "<span>待结算</span>";
-                                    } else if (parseInt(d.statu) === 4) {
-                                        return "<span>已结算</span>";
+                                        return "<span style=\"color:#0f7f12;\">已结算</span>";
                                     }
                                 }
                             },
@@ -100,7 +100,7 @@
                 table.on('tool(tool)', function (obj) {
                     var id = obj.data.billID;
                     var statu = obj.data.statu;
-                    os.Open('佣金结算详情', '/fytadmin/cms/BalanceDetail/?billId=' + id + "&status=" + statu, '1100px', '600px', active.reload);
+                    os.Open('佣金结算详情', '/fytadmin/cms/BalanceDetail/?billId=' + id + "&status=" + statu, '1150px', '600px', active.reload);
                 });
                 function data() {
                     if ($.trim($("#start_date").val()).length == 0) {
