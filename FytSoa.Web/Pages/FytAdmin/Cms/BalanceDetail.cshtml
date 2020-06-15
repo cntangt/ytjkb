@@ -1,4 +1,5 @@
 ﻿@page
+@model BalanceDetailModel
 @using FytSoa.Extensions
 @{
     ViewBag.Title = "佣金结算";
@@ -18,9 +19,9 @@
 <div id="container">
     <div class="list-wall" style="padding-top:0px;">
         <div style="text-align:center;padding:20px 0 10px 0">
-            @if (isSys)
+            @if (Model.Dispaly)
             {
-                <button class="layui-btn" lay-filter="submit" id="submit"><i class="layui-icon layui-icon-loading layui-icon layui-anim layui-anim-rotate layui-anim-loop layui-hide"></i>确认</button>
+                <button class="layui-btn" lay-filter="submit" id="submit"><i class="layui-icon layui-icon-loading layui-icon layui-anim layui-anim-rotate layui-anim-loop layui-hide"></i>@Model.BtnName</button>
             }
             <button class="layui-btn" lay-filter="export" id="export"><i class="layui-icon layui-icon-loading layui-icon layui-anim layui-anim-rotate layui-anim-loop layui-hide"></i>导出明细</button>
         </div>

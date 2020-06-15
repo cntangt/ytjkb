@@ -492,7 +492,7 @@ namespace FytSoa.Api.Controllers
                 p => new EC("退款金额", p.refund_create_amount, "¥#,##0.00", sum: true),
                 p => new EC("商家优惠", p.coupon_amount, "¥#,##0.00", sum: true),
                 p => new EC("参与返佣净额", p.balance_amount, "¥#,##0.00", sum: true),
-                p => new EC("返佣比例", p.rebate, "0.00%"),
+                p => new EC("返佣比例", p.rebate / 100M, "0.00%"),
                 p => new EC("应返金额", p.rebate_amount, "¥#,##0.00", sum: true),
                 p => new EC("调整金额", p.modify_amount, "¥#,##0.00", sum: true),
                 p => new EC("实际返佣", p.rebate_amount_rel, "¥#,##0.00", sum: true));

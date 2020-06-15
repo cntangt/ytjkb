@@ -61,7 +61,7 @@
                             { field: 'modify_amount', title: '调整金额', width: 140, align: 'right', totalRow: true, templet: os.ntc },
                             { field: 'rebate_amount_rel', title: '实际返佣', width: 140, align: 'right', totalRow: true, templet: os.ntc },
                             { field: 'statu', title: '返佣状态', width: 100, align: 'right' },
-                            { field: 'moditime', title: '返佣时间', width: 150, align: 'center', templet: (d) => layui.util.toDateString(d.moditime, 'yyyy-MM-dd HH:mm:ss') },
+                            { field: 'moditime', title: '返佣时间', width: 155, align: 'center', templet: (d) => layui.util.toDateString(d.moditime, 'yyyy-MM-dd HH:mm:ss') },
                             { title: '操作', align: 'center', templet: '#tool', width: 100 }
                         ]
                     ],
@@ -71,7 +71,10 @@
                     id: 'tables'
                 });
                 dt.render({ elem: '#start_date', type: 'month' });
-                dt.render({ elem: '#end_date', type: 'month', max:'@end_date' });
+                dt.render({ elem: '#end_date', type: 'month', max: '@end_date' });
+                var active = {
+                    reload: function () { table.reload('tables'); },
+                }
                 $('#searchform').on('submit', () => {
                     table.reload('tables',
                         {
@@ -84,7 +87,8 @@
                 });
                 table.on('tool(tool)', function (obj) {
                     var id = obj.data.billID;
-                    os.Open('佣金结算详情', '/fytadmin/cms/BalanceDetail/?billId=' + id, '1100px', '600px');
+                    var status = obj.data.status;
+                    os.Open('佣金结算详情', '/fytadmin/cms/BalanceDetail/?billId=' + id + "&status=" + status, '1100px', '600px', active.reload);
                 });
                 function data() {
                     if ($.trim($("#start_date").val()).length == 0) {
