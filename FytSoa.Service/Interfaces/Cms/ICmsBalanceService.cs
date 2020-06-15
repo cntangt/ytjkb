@@ -13,5 +13,7 @@ namespace FytSoa.Service.Interfaces
         Task<ApiResult<Page<CmsBalance_Chi>>> GetDetailPageAsync(PageParm parm);
 
         Task<ApiResult<string>> ModifyAmountAsync(CmsBalance_Chi parm);
+
+        Task<ApiResult<string>> ConfirmBillAsync(CmsBalance parm);
     }
 }

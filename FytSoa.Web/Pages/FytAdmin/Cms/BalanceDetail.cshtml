@@ -120,7 +120,13 @@
                     }));
                 });
                 $("#submit").click(function () {
-
+                    os.ajax('api/balance/confirm', { billId: billId }, (res) => {
+                        if (!res.success) {
+                            os.error(res.message);
+                        } else {
+                            layer.close(index);
+                        }
+                    });
                 });
                 $("#export").click(function () {
                     l.open({ title: '结算明细导出', area: ['550px', '300px'], content: '/api/sync/balanceexport/?billId=' + billId, type: 2 });

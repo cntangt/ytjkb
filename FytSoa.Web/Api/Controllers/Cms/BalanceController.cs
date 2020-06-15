@@ -51,5 +51,8 @@ namespace FytSoa.Api.Controllers.Cms
 
         [HttpPost("modify"), ApiAuthorize(Modules = "Balance", Methods = "Update", LogType = LogEnum.UPDATE)]
         public Task<ApiResult<string>> Modify([FromBody]CmsBalance_Chi parm) => balanceService.ModifyAmountAsync(parm);
+
+        [HttpPost("confirm"), ApiAuthorize(Modules = "Balance", Methods = "Update", LogType = LogEnum.UPDATE)]
+        public Task<ApiResult<string>> Confirm([FromBody]CmsBalance parm) => balanceService.ConfirmBillAsync(parm);
     }
 }

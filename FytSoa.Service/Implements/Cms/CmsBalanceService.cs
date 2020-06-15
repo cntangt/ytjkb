@@ -119,5 +119,29 @@ namespace FytSoa.Service.Implements
 
             return res;
         }
+
+        public async Task<ApiResult<string>> ConfirmBillAsync(CmsBalance parm)
+        {
+            var res = new ApiResult<string>() { statusCode = (int)ApiEnum.Error };
+
+            try
+            {
+                var model = await Db.Queryable<CmsBalance>().Where(t => t.BillID == parm.BillID).SingleAsync();
+
+                model.statu += 1;
+
+                await Db.Updateable(model).UpdateColumns(t => new { t.statu }).ExecuteCommandAsync();
+            }
+            catch (Exception ex)
+            {
+                res.message = ApiEnum.Error.GetEnumText() + ex.Message;
+                Logger.Default.ProcessError((int)ApiEnum.Error, ex.Message);
+            }
+
+            res.statusCode = (int)ApiEnum.Status;
+            res.message = "操作成功";
+
+            return res;
+        }
     }
 }
