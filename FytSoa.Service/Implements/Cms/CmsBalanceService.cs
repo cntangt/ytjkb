@@ -103,8 +103,9 @@ namespace FytSoa.Service.Implements
                 {
                     BillID = fath.BillID,
                     modify_amount = fath.modify_amount - chi.modify_amount + parm.modify_amount,
-                    rebate_amount_rel = fath.rebate_amount_rel - chi.modify_amount + parm.modify_amount
-                }).UpdateColumns(t => new { t.modify_amount, t.rebate_amount_rel }).ExecuteCommandAsync();
+                    rebate_amount_rel = fath.rebate_amount_rel - chi.modify_amount + parm.modify_amount,
+                    moditime = DateTime.Now
+                }).UpdateColumns(t => new { t.modify_amount, t.rebate_amount_rel, t.moditime }).ExecuteCommandAsync();
 
                 tran.Complete();
             }
@@ -129,8 +130,9 @@ namespace FytSoa.Service.Implements
                 var model = await Db.Queryable<CmsBalance>().Where(t => t.BillID == parm.BillID).SingleAsync();
 
                 model.statu += 1;
+                model.moditime = DateTime.Now;
 
-                await Db.Updateable(model).UpdateColumns(t => new { t.statu }).ExecuteCommandAsync();
+                await Db.Updateable(model).UpdateColumns(t => new { t.statu, t.moditime }).ExecuteCommandAsync();
             }
             catch (Exception ex)
             {
