@@ -58,15 +58,15 @@
                 var index = parent.layer.getFrameIndex(window.name);
                 var cols = [[
                     { field: 'mch_name', title: '商户名称', align: 'left' },
-                    { field: 'settle_Name', title: '支付渠道', align: 'left' },
-                    { field: 'success_amount', title: '支付金额', align: 'right', templet: os.ntc },
+                    { field: 'settle_Name', title: '支付渠道', align: 'left', wdith: 110 },
+                    { field: 'success_amount', title: '支付金额', align: 'right' },
                     { field: 'refund_create_amount', title: '退款金额', align: 'right', templet: os.ntc, width: 85 },
                     { field: 'coupon_amount', title: '商家优惠', align: 'right', templet: os.ntc, width: 85 },
                     { field: 'balance_amount', title: '参与返佣净额', align: 'right', templet: os.ntc },
                     { field: 'rebate', title: '返佣比例', align: 'right', templet: os.tp, width: 85 },
-                    { field: 'rebate_amount', title: '应返金额', align: 'right', templet: os.ntc, width: 95 },
+                    { field: 'rebate_amount', title: '应返金额', align: 'right', templet: os.ntc, width: 100 },
                     { field: 'modify_amount', title: '调整金额', align: 'right', templet: os.ntc, width: 85 },
-                    { field: 'rebate_amount_rel', title: '实际返佣', align: 'right', templet: os.ntc, width: 95 },
+                    { field: 'rebate_amount_rel', title: '实际返佣', align: 'right', templet: os.ntc, width: 100 },
                 ]];
                 if ('@isSys' === 'True' && parseInt(status) === 0) cols[0].push({ title: '操作', align: 'center', templet: '#tool', width: 90 });
                 table.render({
