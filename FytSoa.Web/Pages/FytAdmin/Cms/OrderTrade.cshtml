@@ -357,7 +357,7 @@
                             tpl(details.innerHTML).render(obj.data, (html) => l.open({ title: '交易订单详情', area: ['720px', '570px'], content: html }));
                             break;
                         case 'goods':
-                            os.Open('商品列表', '/fytadmin/cms/goodslist/?str=' + encodeURI(JSON.stringify(obj.data.detail)), '730px', '470px');
+                            os.Open('商品列表', '/fytadmin/cms/goodslist/?str=' + encodeURI(obj.data.detail), '730px', '470px');
                             break;
                         case 'refund':
                             tpl(refund.innerHTML).render(obj.data, (html) => l.open({

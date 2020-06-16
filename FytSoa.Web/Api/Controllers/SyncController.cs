@@ -504,24 +504,19 @@ namespace FytSoa.Api.Controllers
             );
         }
 
-        public async Task<PageResult<IEnumerable<GoodsDetail>>> GoodsList(PageParm parm)
+        public async Task<IActionResult> GoodsList(PageParm parm)
         {
-            var res = new PageResult<IEnumerable<GoodsDetail>>();
-            var data = new GoodsDto();
-
             try
             {
-                data = JsonConvert.DeserializeObject<GoodsDto>(parm.key);
+                var res = JsonConvert.DeserializeObject<GoodsDto>(parm.key);
+                var count = res.goods_detail.Count();
+                var data = res.goods_detail.Skip((parm.page - 1) * parm.limit).Take(parm.limit);
+                return Ok(new { code = 0, msg = "success", count = count, data = data });
             }
-            catch (Exception ex)
+            catch
             {
-
+                return Ok(new { code = 0, msg = "无数据" });
             }
-
-            res.Count = data.goods_detail.Count();
-            res.Data = data.goods_detail.Skip((parm.page - 1) * parm.limit).Take(parm.limit);
-
-            return res;
         }
     }
 }
