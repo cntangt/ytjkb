@@ -501,5 +501,28 @@ namespace FytSoa.Service.Implements
 
             return res;
         }
+
+        /// <summary>
+        /// 更新用户登录次数
+        /// </summary>
+        /// <returns></returns>
+        public async Task<ApiResult<string>> UpdateLoginSum(string admin_guid)
+        {
+            var res = new ApiResult<string> { statusCode = (int)ApiEnum.Status, success = true };
+
+            try
+            {
+                await Db.Ado.ExecuteCommandAsync($"update sys_admin set loginsum = loginsum+1 where guid = '{admin_guid}'");
+            }
+            catch (Exception ex)
+            {
+                res.success = false;
+                res.statusCode = (int)ApiEnum.Error;
+                res.message = ApiEnum.Error.GetEnumText() + ex.Message;
+                Logger.Default.ProcessError((int)ApiEnum.Error, ex.Message);
+            }
+
+            return res;
+        }
     }
 }

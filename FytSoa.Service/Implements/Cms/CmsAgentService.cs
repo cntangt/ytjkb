@@ -142,6 +142,7 @@ namespace FytSoa.Service.Implements
 
                 parm.Create_Time = DateTime.Now;
                 parm.Admin_Guid = admin_guid;
+                parm.Status = true;
 
                 var dbres = await Db.Insertable(parm).ExecuteCommandAsync();
 

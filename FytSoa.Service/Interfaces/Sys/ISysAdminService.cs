@@ -61,5 +61,11 @@ namespace FytSoa.Service.Interfaces
         /// </summary>
         /// <returns></returns>
         Task<ApiResult<string>> AddShopsAsync(AdminShopRel parm);
+
+        /// <summary>
+        /// 更新登录次数
+        /// </summary>
+        /// <returns></returns>
+        Task<ApiResult<string>> UpdateLoginSum(string admin_guid);
     }
 }

@@ -346,5 +346,29 @@ namespace FytSoa.Api.Controllers
             parm.userId = await HttpContext.LoginUserId();
             return Ok(await _adminService.UpdatePwdAsync(parm));
         }
+
+        [HttpPost("loginsum")]
+        public async Task<IActionResult> GetLoginSum()
+        {
+            if (!(await HttpContext.IsSystem()))
+            {
+                var guid = await HttpContext.LoginUserId();
+                var model = await _adminService.GetModelAsync(t => t.Guid == guid);
+
+                if (model.data.LoginSum <= 1)
+                {
+                    return Ok(true);
+                }
+            }
+
+            return Ok(false);
+        }
+
+        [HttpPost("updateloginsum")]
+        public async Task<IActionResult> UpdateLoginSum()
+        {
+            var guid = await HttpContext.LoginUserId();
+            return Ok(await _adminService.UpdateLoginSum(guid));
+        }
     }
 }

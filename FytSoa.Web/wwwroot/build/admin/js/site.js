@@ -727,6 +727,9 @@ var main_vm = new Vue({
         updatepwd: function () {
             os.Open('修改密码', '/fytadmin/updatepwd', '500px', '340px');
         },
+        updateloginsum: function () {
+            os.ajax('api/admin/updateloginsum', null, function () { });
+        },
         unreadcount: function () {
             os.ajax('api/notice/unreadquantity', {}, function (res) {
                 if (res.statusCode === 200) {
@@ -810,6 +813,11 @@ layui.config({
             os.error(res.message);
         }
     }, 'get');
+    os.ajax('api/admin/loginsum', null, function (res) {
+        if (res) {
+            os.Open('修改密码', '/fytadmin/updatepwd', '500px', '340px', main_vm.updateloginsum);
+        }
+    });
     $("#content-container").height($("#main-container").height() - 36);
     main_vm.unreadcount();
 });
